@@ -9,6 +9,7 @@
 ```bash
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
+$ slack init
 ```
 > __NOTE:__ Also requires that your Slack team has one or more [incoming webhook integrations](https://api.slack.com/incoming-webhooks)
 
