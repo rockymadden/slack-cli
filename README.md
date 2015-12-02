@@ -10,6 +10,10 @@
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 $ slack init
+Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
+Enter default channel (e.g. @username): @username
+Enter default username (e.g. username-bot): username-bot
+Enter default emoji (e.g. :robot_face:): :robot_face:
 ```
 > __NOTE:__ Also requires that your Slack team has one or more [incoming webhook integrations](https://api.slack.com/incoming-webhooks)
 
