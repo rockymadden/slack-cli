@@ -18,16 +18,17 @@ $ slack init
 All subcommands prompt for required arguments which were not provided via options. This allows for
 both traditional option-based usage and also prompt-based usage.
 
-### Send message via prompt-based usage:
+### Send message:
 ```bash
 $ slack send
 Enter message (e.g. Hello World!): Hello World!
-```
-
----
-
-### Send message via option-based usage:
-```bash
+$ slack send -c '#general'
+Enter message (e.g. Hello World!): Hello World!
+$ slack send --channel='@username'
+Enter message (e.g. Hello World!): Hello World!
+$ slack send -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
+$ slack send --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
+$ slack send -c '#general' -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
 $ slack send --channel='@username' --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
 ```
 
