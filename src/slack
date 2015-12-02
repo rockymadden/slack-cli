@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+case "${1}" in
+  init)
+    CHANNEL=
+    EMOJI=
+    USERNAME=
+    WEBHOOK=
+
+    while (( "$#" )); do
+      case "${2}" in
+        --*=*|-*=*)
+          opt[0]=$(echo "${2}" | cut -d '=' -f 1) && \
+          opt[1]=$(echo "${2}" | cut -d '=' -f 2) && \
+          shift
+        ;;
+        *)
+          case "${3}" in
+            --*|-*) opt=("${2}" "") && shift ;;
+            *) opt=("${2}" "${3}") && shift && shift ;;
+          esac
+        ;;
+      esac
+
+      case "${opt[0]}" in
+        --emoji|-e) EMOJI="${opt[1]}" ;;
+        --username|-u) USERNAME="${opt[1]}" ;;
+        --webhook|-w) WEBHOOK="${opt[1]}" ;;
+      esac
+    done
+
+    test -z "${WEBHOOK}" && read -e -p 'Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): ' WEBHOOK
+    test -z "${CHANNEL}" && read -e -p 'Enter default channel (e.g. @username): ' CHANNEL
+    test -z "${USERNAME}" && read -e -p 'Enter default username (e.g. username-bot): ' USERNAME
+    test -z "${EMOJI}" && read -e -p 'Enter default emoji (e.g. :robot_face:): ' EMOJI
+
+    echo "${WEBHOOK}" > ~/.slack-cli && \
+    echo "${CHANNEL}" >> ~/.slack-cli && \
+    echo "${USERNAME}" >> ~/.slack-cli && \
+    echo "${EMOJI}" >> ~/.slack-cli
+  ;;
+
+  send)
+    CHANNEL=$(sed -n '2p' < ~/.slack-cli)
+    EMOJI=$(sed -n '4p' < ~/.slack-cli)
+    MESSAGE=
+    USERNAME=$(sed -n '3p' < ~/.slack-cli)
+    WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
+
+    while (( "$#" )); do
+      case "${2}" in
+        --*=*|-*=*)
+          opt[0]=$(echo "${2}" | cut -d '=' -f 1) && \
+          opt[1]=$(echo "${2}" | cut -d '=' -f 2) && \
+          shift
+        ;;
+        *)
+          case "${3}" in
+            --*|-*) opt=(${2} '') && shift ;;
+            *) opt=(${2} "${3}") && shift && shift ;;
+          esac
+        ;;
+      esac
+
+      case "${opt[0]}" in
+        --channel|-c) CHANNEL="${opt[1]}" ;;
+        --emoji|-e) EMOJI="${opt[1]}" ;;
+        --message|-m) MESSAGE="${opt[1]}" ;;
+        --username|-u) USERNAME="${opt[1]}" ;;
+        --webhook|-w) WEBHOOK="${opt[1]}" ;;
+      esac
+    done
+
+    test -z "${WEBHOOK}" && read -e -p 'Enter webhook url: ' WEBHOOK
+    test -z "${CHANNEL}" && read -e -p 'Enter channel (e.g. #general): ' CHANNEL
+    test -z "${USERNAME}" && read -e -p 'Enter username (e.g. username-bot): ' USERNAME
+    test -z "${EMOJI}" && read -e -p 'Enter emoji (e.g. robot_face): ' EMOJI
+    test -z "${MESSAGE}" && read -e -p 'Enter message (e.g. Hello World!): ' MESSAGE
+
+    PAYLOAD="payload={\"text\": \"${MESSAGE}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
+
+    exec curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
+  ;;
+
+  --help)
+    a=(${0//\// })
+    bin=${a[${#a[@]}-1]}
+
+    echo 'Usage:'
+    echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>]"
+    echo "  ${bin} send [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--message|-m <message>]"
+    echo
+    echo "Settings Commands:"
+    echo "  init     Initialize default settings"
+    echo
+    echo "Messaging Commands:"
+    echo "  send     Send a message"
+  ;;
+
+  --version) echo 'v0.0.0' ;;
+
+  *) ${0} --help && exit 1 ;;
+esac
+
+exit 0
