@@ -18,28 +18,6 @@ $ slack init
 All subcommands prompt for required arguments which were not provided via options. This allows for
 both traditional option-based usage and also interactive/prompt-based usage.
 
-### Init via prompt-based usage:
-```bash
-$ slack init
-Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
-Enter default channel (e.g. @username): @username
-Enter default username (e.g. username-bot): username-bot
-Enter default emoji (e.g. :robot_face:): :robot_face:
-```
-
----
-
-### Init via option-based usage:
-```bash
-$ slack init \
-  --webhook=https://hooks.slack.com/services/XXX/XXX/XXX \
-  --channel='@username' \
-  --username=username-bot \
-  --emoji=':robot_face:'
-```
-
----
-
 ### Send message via prompt-based usage:
 ```bash
 $ slack send
