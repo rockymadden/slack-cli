@@ -9,34 +9,69 @@
 ```bash
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
-$ slack init
-Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
-Enter default channel (e.g. @username): @username
-Enter default username (e.g. username-bot): username-bot
-Enter default emoji (e.g. :robot_face:): :robot_face:
 ```
-> __NOTE:__ Also requires that your Slack team has one or more [incoming webhook integrations](https://api.slack.com/incoming-webhooks)
+> __NOTE:__ Requires that your Slack team has one or more
+[incoming webhook integrations](https://api.slack.com/incoming-webhooks)
 
 ## Usage
 
 All subcommands prompt for required arguments which were not provided via options. This allows for
 both traditional option-based usage and also prompt-based usage.
 
-### Send message:
+### Initialize:
+
+```bash
+$ slack init
+Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
+Enter default channel (e.g. @username): @username
+Enter default username (e.g. username-bot): username-bot
+Enter default emoji (e.g. :robot_face:): :robot_face:
+```
+
+### Send a message:
+
 ```bash
 $ slack send
 Enter message (e.g. Hello World!): Hello World!
-$ slack send -c '#general'
-Enter message (e.g. Hello World!): Hello World!
-$ slack send --channel='@username'
-Enter message (e.g. Hello World!): Hello World!
-$ slack send -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
-$ slack send --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
-$ slack send -c '#general' -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
-$ slack send --channel='@username' --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
 ```
 
----
+<sub><sup>_--or--_</sup></sub>
+
+```bash
+$ slack send -c '#general'
+Enter message (e.g. Hello World!): Hello World!
+```
+
+<sub><sup>_--or--_</sup></sub>
+
+```bash
+$ slack send --channel='@username'
+Enter message (e.g. Hello World!): Hello World!
+```
+
+<sub><sup>_--or--_</sup></sub>
+
+```bash
+$ slack send -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
+```
+
+<sub><sup>_--or--_</sup></sub>
+
+```bash
+$ slack send --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
+```
+
+<sub><sup>_--or--_</sup></sub>
+
+```bash
+$ slack send -c '#general' -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
+```
+
+<sub><sup>_--or--_</sup></sub>
+
+```bash
+$ slack send --channel='@username' --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
+```
 
 ## License
 ```
