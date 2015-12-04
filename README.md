@@ -35,39 +35,39 @@ $ slack send
 Enter message (e.g. Hello World!): Hello World!
 ```
 
-<sub><sup>_--or--_</sup></sub>
+_--or--_
 
 ```bash
 $ slack send -c '#general'
 Enter message (e.g. Hello World!): Hello World!
 ```
 
-<sub><sup>_--or--_</sup></sub>
+_--or--_
 
 ```bash
 $ slack send --channel='@username'
 Enter message (e.g. Hello World!): Hello World!
 ```
 
-<sub><sup>_--or--_</sup></sub>
+_--or--_
 
 ```bash
 $ slack send -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
 ```
 
-<sub><sup>_--or--_</sup></sub>
+_--or--_
 
 ```bash
 $ slack send --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
 ```
 
-<sub><sup>_--or--_</sup></sub>
+_--or--_
 
 ```bash
 $ slack send -c '#general' -m 'Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
 ```
 
-<sub><sup>_--or--_</sup></sub>
+_--or--_
 
 ```bash
 $ slack send --channel='@username' --message='Checkout this <https://github.com/rockymadden/slack-cli|repo>!'
