@@ -9,23 +9,15 @@ case "${1}" in
 
     while (( "$#" )); do
       case "${2}" in
-        --*=*|-*=*)
-          opt[0]=$(echo "${2}" | cut -d '=' -f 1) && \
-          opt[1]=$(echo "${2}" | cut -d '=' -f 2) && \
-          shift
-        ;;
-        *)
-          case "${3}" in
-            --*|-*) opt=("${2}" "") && shift ;;
-            *) opt=("${2}" "${3}") && shift && shift ;;
-          esac
-        ;;
-      esac
-
-      case "${opt[0]}" in
-        --emoji|-e) EMOJI="${opt[1]}" ;;
-        --username|-u) USERNAME="${opt[1]}" ;;
-        --webhook|-w) WEBHOOK="${opt[1]}" ;;
+        --channel=*) CHANNEL=${2/--channel=/''} && shift ;;
+        --emoji=*) EMOJI=${2/--emoji=/''} && shift ;;
+        --username=*) USERNAME=${2/--username=/''} && shift ;;
+        --webhook=*) WEBHOOK=${2/--webhook=/''} && shift ;;
+        -c*) CHANNEL=${3} && shift && shift ;;
+        -e*) EMOJI=${3} && shift && shift ;;
+        -u*) USERNAME=${3} && shift && shift ;;
+        -e*) WEBHOOK=${3} && shift && shift ;;
+        *) shift ;;
       esac
     done
 
@@ -49,25 +41,17 @@ case "${1}" in
 
     while (( "$#" )); do
       case "${2}" in
-        --*=*|-*=*)
-          opt[0]=$(echo "${2}" | cut -d '=' -f 1) && \
-          opt[1]=$(echo "${2}" | cut -d '=' -f 2) && \
-          shift
-        ;;
-        *)
-          case "${3}" in
-            --*|-*) opt=(${2} '') && shift ;;
-            *) opt=(${2} "${3}") && shift && shift ;;
-          esac
-        ;;
-      esac
-
-      case "${opt[0]}" in
-        --channel|-c) CHANNEL="${opt[1]}" ;;
-        --emoji|-e) EMOJI="${opt[1]}" ;;
-        --message|-m) MESSAGE="${opt[1]}" ;;
-        --username|-u) USERNAME="${opt[1]}" ;;
-        --webhook|-w) WEBHOOK="${opt[1]}" ;;
+        --channel=*) CHANNEL=${2/--channel=/''} && shift ;;
+        --emoji=*) EMOJI=${2/--emoji=/''} && shift ;;
+        --message=*) MESSAGE=${2/--message=/''} && shift ;;
+        --username=*) USERNAME=${2/--username=/''} && shift ;;
+        --webhook=*) WEBHOOK=${2/--webhook=/''} && shift ;;
+        -c*) CHANNEL=${3} && shift && shift ;;
+        -e*) EMOJI=${3} && shift && shift ;;
+        -m*) MESSAGE=${3} && shift && shift ;;
+        -u*) USERNAME=${3} && shift && shift ;;
+        -e*) WEBHOOK=${3} && shift && shift ;;
+        *) test -n "${2}" && MESSAGE=${2} ; shift ;;
       esac
     done
 

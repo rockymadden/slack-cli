@@ -31,6 +31,12 @@ Enter default emoji (e.g. :robot_face:): :robot_face:
 ### Send a message:
 
 ```bash
+$ slack send 'Hello World!'
+```
+
+_--or--_
+
+```bash
 $ slack send
 Enter message (e.g. Hello World!): Hello World!
 ```
