@@ -34,58 +34,40 @@ Enter default emoji (e.g. :robot_face:): :robot_face:
 $ slack send 'Hello World!'
 ```
 
-_--or--_
-
 ```bash
 $ slack send 'Hello World!' -c '#general'
 ```
 
-_--or--_
-
 ```bash
 $ slack send 'Hello World!' --channel='@username'
 ```
-
-_--or--_
 
 ```bash
 $ slack send
 Enter message (e.g. Hello World!): Hello World!
 ```
 
-_--or--_
-
 ```bash
 $ slack send -c '#general'
 Enter message (e.g. Hello World!): Hello World!
 ```
-
-_--or--_
 
 ```bash
 $ slack send --channel='@username'
 Enter message (e.g. Hello World!): Hello World!
 ```
 
-_--or--_
-
 ```bash
 $ slack send -m 'Hello World!'
 ```
-
-_--or--_
-
-```bash
-$ slack send --message='Hello World!'
-```
-
-_--or--_
 
 ```bash
 $ slack send -m 'Hello World!' -c '#general'
 ```
 
-_--or--_
+```bash
+$ slack send --message='Hello World!'
+```
 
 ```bash
 $ slack send --message='Hello World!' --channel='@username'
