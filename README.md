@@ -20,16 +20,16 @@ $ slack --help
 Usage:
   slack init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]
   slack send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]
-  slack sendtmpl status [--channel|-c <channel>] [--what=<what>] [--when=<when>] [--color=<color>] [--silent|-s]
+  slack sendtmpl event [--channel|-c <channel>] [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--silent|-s]
   slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]
 
 Settings Commands:
   init     Initialize default settings
 
 Messaging Commands:
-  send                Send a message
-  sendtmpl status     Send a status templated message
-  sendtmpl task       Send a task templated message
+  send               Send a message
+  sendtmpl event     Send an event templated message
+  sendtmpl task      Send a task notification templated message
 ```
 
 > __NOTE:__ All subcommands prompt for required arguments which were not provided via options. This
@@ -72,14 +72,16 @@ Sending: done
 
 ### Send a templated message:
 
-#### Status notification template:
+#### Event template:
 
-![Status Notification Example](http://share.rockymadden.com/image/1x2w2X0y0Y16/Image%202015-12-05%20at%208.02.08%20PM.png)
+![Event Example](http://share.rockymadden.com/image/111B3o28020W/Image%202015-12-05%20at%208.22.37%20PM.png)
 
 ```bash
-$ slack sendtmpl status --color=warning
-Enter what (e.g. Released v1.2.3): Released v1.2.3
-Enter when (e.g. 15:45, Now): Now
+$ slack sendtmpl event
+Enter event (e.g. New version of slack-cli released): New version of slack-cli released
+Enter title (e.g. v0.2.0): v0.2.0
+Enter link (e.g https://github.com/rockymadden/slack-cli/releases/tag/v0.2.0): https://github.com/rockymadden/slack-cli/releases/tag/v0.2.0
+Enter details (e.g Introduces new templated messages): Introduces new templated messages
 Sending: done
 ```
 
