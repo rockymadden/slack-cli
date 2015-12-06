@@ -74,7 +74,7 @@ Sending: done
 
 #### Event template:
 
-![Event Example](http://share.rockymadden.com/image/111B3o28020W/Image%202015-12-05%20at%208.22.37%20PM.png)
+![Event Example](http://share.rockymadden.com/image/1D121I1O1c2T/Image%202015-12-05%20at%208.31.03%20PM.png)
 
 ```bash
 $ slack sendtmpl event
