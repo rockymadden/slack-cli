@@ -81,7 +81,7 @@ case "${1}" in
 
     echo 'Usage:'
     echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]"
-    echo "  ${bin} send [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--message|-m <message>] [--silent|-s]"
+    echo "  ${bin} send [--message|-m <message>] [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]"
     echo
     echo "Settings Commands:"
     echo "  init     Initialize default settings"
