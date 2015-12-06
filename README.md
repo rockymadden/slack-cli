@@ -18,14 +18,16 @@ $ brew install slack-cli
 ```bash
 $ slack --help
 Usage:
-  slack init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]
-  slack send [--message|-m <message>] [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]
+  slack init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]
+  slack send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]
+  slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--who=<who>] [--when=<when>] [--color=<color>] [--silent|-s]
 
 Settings Commands:
   init     Initialize default settings
 
 Messaging Commands:
-  send     Send a message
+  send              Send a message
+  sendtmpl task     Send a task templated message
 ```
 > __NOTE:__ All subcommands prompt for required arguments which were not provided via options. This
 allows for both traditional option-based usage and also prompt-based usage.
