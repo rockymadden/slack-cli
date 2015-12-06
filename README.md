@@ -71,17 +71,15 @@ Sending: done
 
 #### Task notification template:
 
+![Task Notification Example](http://share.rockymadden.com/image/3N2t402L0b3Q/Image%202015-12-05%20at%207.45.21%20PM.png)
+
 ```bash
 $ slack sendtmpl task
-Enter what (e.g. Restarting server): Restarting server due to out of memory issues
-Enter who (e.g. First Last): Rocky Madden
+Enter what (e.g. Restarting server): Restarting database server #3
+Enter why (e.g. Out of memory): Out of memory
 Enter when (e.g. 15:45, Now): 15:45
 Sending: done
 ```
-
-__Slack output:__
-
-![Task Notification Example](http://share.rockymadden.com/image/0X0x2l2w2S23/Image%202015-12-05%20at%207.15.31%20PM.png)
 
 ## License
 ```
