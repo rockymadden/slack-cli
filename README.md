@@ -15,9 +15,6 @@ $ brew install slack-cli
 
 ## Usage
 
-All subcommands prompt for required arguments which were not provided via options. This allows for
-both traditional option-based usage and also prompt-based usage.
-
 ```bash
 $ slack --help
 Usage:
@@ -30,6 +27,8 @@ Settings Commands:
 Messaging Commands:
   send     Send a message
 ```
+> __NOTE:__ All subcommands prompt for required arguments which were not provided via options. This
+allows for both traditional option-based usage and also prompt-based usage.
 
 ### Initialize:
 
