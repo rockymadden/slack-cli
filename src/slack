@@ -73,6 +73,37 @@ case "${1}" in
     WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
 
     case "${2}" in
+      status)
+        COLOR='good'
+
+        while (( "$#" )); do
+          case "${3}" in
+            --channel=*) CHANNEL=${3/--channel=/''} ; shift ;;
+            --color=*) COLOR=${3/--color=/''} ; shift ;;
+            --silent) SILENT='0' ; shift ;;
+            --what=*) WHAT=${3/--what=/''} ; shift ;;
+            --when=*) WHEN=${3/--when=/''} ; shift ;;
+            -c*) CHANNEL=${4} ; shift ; shift ;;
+            -s) SILENT='0' ; shift ;;
+            *) shift ;;
+          esac
+        done
+
+        test -z "${CHANNEL}" && read -e -p 'Enter channel (e.g. #general): ' CHANNEL
+        test -z "${WHAT}" && read -e -p 'Enter what (e.g. Released v1.2.3): ' WHAT
+        test -z "${WHEN}" && read -e -p 'Enter when (e.g. 15:45, Now): ' WHEN
+        test -z "${COLOR}" && read -e -p 'Enter color (e.g. good, warning, danger): ' COLOR
+        test -z "${SILENT}" && echo -n 'Sending: '
+
+        PAYLOAD="payload={\"attachments\": [{\"author_name\": \"Status Notification\", \"author_icon\": \"http://www.emoji-cheat-sheet.com/graphics/emojis/satellite.png\", \"fallback\": \"${WHAT}\", \"text\": \"${WHAT}\", \"color\": \"${COLOR}\", \"fields\": [{\"title\": \"When\", \"value\": \"${WHEN}\", \"short\": true}]}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
+        curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
+
+        case "$?" in
+          0) test -z "${SILENT}" && echo 'done' ; exit 0 ;;
+          *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
+        esac
+      ;;
+
       task)
         COLOR='good'
 
@@ -117,14 +148,16 @@ case "${1}" in
     echo 'Usage:'
     echo "  ${bin} init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]"
     echo "  ${bin} send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]"
+    echo "  ${bin} sendtmpl status [--channel|-c <channel>] [--what=<what>] [--when=<when>] [--color=<color>] [--silent|-s]"
     echo "  ${bin} sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]"
     echo
     echo "Settings Commands:"
     echo "  init     Initialize default settings"
     echo
     echo "Messaging Commands:"
-    echo "  send              Send a message"
-    echo "  sendtmpl task     Send a task templated message"
+    echo "  send                Send a message"
+    echo "  sendtmpl status     Send a status templated message"
+    echo "  sendtmpl task       Send a task templated message"
   ;;
 
   --version) echo 'v0.1.0' ;;

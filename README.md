@@ -20,15 +20,18 @@ $ slack --help
 Usage:
   slack init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]
   slack send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]
+  slack sendtmpl status [--channel|-c <channel>] [--what=<what>] [--when=<when>] [--color=<color>] [--silent|-s]
   slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]
 
 Settings Commands:
   init     Initialize default settings
 
 Messaging Commands:
-  send              Send a message
-  sendtmpl task     Send a task templated message
+  send                Send a message
+  sendtmpl status     Send a status templated message
+  sendtmpl task       Send a task templated message
 ```
+
 > __NOTE:__ All subcommands prompt for required arguments which were not provided via options. This
 allows for both traditional option-based usage and also prompt-based usage.
 
@@ -68,6 +71,17 @@ Sending: done
 ```
 
 ### Send a templated message:
+
+#### Status notification template:
+
+![Status Notification Example](http://share.rockymadden.com/image/1x2w2X0y0Y16/Image%202015-12-05%20at%208.02.08%20PM.png)
+
+```bash
+$ slack sendtmpl status --color=warning
+Enter what (e.g. Released v1.2.3): Released v1.2.3
+Enter when (e.g. 15:45, Now): Now
+Sending: done
+```
 
 #### Task notification template:
 
