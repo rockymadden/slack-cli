@@ -34,10 +34,10 @@ allows for both traditional option-based usage and also prompt-based usage.
 
 ```bash
 $ slack init
-Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
-Enter default channel (e.g. @username): @username
-Enter default username (e.g. username-bot): username-bot
-Enter default emoji (e.g. :robot_face:): :robot_face:
+Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
+Enter username (e.g. username-bot): username-bot
+Enter emoji (e.g. :robot_face:): :robot_face:
+Enter default channel (e.g. #general): #general
 Initializing: done
 ```
 
@@ -64,6 +64,21 @@ $ slack send --channel='@username'
 Enter message (e.g. Hello World!): Hello World!
 Sending: done
 ```
+
+### Send a templated message:
+
+#### Task notification template:
+
+```bash
+$ slack sendtmpl task
+Enter what (e.g. Restarting server): Restarting server due to out of memory issues
+Enter who (e.g. First Last): Rocky Madden
+Enter when (e.g. 15:45, Now): 15:45
+Sending: done
+```
+
+__Slack output:__
+![Task Notification Example](http://share.rockymadden.com/image/0X0x2l2w2S23/Image%202015-12-05%20at%207.15.31%20PM.png)
 
 ## License
 ```
