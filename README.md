@@ -20,7 +20,7 @@ $ slack --help
 Usage:
   slack init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]
   slack send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]
-  slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--who=<who>] [--when=<when>] [--color=<color>] [--silent|-s]
+  slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]
 
 Settings Commands:
   init     Initialize default settings
