@@ -18,15 +18,15 @@ $ brew install slack-cli
 ```bash
 $ slack --help
 Usage:
-  slack init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]
+  slack init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]
   slack send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]
   slack sendtmpl event [--channel|-c <channel>] [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--silent|-s]
   slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]
 
-Settings Commands:
+  Settings Commands:
   init     Initialize default settings
 
-Messaging Commands:
+  Messaging Commands:
   send               Send a message
   sendtmpl event     Send an event templated message
   sendtmpl task      Send a task notification templated message
@@ -40,9 +40,9 @@ allows for both traditional option-based usage and also prompt-based usage.
 ```bash
 $ slack init
 Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
+Enter default channel (e.g. #general): #general
 Enter username (e.g. username-bot): username-bot
 Enter emoji (e.g. :robot_face:): :robot_face:
-Enter default channel (e.g. #general): #general
 Initializing: done
 ```
 

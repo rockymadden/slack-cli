@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 
+function iconkey() {
+  if [[ ${1:0:1} == ":" ]] ; then echo 'icon_emoji' ; else echo 'icon_url' ; fi
+}
+
 case "${1}" in
   init)
     while (( "$#" )); do
       case "${2}" in
         --channel=*) CHANNEL=${2/--channel=/''} ; shift ;;
-        --emoji=*) EMOJI=${2/--emoji=/''} ; shift ;;
+        --icon=*) ICON=${2/--icon=/''} ; shift ;;
         --silent) SILENT='0' ; shift ;;
         --username=*) USERNAME=${2/--username=/''} ; shift ;;
         --webhook=*) WEBHOOK=${2/--webhook=/''} ; shift ;;
         -c*) CHANNEL=${3} ; shift ; shift ;;
-        -e*) EMOJI=${3} ; shift ; shift ;;
+        -i*) ICON=${3} ; shift ; shift ;;
         -s) SILENT='0' ; shift ;;
         -u*) USERNAME=${3} ; shift ; shift ;;
         -w*) WEBHOOK=${3} ; shift ; shift ;;
@@ -19,15 +23,15 @@ case "${1}" in
     done
 
     test -z "${WEBHOOK}" && read -e -p 'Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): ' WEBHOOK
-    test -z "${USERNAME}" && read -e -p 'Enter username (e.g. username-bot): ' USERNAME
-    test -z "${EMOJI}" && read -e -p 'Enter emoji (e.g. :robot_face:): ' EMOJI
     test -z "${CHANNEL}" && read -e -p 'Enter default channel (e.g. #general): ' CHANNEL
+    test -z "${USERNAME}" && read -e -p 'Enter username (e.g. username-bot): ' USERNAME
+    test -z "${ICON}" && read -e -p 'Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): ' ICON
     test -z "${SILENT}" && echo -n 'Initializing: '
 
     echo "${WEBHOOK}" > ~/.slack-cli && \
     echo "${CHANNEL}" >> ~/.slack-cli && \
     echo "${USERNAME}" >> ~/.slack-cli && \
-    echo "${EMOJI}" >> ~/.slack-cli
+    echo "${ICON}" >> ~/.slack-cli
 
     case "$?" in
       0) test -z "${SILENT}" && echo 'done' ; exit 0 ;;
@@ -37,7 +41,7 @@ case "${1}" in
 
   send)
     CHANNEL=$(sed -n '2p' < ~/.slack-cli)
-    EMOJI=$(sed -n '4p' < ~/.slack-cli)
+    ICON=$(sed -n '4p' < ~/.slack-cli)
     USERNAME=$(sed -n '3p' < ~/.slack-cli)
     WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
 
@@ -53,11 +57,10 @@ case "${1}" in
       esac
     done
 
-    test -z "${CHANNEL}" && read -e -p 'Enter channel (e.g. #general): ' CHANNEL
     test -z "${TEXT}" && read -e -p 'Enter text (e.g. Hello World!): ' TEXT
     test -z "${SILENT}" && echo -n 'Sending: '
 
-    PAYLOAD="payload={\"text\": \"${TEXT}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
+    PAYLOAD="payload={\"text\": \"${TEXT}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
     curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
     case "$?" in
@@ -68,7 +71,7 @@ case "${1}" in
 
   sendtmpl)
     CHANNEL=$(sed -n '2p' < ~/.slack-cli)
-    EMOJI=$(sed -n '4p' < ~/.slack-cli)
+    ICON=$(sed -n '4p' < ~/.slack-cli)
     USERNAME=$(sed -n '3p' < ~/.slack-cli)
     WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
 
@@ -91,15 +94,13 @@ case "${1}" in
           esac
         done
 
-        test -z "${CHANNEL}" && read -e -p 'Enter channel (e.g. #general): ' CHANNEL
         test -z "${EVENT}" && read -e -p 'Enter event (e.g. New version of slack-cli released): ' EVENT
         test -z "${TITLE}" && read -e -p 'Enter title (e.g. v0.2.0): ' TITLE
         test -z "${LINK}" && read -e -p 'Enter link (e.g https://github.com/rockymadden/slack-cli/releases/tag/v0.2.0): ' LINK
         test -z "${DETAILS}" && read -e -p 'Enter details (e.g Introduces new templated messages): ' DETAILS
-        test -z "${COLOR}" && read -e -p 'Enter color (e.g. good, warning, danger): ' COLOR
         test -z "${SILENT}" && echo -n 'Sending: '
 
-        PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${EVENT}\", \"pretext\": \"${EVENT}\", \"color\": \"${COLOR}\", \"title\": \"${TITLE}\", \"title_link\": \"${LINK}\", \"text\": \"${DETAILS}\"}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
+        PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${EVENT}\", \"pretext\": \"${EVENT}\", \"color\": \"${COLOR}\", \"title\": \"${TITLE}\", \"title_link\": \"${LINK}\", \"text\": \"${DETAILS}\"}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
         curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
         case "$?" in
@@ -125,14 +126,12 @@ case "${1}" in
           esac
         done
 
-        test -z "${CHANNEL}" && read -e -p 'Enter channel (e.g. #general): ' CHANNEL
         test -z "${WHAT}" && read -e -p 'Enter what (e.g. Restarting server): ' WHAT
         test -z "${WHY}" && read -e -p 'Enter why (e.g. Out of memory): ' WHY
         test -z "${WHEN}" && read -e -p 'Enter when (e.g. 15:45, Now): ' WHEN
-        test -z "${COLOR}" && read -e -p 'Enter color (e.g. good, warning, danger): ' COLOR
         test -z "${SILENT}" && echo -n 'Sending: '
 
-        PAYLOAD="payload={\"attachments\": [{\"author_name\": \"Task Notification\", \"author_icon\": \"http://www.emoji-cheat-sheet.com/graphics/emojis/nut_and_bolt.png\", \"fallback\": \"${WHAT}\", \"text\": \"${WHAT}\", \"color\": \"${COLOR}\", \"fields\": [{\"title\": \"Why\", \"value\": \"${WHY}\", \"short\": true}, {\"title\": \"When\", \"value\": \"${WHEN}\", \"short\": true}]}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
+        PAYLOAD="payload={\"attachments\": [{\"author_name\": \"Task Notification\", \"author_icon\": \"http://www.emoji-cheat-sheet.com/graphics/emojis/nut_and_bolt.png\", \"fallback\": \"${WHAT}\", \"text\": \"${WHAT}\", \"color\": \"${COLOR}\", \"fields\": [{\"title\": \"Why\", \"value\": \"${WHY}\", \"short\": true}, {\"title\": \"When\", \"value\": \"${WHEN}\", \"short\": true}]}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
         curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
         case "$?" in
@@ -150,7 +149,7 @@ case "${1}" in
     bin=${a[${#a[@]}-1]}
 
     echo 'Usage:'
-    echo "  ${bin} init [--webhook|-w <webhook>] [--username|-u <username>] [--emoji|-e <emoji>] [--channel|-c <channel>] [--silent|-s]"
+    echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]"
     echo "  ${bin} send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]"
     echo "  ${bin} sendtmpl event [--channel|-c <channel>] [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--silent|-s]"
     echo "  ${bin} sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]"
