@@ -45,17 +45,17 @@ case "${1}" in
       case "${2}" in
         --channel=*) CHANNEL=${2/--channel=/''} && shift ;;
         --emoji=*) EMOJI=${2/--emoji=/''} && shift ;;
-        --message=*) MESSAGE=${2/--message=/''} && shift ;;
         --silent) SILENT='0' && shift ;;
+        --text=*) TEXT=${2/--text=/''} && shift ;;
         --username=*) USERNAME=${2/--username=/''} && shift ;;
         --webhook=*) WEBHOOK=${2/--webhook=/''} && shift ;;
         -c*) CHANNEL=${3} && shift && shift ;;
         -e*) EMOJI=${3} && shift && shift ;;
-        -m*) MESSAGE=${3} && shift && shift ;;
         -s) SILENT='0' && shift ;;
+        -t*) TEXT=${3} && shift && shift ;;
         -u*) USERNAME=${3} && shift && shift ;;
         -e*) WEBHOOK=${3} && shift && shift ;;
-        *) test -n "${2}" && MESSAGE=${2} ; shift ;;
+        *) test -n "${2}" && TEXT=${2} ; shift ;;
       esac
     done
 
@@ -63,10 +63,10 @@ case "${1}" in
     test -z "${CHANNEL}" && read -e -p 'Enter channel (e.g. #general): ' CHANNEL
     test -z "${USERNAME}" && read -e -p 'Enter username (e.g. username-bot): ' USERNAME
     test -z "${EMOJI}" && read -e -p 'Enter emoji (e.g. robot_face): ' EMOJI
-    test -z "${MESSAGE}" && read -e -p 'Enter message (e.g. Hello World!): ' MESSAGE
+    test -z "${TEXT}" && read -e -p 'Enter text (e.g. Hello World!): ' TEXT
     test -z "${SILENT}" && echo -n 'Sending: '
 
-    PAYLOAD="payload={\"text\": \"${MESSAGE}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
+    PAYLOAD="payload={\"text\": \"${TEXT}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"icon_emoji\": \"${EMOJI}\"}"
     curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
     case "$?" in
@@ -81,13 +81,14 @@ case "${1}" in
 
     echo 'Usage:'
     echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]"
-    echo "  ${bin} send [--message|-m <message>] [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]"
+    echo "  ${bin} send [--text|-t <text>] [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--emoji|-e <emoji>] [--silent|-s]"
     echo
     echo "Settings Commands:"
     echo "  init     Initialize default settings"
     echo
     echo "Messaging Commands:"
-    echo "  send     Send a message"
+    echo "  send           Send a message"
+    echo "  sendf task     Send a formatted message; task template"
   ;;
 
   --version) echo 'v0.1.0' ;;
