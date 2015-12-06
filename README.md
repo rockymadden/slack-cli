@@ -26,51 +26,31 @@ Enter default webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https
 Enter default channel (e.g. @username): @username
 Enter default username (e.g. username-bot): username-bot
 Enter default emoji (e.g. :robot_face:): :robot_face:
+Initializing: done
 ```
 
 ### Send a message:
 
 ```bash
 $ slack send 'Hello World!'
-```
-
-```bash
-$ slack send 'Hello World!' -c '#general'
+Sending: done
 ```
 
 ```bash
 $ slack send 'Hello World!' --channel='@username'
+Sending: done
 ```
 
 ```bash
 $ slack send
 Enter message (e.g. Hello World!): Hello World!
-```
-
-```bash
-$ slack send -c '#general'
-Enter message (e.g. Hello World!): Hello World!
+Sending: done
 ```
 
 ```bash
 $ slack send --channel='@username'
 Enter message (e.g. Hello World!): Hello World!
-```
-
-```bash
-$ slack send -m 'Hello World!'
-```
-
-```bash
-$ slack send -m 'Hello World!' -c '#general'
-```
-
-```bash
-$ slack send --message='Hello World!'
-```
-
-```bash
-$ slack send --message='Hello World!' --channel='@username'
+Sending: done
 ```
 
 ## License
