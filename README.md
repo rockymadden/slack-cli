@@ -78,6 +78,7 @@ Sending: done
 ```
 
 __Slack output:__
+
 ![Task Notification Example](http://share.rockymadden.com/image/0X0x2l2w2S23/Image%202015-12-05%20at%207.15.31%20PM.png)
 
 ## License
