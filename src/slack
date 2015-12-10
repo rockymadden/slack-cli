@@ -34,7 +34,7 @@ case "${1}" in
     echo "${ICON}" >> ~/.slack-cli
 
     case "$?" in
-      0) test -z "${SILENT}" && echo 'done' ; exit 0 ;;
+      0) test -z "${SILENT}" && echo 'done' ;;
       *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
     esac
   ;;
@@ -64,7 +64,7 @@ case "${1}" in
     curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
     case "$?" in
-      0) test -z "${SILENT}" && echo 'done' ; exit 0 ;;
+      0) test -z "${SILENT}" && echo 'done' ;;
       *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
     esac
   ;;
@@ -104,7 +104,7 @@ case "${1}" in
         curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
         case "$?" in
-          0) test -z "${SILENT}" && echo 'done' ; exit 0 ;;
+          0) test -z "${SILENT}" && echo 'done' ;;
           *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
         esac
       ;;
@@ -135,12 +135,12 @@ case "${1}" in
         curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
 
         case "$?" in
-          0) test -z "${SILENT}" && echo 'done' ; exit 0 ;;
+          0) test -z "${SILENT}" && echo 'done';;
           *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
         esac
       ;;
 
-      *) ${0} --help && exit 1 ;;
+      *) ${0} --help ; exit 1 ;;
     esac
   ;;
 
@@ -150,9 +150,9 @@ case "${1}" in
 
     echo 'Usage:'
     echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]"
-    echo "  ${bin} send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]"
-    echo "  ${bin} sendtmpl event [--channel|-c <channel>] [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--silent|-s]"
-    echo "  ${bin} sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]"
+    echo "  ${bin} send [text] [--text|-t <text>] [--channel|-c <channel>] [--silent|-s]"
+    echo "  ${bin} sendtmpl event [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]"
+    echo "  ${bin} sendtmpl task [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]"
     echo
     echo "Settings Commands:"
     echo "  init     Initialize default settings"
@@ -165,7 +165,7 @@ case "${1}" in
 
   --version) echo 'v0.3.0' ;;
 
-  *) ${0} --help && exit 1 ;;
+  *) ${0} --help ; exit 1 ;;
 esac
 
 exit 0
