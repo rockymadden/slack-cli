@@ -19,14 +19,14 @@ $ brew install slack-cli
 $ slack --help
 Usage:
   slack init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]
-  slack send [--channel|-c <channel>] [--text|-t <text>]  [--silent|-s]
-  slack sendtmpl event [--channel|-c <channel>] [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--silent|-s]
-  slack sendtmpl task [--channel|-c <channel>] [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--silent|-s]
+  slack send [text] [--text|-t <text>] [--channel|-c <channel>] [--silent|-s]
+  slack sendtmpl event [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]
+  slack sendtmpl task [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]
 
-  Settings Commands:
+Settings Commands:
   init     Initialize default settings
 
-  Messaging Commands:
+Messaging Commands:
   send               Send a message
   sendtmpl event     Send an event templated message
   sendtmpl task      Send a task notification templated message
