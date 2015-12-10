@@ -163,7 +163,7 @@ case "${1}" in
     echo "  sendtmpl task      Send a task notification templated message"
   ;;
 
-  --version) echo 'v0.3.0' ;;
+  --version) echo 'v0.3.1' ;;
 
   *) ${0} --help ; exit 1 ;;
 esac
