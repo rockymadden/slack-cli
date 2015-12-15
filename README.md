@@ -42,7 +42,7 @@ $ slack init
 Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
 Enter default channel (e.g. #general): #general
 Enter username (e.g. username-bot): username-bot
-Enter emoji (e.g. :robot_face:): :robot_face:
+Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): :robot_face:
 Initializing: done
 ```
 
