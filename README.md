@@ -33,7 +33,7 @@ Messaging Commands:
 ```
 
 > __NOTE:__ All commands prompt for required arguments which were not provided via options. This
-allows for both traditional option-based usage and also prompt-based usage.
+allows for both traditional option-based usage and prompt-based usage.
 
 ### Initialize:
 
