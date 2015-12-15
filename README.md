@@ -18,8 +18,12 @@ $ brew install slack-cli
 ```bash
 $ slack --help
 Usage:
-  slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s] [--username|-u <username>] [--webhook|-w <webhook>]
-  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]
+  slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]
+    [--username|-u <username>] [--webhook|-w <webhook>]
+  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
+    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>]
+    [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]
 
 Setup Commands:
   init     Initialize
@@ -29,7 +33,10 @@ Messaging Commands:
 ```
 
 > __NOTE:__ All commands prompt for required arguments which were not provided via options. This
-allows for both traditional option-based usage and also prompt-based usage.
+allows for both traditional option-based usage and prompt-based usage.
+
+> __NOTE:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+more information about `send` option meanings.
 
 ### Initialize:
 
@@ -38,7 +45,7 @@ $ slack init
 Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
 Enter default channel (e.g. #general): #general
 Enter username (e.g. username-bot): username-bot
-Enter emoji (e.g. :robot_face:): :robot_face:
+Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): :robot_face:
 Initializing: done
 ```
 
