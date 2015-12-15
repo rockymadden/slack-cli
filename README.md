@@ -22,7 +22,7 @@ Usage:
   slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]
 
 Setup Commands:
-  init     Initialize default settings
+  init     Initialize
 
 Messaging Commands:
   send     Send a message
