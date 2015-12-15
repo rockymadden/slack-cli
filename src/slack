@@ -56,13 +56,13 @@ case "${1}" in
         --pretext=*) PRETEXT=${2/--pretext=/''} ; shift ;;
         --silent) SILENT='0' ; shift ;;
         --text=*) TEXT=${2/--text=/''} ; shift ;;
-        --thumb=*) THUMB=${2/--thumb=/''} ; shift ;;
+        --thumbnail=*) THUMBNAIL=${2/--thumbnail=/''} ; shift ;;
         --title=*) TITLE=${2/--title=/''} ; shift ;;
         --title-link=*) TITLELINK=${2/--title-link=/''} ; shift ;;
         -a*) AUTHOR=${3} ; shift ; shift ;;
         -c*) CHANNEL=${3} ; shift ; shift ;;
         -C*) COLOR=${3} ; shift ; shift ;;
-        -h*) THUMB=${3} ; shift ; shift ;;
+        -h*) THUMBNAIL=${3} ; shift ; shift ;;
         -i*) IMAGE=${3} ; shift ; shift ;;
         -I*) AUTHORICON=${3} ; shift ; shift ;;
         -l*) TITLELINK=${3} ; shift ; shift ;;
@@ -84,11 +84,11 @@ case "${1}" in
     test -n "${COLOR}" && _COLOR=", \"color\": \"${COLOR}\""
     test -n "${IMAGE}" && _IMAGE=", \"image_url\": \"${IMAGE}\""
     test -n "${PRETEXT}" && _PRETEXT=", \"pretext\": \"${PRETEXT}\""
-    test -n "${THUMB}" && _THUMB=", \"thumb_url\": \"${THUMB}\""
+    test -n "${THUMBNAIL}" && _THUMBNAIL=", \"thumb_url\": \"${THUMBNAIL}\""
     test -n "${TITLE}" && _TITLE=", \"title\": \"${TITLE}\""
     test -n "${TITLELINK}" && _TITLELINK=", \"title_link\": \"${TITLELINK}\""
 
-    _PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${TEXT}\", \"text\": \"${TEXT}\"${_AUTHOR}${_AUTHORICON}${_AUTHORLINK}${_COLOR}${_IMAGE}${_PRETEXT}${_THUMB}${_TITLE}${_TITLELINK}}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
+    _PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${TEXT}\", \"text\": \"${TEXT}\"${_AUTHOR}${_AUTHORICON}${_AUTHORLINK}${_COLOR}${_IMAGE}${_PRETEXT}${_THUMBNAIL}${_TITLE}${_TITLELINK}}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
     curl --silent --fail -X POST --data-urlencode "${_PAYLOAD}" ${WEBHOOK} > /dev/null
 
     case "$?" in
@@ -103,7 +103,7 @@ case "${1}" in
 
     echo 'Usage:'
     echo "  ${bin} init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s] [--username|-u <username>] [--webhook|-w <webhook>]"
-    echo "  ${bin} send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
+    echo "  ${bin} send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
     echo
     echo "Setup Commands:"
     echo "  init     Initialize"
