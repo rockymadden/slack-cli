@@ -18,8 +18,12 @@ $ brew install slack-cli
 ```bash
 $ slack --help
 Usage:
-  slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s] [--username|-u <username>] [--webhook|-w <webhook>]
-  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]
+  slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]
+    [--username|-u <username>] [--webhook|-w <webhook>]
+  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
+    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>]
+    [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]
 
 Setup Commands:
   init     Initialize
