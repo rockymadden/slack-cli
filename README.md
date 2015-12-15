@@ -66,6 +66,11 @@ Enter message (e.g. Hello World!): Hello World!
 Sending: done
 ```
 
+```bash
+$ echo 'Hello World!' | slack send --channel='@username'
+Sending: done
+```
+
 ## License
 ```
 The MIT License (MIT)
