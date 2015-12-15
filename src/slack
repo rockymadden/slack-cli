@@ -47,12 +47,30 @@ case "${1}" in
 
     while (( "$#" )); do
       case "${2}" in
+        --author=*) AUTHOR=${2/--author=/''} ; shift ;;
+        --author-icon=*) AUTHORICON=${2/--author-icon=/''} ; shift ;;
+        --author-link=*) AUTHORLINK=${2/--author-link=/''} ; shift ;;
         --channel=*) CHANNEL=${2/--channel=/''} ; shift ;;
+        --color=*) COLOR=${2/--color=/''} ; shift ;;
+        --image=*) IMAGE=${2/--image-url=/''} ; shift ;;
+        --pretext=*) PRETEXT=${2/--pretext=/''} ; shift ;;
         --silent) SILENT='0' ; shift ;;
         --text=*) TEXT=${2/--text=/''} ; shift ;;
+        --thumb=*) THUMB=${2/--thumb=/''} ; shift ;;
+        --title=*) TITLE=${2/--title=/''} ; shift ;;
+        --title-link=*) TITLELINK=${2/--title-link=/''} ; shift ;;
+        -a*) AUTHOR=${3} ; shift ; shift ;;
         -c*) CHANNEL=${3} ; shift ; shift ;;
+        -C*) COLOR=${3} ; shift ; shift ;;
+        -h*) THUMB=${3} ; shift ; shift ;;
+        -i*) IMAGE=${3} ; shift ; shift ;;
+        -I*) AUTHORICON=${3} ; shift ; shift ;;
+        -l*) TITLELINK=${3} ; shift ; shift ;;
+        -L*) AUTHORLINK=${3} ; shift ; shift ;;
+        -p*) PRETEXT=${3} ; shift ; shift ;;
         -s) SILENT='0' ; shift ;;
         -t*) TEXT=${3} ; shift ; shift ;;
+        -T*) TITLE=${3} ; shift ; shift ;;
         *) test -n "${2}" && TEXT=${2} ; shift ;;
       esac
     done
@@ -60,8 +78,18 @@ case "${1}" in
     test -z "${TEXT}" && read -e -p 'Enter text (e.g. Hello World!): ' TEXT
     test -z "${SILENT}" && echo -n 'Sending: '
 
-    PAYLOAD="payload={\"text\": \"${TEXT}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
-    curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
+    test -n "${AUTHOR}" && _AUTHOR=", \"author_name\": \"${AUTHOR}\""
+    test -n "${AUTHORICON}" && _AUTHORICON=", \"author_icon\": \"${AUTHORICON}\""
+    test -n "${AUTHORLINK}" && _AUTHORLINK=", \"author_link\": \"${AUTHORLINK}\""
+    test -n "${COLOR}" && _COLOR=", \"color\": \"${COLOR}\""
+    test -n "${IMAGE}" && _IMAGE=", \"image_url\": \"${IMAGE}\""
+    test -n "${PRETEXT}" && _PRETEXT=", \"pretext\": \"${PRETEXT}\""
+    test -n "${THUMB}" && _THUMB=", \"thumb_url\": \"${THUMB}\""
+    test -n "${TITLE}" && _TITLE=", \"title\": \"${TITLE}\""
+    test -n "${TITLELINK}" && _TITLELINK=", \"title_link\": \"${TITLELINK}\""
+
+    _PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${TEXT}\", \"text\": \"${TEXT}\"${_AUTHOR}${_AUTHORICON}${_AUTHORLINK}${_COLOR}${_IMAGE}${_PRETEXT}${_THUMB}${_TITLE}${_TITLELINK}}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
+    curl --silent --fail -X POST --data-urlencode "${_PAYLOAD}" ${WEBHOOK} > /dev/null
 
     case "$?" in
       0) test -z "${SILENT}" && echo 'done' ;;
