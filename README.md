@@ -10,7 +10,7 @@
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 ```
-> __NOTE:__ Requires that your Slack team has one or more
+> __NOTE:__ Requires your Slack team has one or more
 [incoming webhook integrations](https://api.slack.com/incoming-webhooks)
 
 ## Usage
