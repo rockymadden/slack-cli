@@ -106,7 +106,7 @@ case "${1}" in
     echo "  ${bin} send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
     echo
     echo "Setup Commands:"
-    echo "  init     Initialize default settings"
+    echo "  init     Initialize"
     echo
     echo "Messaging Commands:"
     echo "  send     Send a message"
