@@ -18,16 +18,14 @@ $ brew install slack-cli
 ```bash
 $ slack --help
 Usage:
-  slack init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]
-  slack send [text] [--text|-t <text>] [--channel|-c <channel>] [--silent|-s]
-  slack sendtmpl task [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]
+  slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s] [--username|-u <username>] [--webhook|-w <webhook>]
+  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]
 
-Settings Commands:
+Setup Commands:
   init     Initialize default settings
 
 Messaging Commands:
-  send               Send a message
-  sendtmpl task      Send a task notification templated message
+  send     Send a message
 ```
 
 > __NOTE:__ All commands prompt for required arguments which were not provided via options. This

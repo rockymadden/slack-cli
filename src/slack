@@ -102,14 +102,14 @@ case "${1}" in
     bin=${a[${#a[@]}-1]}
 
     echo 'Usage:'
-    echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]"
-    echo "  ${bin} send [text] [--text|-t <text>] [--channel|-c <channel>] [--silent|-s]"
+    echo "  ${bin} init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s] [--username|-u <username>] [--webhook|-w <webhook>]"
+    echo "  ${bin} send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
     echo
-    echo "Settings Commands:"
+    echo "Setup Commands:"
     echo "  init     Initialize default settings"
     echo
     echo "Messaging Commands:"
-    echo "  send               Send a message"
+    echo "  send     Send a message"
   ;;
 
   --version) echo 'v0.3.1' ;;
