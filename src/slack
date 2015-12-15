@@ -47,12 +47,30 @@ case "${1}" in
 
     while (( "$#" )); do
       case "${2}" in
+        --author=*) AUTHOR=${2/--author=/''} ; shift ;;
+        --author-icon=*) AUTHORICON=${2/--author-icon=/''} ; shift ;;
+        --author-link=*) AUTHORLINK=${2/--author-link=/''} ; shift ;;
         --channel=*) CHANNEL=${2/--channel=/''} ; shift ;;
+        --color=*) COLOR=${2/--color=/''} ; shift ;;
+        --image=*) IMAGE=${2/--image-url=/''} ; shift ;;
+        --pretext=*) PRETEXT=${2/--pretext=/''} ; shift ;;
         --silent) SILENT='0' ; shift ;;
         --text=*) TEXT=${2/--text=/''} ; shift ;;
+        --thumb=*) THUMB=${2/--thumb=/''} ; shift ;;
+        --title=*) TITLE=${2/--title=/''} ; shift ;;
+        --title-link=*) TITLELINK=${2/--title-link=/''} ; shift ;;
+        -a*) AUTHOR=${3} ; shift ; shift ;;
         -c*) CHANNEL=${3} ; shift ; shift ;;
+        -C*) COLOR=${3} ; shift ; shift ;;
+        -h*) THUMB=${3} ; shift ; shift ;;
+        -i*) IMAGE=${3} ; shift ; shift ;;
+        -I*) AUTHORICON=${3} ; shift ; shift ;;
+        -l*) TITLELINK=${3} ; shift ; shift ;;
+        -L*) AUTHORLINK=${3} ; shift ; shift ;;
+        -p*) PRETEXT=${3} ; shift ; shift ;;
         -s) SILENT='0' ; shift ;;
         -t*) TEXT=${3} ; shift ; shift ;;
+        -T*) TITLE=${3} ; shift ; shift ;;
         *) test -n "${2}" && TEXT=${2} ; shift ;;
       esac
     done
@@ -60,87 +78,22 @@ case "${1}" in
     test -z "${TEXT}" && read -e -p 'Enter text (e.g. Hello World!): ' TEXT
     test -z "${SILENT}" && echo -n 'Sending: '
 
-    PAYLOAD="payload={\"text\": \"${TEXT}\", \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
-    curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
+    test -n "${AUTHOR}" && _AUTHOR=", \"author_name\": \"${AUTHOR}\""
+    test -n "${AUTHORICON}" && _AUTHORICON=", \"author_icon\": \"${AUTHORICON}\""
+    test -n "${AUTHORLINK}" && _AUTHORLINK=", \"author_link\": \"${AUTHORLINK}\""
+    test -n "${COLOR}" && _COLOR=", \"color\": \"${COLOR}\""
+    test -n "${IMAGE}" && _IMAGE=", \"image_url\": \"${IMAGE}\""
+    test -n "${PRETEXT}" && _PRETEXT=", \"pretext\": \"${PRETEXT}\""
+    test -n "${THUMB}" && _THUMB=", \"thumb_url\": \"${THUMB}\""
+    test -n "${TITLE}" && _TITLE=", \"title\": \"${TITLE}\""
+    test -n "${TITLELINK}" && _TITLELINK=", \"title_link\": \"${TITLELINK}\""
+
+    _PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${TEXT}\", \"text\": \"${TEXT}\"${_AUTHOR}${_AUTHORICON}${_AUTHORLINK}${_COLOR}${_IMAGE}${_PRETEXT}${_THUMB}${_TITLE}${_TITLELINK}}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
+    curl --silent --fail -X POST --data-urlencode "${_PAYLOAD}" ${WEBHOOK} > /dev/null
 
     case "$?" in
       0) test -z "${SILENT}" && echo 'done' ;;
       *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
-    esac
-  ;;
-
-  sendtmpl)
-    CHANNEL=$(sed -n '2p' < ~/.slack-cli)
-    ICON=$(sed -n '4p' < ~/.slack-cli)
-    USERNAME=$(sed -n '3p' < ~/.slack-cli)
-    WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
-
-    case "${2}" in
-      event)
-        COLOR='good'
-
-        while (( "$#" )); do
-          case "${3}" in
-            --channel=*) CHANNEL=${3/--channel=/''} ; shift ;;
-            --color=*) COLOR=${3/--color=/''} ; shift ;;
-            --details=*) DETAILS=${3/--details=/''} ; shift ;;
-            --event=*) EVENT=${3/--event=/''} ; shift ;;
-            --link=*) LINK=${3/--link=/''} ; shift ;;
-            --silent) SILENT='0' ; shift ;;
-            --title=*) TITLE=${3/--title=/''} ; shift ;;
-            -c*) CHANNEL=${4} ; shift ; shift ;;
-            -s) SILENT='0' ; shift ;;
-            *) shift ;;
-          esac
-        done
-
-        test -z "${EVENT}" && read -e -p 'Enter event (e.g. New version of slack-cli released): ' EVENT
-        test -z "${TITLE}" && read -e -p 'Enter title (e.g. v0.2.0): ' TITLE
-        test -z "${LINK}" && read -e -p 'Enter link (e.g https://github.com/rockymadden/slack-cli/releases/tag/v0.2.0): ' LINK
-        test -z "${DETAILS}" && read -e -p 'Enter details (e.g Introduces new templated messages): ' DETAILS
-        test -z "${SILENT}" && echo -n 'Sending: '
-
-        PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${EVENT}\", \"pretext\": \"${EVENT}\", \"color\": \"${COLOR}\", \"title\": \"${TITLE}\", \"title_link\": \"${LINK}\", \"text\": \"${DETAILS}\"}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
-        curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
-
-        case "$?" in
-          0) test -z "${SILENT}" && echo 'done' ;;
-          *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
-        esac
-      ;;
-
-      task)
-        COLOR='good'
-
-        while (( "$#" )); do
-          case "${3}" in
-            --channel=*) CHANNEL=${3/--channel=/''} ; shift ;;
-            --color=*) COLOR=${3/--color=/''} ; shift ;;
-            --silent) SILENT='0' ; shift ;;
-            --what=*) WHAT=${3/--what=/''} ; shift ;;
-            --when=*) WHEN=${3/--when=/''} ; shift ;;
-            --why=*) WHY=${3/--why=/''} ; shift ;;
-            -c*) CHANNEL=${4} ; shift ; shift ;;
-            -s) SILENT='0' ; shift ;;
-            *) shift ;;
-          esac
-        done
-
-        test -z "${WHAT}" && read -e -p 'Enter what (e.g. Restarting server): ' WHAT
-        test -z "${WHY}" && read -e -p 'Enter why (e.g. Out of memory): ' WHY
-        test -z "${WHEN}" && read -e -p 'Enter when (e.g. 15:45, Now): ' WHEN
-        test -z "${SILENT}" && echo -n 'Sending: '
-
-        PAYLOAD="payload={\"attachments\": [{\"author_name\": \"Task Notification\", \"author_icon\": \"http://www.emoji-cheat-sheet.com/graphics/emojis/nut_and_bolt.png\", \"fallback\": \"${WHAT}\", \"text\": \"${WHAT}\", \"color\": \"${COLOR}\", \"fields\": [{\"title\": \"Why\", \"value\": \"${WHY}\", \"short\": true}, {\"title\": \"When\", \"value\": \"${WHEN}\", \"short\": true}]}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
-        curl --silent --fail -X POST --data-urlencode "${PAYLOAD}" ${WEBHOOK} > /dev/null
-
-        case "$?" in
-          0) test -z "${SILENT}" && echo 'done';;
-          *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
-        esac
-      ;;
-
-      *) ${0} --help ; exit 1 ;;
     esac
   ;;
 
@@ -149,18 +102,14 @@ case "${1}" in
     bin=${a[${#a[@]}-1]}
 
     echo 'Usage:'
-    echo "  ${bin} init [--webhook|-w <webhook>] [--channel|-c <channel>] [--username|-u <username>] [--icon|-i <icon>] [--silent|-s]"
-    echo "  ${bin} send [text] [--text|-t <text>] [--channel|-c <channel>] [--silent|-s]"
-    echo "  ${bin} sendtmpl event [--event=<event>] [--title=<title>] [--link=<link>] [--details=<details>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]"
-    echo "  ${bin} sendtmpl task [--what=<what>] [--why=<why>] [--when=<when>] [--color=<color>] [--channel|-c <channel>] [--silent|-s]"
+    echo "  ${bin} init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s] [--username|-u <username>] [--webhook|-w <webhook>]"
+    echo "  ${bin} send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>] [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>] [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>] [--thumb|-H <thumb-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
     echo
-    echo "Settings Commands:"
-    echo "  init     Initialize default settings"
+    echo "Setup Commands:"
+    echo "  init     Initialize"
     echo
     echo "Messaging Commands:"
-    echo "  send               Send a message"
-    echo "  sendtmpl event     Send an event templated message"
-    echo "  sendtmpl task      Send a task notification templated message"
+    echo "  send     Send a message"
   ;;
 
   --version) echo 'v0.3.1' ;;
