@@ -9,4 +9,7 @@ install: | stub
 stub:
 	@-mkdir -p ${PREFIX}/bin
 
-.PHONY: clean install stub
+test: | install
+	@-test/slack
+
+.PHONY: clean install stub test
