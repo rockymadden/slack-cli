@@ -49,31 +49,28 @@ Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): :r
 Initializing: done
 ```
 
-### Send a message:
+### Send message:
 
 ```bash
+# Basic usage, sending to default channel:
 $ slack send 'Hello World!'
 Sending: done
-```
 
-```bash
+# Basic usage, sending to specified channel:
 $ slack send 'Hello World!' --channel='@username'
 Sending: done
-```
 
-```bash
+# Prompt for text, since it wasn't passed, to default channel:
 $ slack send
 Enter message (e.g. Hello World!): Hello World!
 Sending: done
-```
 
-```bash
+# Prompt for text, since it wasn't passed, to specified channel:
 $ slack send --channel='@username'
 Enter message (e.g. Hello World!): Hello World!
 Sending: done
-```
 
-```bash
+# Pipe text to specified channel:
 $ echo 'Hello World!' | slack send --channel='@username'
 Sending: done
 ```
