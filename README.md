@@ -84,7 +84,7 @@ Sending: fail
 ### Send notification of a pull-request merge into master:
 
 ```bash
-git issue | grep 154 | cut -d ']' -f2 | slack send --pretext='Pull request merged into master:' --color=good --channel="#channel"
+git issue | grep 177 | cut -d ']' -f2 | slack send --pretext='Pull request merged into master:' --color=good --channel="#channel"
 ```
 
 ![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
