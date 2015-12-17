@@ -10,7 +10,6 @@ stub:
 	@-mkdir -p ${PREFIX}/bin
 
 test: | install
-	@-echo 'slack:'
 	@-test/slack
 
 .PHONY: clean install stub test
