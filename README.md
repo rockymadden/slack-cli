@@ -60,12 +60,12 @@ Sending: done
 $ slack send 'Hello World!' --channel='@username'
 Sending: done
 
-# Prompt for text, since it wasn't passed, to default channel:
+# Prompt for text, since it wasn't specified, to default channel:
 $ slack send
 Enter text (e.g. Hello World!): Hello World!
 Sending: done
 
-# Prompt for text, since it wasn't passed, to specified channel:
+# Prompt for text, since it wasn't specified, to specified channel:
 $ slack send --channel='@username'
 Enter text (e.g. Hello World!): Hello World!
 Sending: done
