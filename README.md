@@ -73,6 +73,10 @@ Sending: done
 # Pipe text to specified channel:
 $ echo 'Hello World!' | slack send --channel='@username'
 Sending: done
+
+# Sending to non-existent channel:
+$ slack send 'Hello World!' --channel='#nonexistentchannel'
+Sending: fail
 ```
 
 ## License
