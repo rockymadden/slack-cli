@@ -104,16 +104,16 @@ case "${1}" in
     echo 'Usage:'
     echo "  ${bin} init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]"
     echo "    [--username|-u <username>] [--webhook|-w <webhook>]"
-    echo "  ${bin} send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
+    echo "  ${bin} send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
     echo "    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]"
-    echo "    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>]"
+    echo "    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]"
     echo "    [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
     echo
     echo "Setup Commands:"
     echo "  init     Initialize"
     echo
-    echo "Messaging Commands:"
-    echo "  send     Send a message"
+    echo "Core Commands:"
+    echo "  send     Send message"
   ;;
 
   --version) echo 'v0.5.0' ;;

@@ -20,16 +20,16 @@ $ slack --help
 Usage:
   slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]
     [--username|-u <username>] [--webhook|-w <webhook>]
-  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+  slack send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
-    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>]
+    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]
     [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]
 
 Setup Commands:
   init     Initialize
 
-Messaging Commands:
-  send     Send a message
+Core Commands:
+  send     Send message
 ```
 
 > __NOTE:__ All commands prompt for required arguments which were not provided via options. This
