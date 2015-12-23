@@ -32,11 +32,11 @@ Core Commands:
   send     Send message
 ```
 
-> __PROTIP:__ All commands prompt for required arguments which were not provided via options or
-arguments. This allows for both traditional usage and prompt-based usage.
-
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about `send` option meanings.
+
+> __PROTIP:__ All commands prompt for required arguments which were not provided via options or
+arguments. This allows for both traditional usage and prompt-based usage.
 
 ### Initialize:
 
