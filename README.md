@@ -52,25 +52,15 @@ Initializing: done
 ### Send message:
 
 ```bash
-# Basic usage, sending to default channel:
+# Sending to default channel:
 $ slack send 'Hello World!'
 Sending: done
 
-# Basic usage, sending to specified channel:
+# Sending to specified channel:
 $ slack send 'Hello World!' --channel='@username'
 Sending: done
 
-# Prompt for text, since it wasn't specified, to default channel:
-$ slack send
-Enter text (e.g. Hello World!): Hello World!
-Sending: done
-
-# Prompt for text, since it wasn't specified, to specified channel:
-$ slack send --channel='@username'
-Enter text (e.g. Hello World!): Hello World!
-Sending: done
-
-# Pipe text to specified channel:
+# Piping text to specified channel:
 $ echo 'Hello World!' | slack send --channel='@username'
 Sending: done
 
