@@ -4,12 +4,10 @@ clean:
 	@-rm -rf ${PREFIX}/bin
 
 install: | stub
-	@-rsync -a src/ ${PREFIX}/bin/
-
-stub:
 	@-mkdir -p ${PREFIX}/bin
+	@-rsync -a src/ ${PREFIX}/bin/
 
 test: | install
 	@-test/slack
 
-.PHONY: clean install stub test
+.PHONY: clean install test
