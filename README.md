@@ -10,7 +10,7 @@
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 ```
-> __NOTE:__ Requires your Slack team has one or more
+> __PROTIP:__ Your Slack team must have one or more
 [incoming webhook integrations](https://api.slack.com/incoming-webhooks)
 
 ## Usage
@@ -20,23 +20,23 @@ $ slack --help
 Usage:
   slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]
     [--username|-u <username>] [--webhook|-w <webhook>]
-  slack send [text] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+  slack send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
-    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s] [--text|-t <text>]
+    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]
     [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]
 
 Setup Commands:
   init     Initialize
 
-Messaging Commands:
-  send     Send a message
+Core Commands:
+  send     Send message
 ```
 
-> __NOTE:__ All commands prompt for required arguments which were not provided via options. This
-allows for both traditional option-based usage and prompt-based usage.
-
-> __NOTE:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+> __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about `send` option meanings.
+
+> __PROTIP:__ All commands prompt for required arguments which were not provided via options or
+arguments. This allows for both traditional usage and prompt-based usage.
 
 ### Initialize:
 
@@ -52,25 +52,19 @@ Initializing: done
 ### Send message:
 
 ```bash
-# Basic usage, sending to default channel:
+# Sending to default channel:
 $ slack send 'Hello World!'
 Sending: done
 
-# Basic usage, sending to specified channel:
+# Sending to specified channel via argument:
+$ slack send 'Hello World!' '@username'
+Sending: done
+
+# Sending to specified channel via option:
 $ slack send 'Hello World!' --channel='@username'
 Sending: done
 
-# Prompt for text, since it wasn't specified, to default channel:
-$ slack send
-Enter text (e.g. Hello World!): Hello World!
-Sending: done
-
-# Prompt for text, since it wasn't specified, to specified channel:
-$ slack send --channel='@username'
-Enter text (e.g. Hello World!): Hello World!
-Sending: done
-
-# Pipe text to specified channel:
+# Piping text to specified channel:
 $ echo 'Hello World!' | slack send --channel='@username'
 Sending: done
 
@@ -79,24 +73,24 @@ $ slack send 'Hello World!' --channel='#nonexistentchannel'
 Sending: fail
 ```
 
-## Useful Recipes
+## Recipes
 
 ### Send notification of a pull-request merge into master:
 
+__Input:__
 ```bash
-git issue | grep 177 | cut -d ']' -f2 | slack send --pretext='Pull request merged into master:' --color=good --channel="#channel"
+$ git issue | grep 177 | cut -d ']' -f2 | slack send --pretext='Pull request merged into master:' --color=good --channel="#channel"
+Sending: done
 ```
 
+__Output:__
 ![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
-
-> __NOTE:__ Uses [github/hub](https://github.com/github/hub)
-
 
 ## License
 ```
 The MIT License (MIT)
 
-Copyright (c) 2015 Rocky Madden (https://rockymadden.com/)
+Copyright (c) 2016 Rocky Madden (https://rockymadden.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

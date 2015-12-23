@@ -1,15 +1,15 @@
-PREFIX ?= .
+PREFIX ?= ./build
 
-clean:
-	@-rm -rf ${PREFIX}/bin
+clean: | uninstall
 
-install: | stub
-	@-rsync -a src/ ${PREFIX}/bin/
-
-stub:
-	@-mkdir -p ${PREFIX}/bin
+install:
+	@mkdir -p ${PREFIX}/bin
+	@rsync -a src/ ${PREFIX}/bin/
 
 test: | install
-	@-test/slack
+	@test/slack
 
-.PHONY: clean install stub test
+uninstall:
+	@rm -rf ${PREFIX}
+
+.PHONY: clean install test uninstall
