@@ -56,7 +56,11 @@ Initializing: done
 $ slack send 'Hello World!'
 Sending: done
 
-# Sending to specified channel:
+# Sending to specified channel via argument:
+$ slack send 'Hello World!' '@username'
+Sending: done
+
+# Sending to specified channel via option:
 $ slack send 'Hello World!' --channel='@username'
 Sending: done
 
