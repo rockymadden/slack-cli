@@ -20,7 +20,7 @@ $ slack --help
 Usage:
   slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]
     [--username|-u <username>] [--webhook|-w <webhook>]
-  slack send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+  slack send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]
     [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]
