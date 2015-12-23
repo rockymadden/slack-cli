@@ -10,7 +10,7 @@
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 ```
-> __NOTE:__ Requires your Slack team has one or more
+> __PROTIP:__ Your Slack team must have one or more
 [incoming webhook integrations](https://api.slack.com/incoming-webhooks)
 
 ## Usage
@@ -32,10 +32,10 @@ Core Commands:
   send     Send message
 ```
 
-> __NOTE:__ All commands prompt for required arguments which were not provided via options. This
-allows for both traditional option-based usage and prompt-based usage.
+> __PROTIP:__ All commands prompt for required arguments which were not provided via options or
+arguments. This allows for both traditional usage and prompt-based usage.
 
-> __NOTE:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+> __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about `send` option meanings.
 
 ### Initialize:
@@ -79,7 +79,7 @@ $ slack send 'Hello World!' --channel='#nonexistentchannel'
 Sending: fail
 ```
 
-## Useful Recipes
+## Recipes
 
 ### Send notification of a pull-request merge into master:
 
@@ -88,9 +88,6 @@ git issue | grep 177 | cut -d ']' -f2 | slack send --pretext='Pull request merge
 ```
 
 ![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
-
-> __NOTE:__ Uses [github/hub](https://github.com/github/hub)
-
 
 ## License
 ```
