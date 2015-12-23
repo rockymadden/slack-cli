@@ -44,6 +44,7 @@ case "${1}" in
     ICON=$(sed -n '4p' < ~/.slack-cli)
     USERNAME=$(sed -n '3p' < ~/.slack-cli)
     WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
+    test -p /dev/stdin && STDIN=$(cat <&0)
 
     while (( "$#" )); do
       case "${2}" in
@@ -72,15 +73,15 @@ case "${1}" in
         -t*) TEXT=${3} ; shift ; shift ;;
         -T*) TITLE=${3} ; shift ; shift ;;
         *)
-          test -n "${2}" && test -z "${TEXT}" && TEXT=${2}
-          test -n "${2}" && test -n "${TEXT}" && CHANNEL=${2}
+          test -z "${STDIN}" && test -n "${2}" && test -z "${TEXT}" && TEXT=${2}
+          test -z "${STDIN}" && test -n "${2}" && test -n "${TEXT}" && CHANNEL=${2}
+          test -n "${STDIN}" && test -z "${TEXT}" && TEXT=${STDIN//$'\n'/'\n'}
           shift
         ;;
       esac
     done
 
     test -z "${TEXT}" && read -e -p 'Enter text (e.g. Hello World!): ' TEXT
-    test -z "${SILENT}" && echo -n 'Sending: '
 
     test -n "${AUTHOR}" && _AUTHOR=", \"author_name\": \"${AUTHOR}\""
     test -n "${AUTHORICON}" && _AUTHORICON=", \"author_icon\": \"${AUTHORICON}\""
@@ -91,10 +92,10 @@ case "${1}" in
     test -n "${THUMBNAIL}" && _THUMBNAIL=", \"thumb_url\": \"${THUMBNAIL}\""
     test -n "${TITLE}" && _TITLE=", \"title\": \"${TITLE}\""
     test -n "${TITLELINK}" && _TITLELINK=", \"title_link\": \"${TITLELINK}\""
-
     _PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${TEXT}\", \"text\": \"${TEXT}\"${_AUTHOR}${_AUTHORICON}${_AUTHORLINK}${_COLOR}${_IMAGE}${_PRETEXT}${_THUMBNAIL}${_TITLE}${_TITLELINK}}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
-    curl --silent --fail -X POST --data-urlencode "${_PAYLOAD}" ${WEBHOOK} > /dev/null
 
+    test -z "${SILENT}" && echo -n 'Sending: '
+    curl --silent --fail -X POST --data-urlencode "${_PAYLOAD}" ${WEBHOOK} > /dev/null
     case "$?" in
       0) test -z "${SILENT}" && echo 'done' ;;
       *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;

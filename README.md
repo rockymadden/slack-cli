@@ -1,9 +1,12 @@
-# slack-cli <sub><sup>| Slack on the command line via pure bash</sup></sub>
+# slack-cli <sub><sup>| Insanely powerful Slack CLI via pure bash</sup></sub>
 [![version](http://img.shields.io/badge/version-v0.6.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
+
+Full support for [rich message formatting](https://api.slack.com/docs/attachments) and extremely
+pipe friendly.
 
 ## Installation
 ```bash
@@ -11,7 +14,7 @@ $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 ```
 > __PROTIP:__ Your Slack team must have one or more
-[incoming webhook integrations](https://api.slack.com/incoming-webhooks)
+[incoming webhook integrations](https://api.slack.com/incoming-webhooks).
 
 ## Usage
 
@@ -57,20 +60,28 @@ $ slack send 'Hello World!'
 Sending: done
 
 # Sending to specified channel via argument:
-$ slack send 'Hello World!' '@username'
+$ slack send 'Hello World!' '#channel'
 Sending: done
 
 # Sending to specified channel via option:
-$ slack send 'Hello World!' --channel='@username'
-Sending: done
-
-# Piping text to specified channel:
-$ echo 'Hello World!' | slack send --channel='@username'
+$ slack send 'Hello World!' --channel='#channel'
 Sending: done
 
 # Sending to non-existent channel:
 $ slack send 'Hello World!' --channel='#nonexistentchannel'
 Sending: fail
+
+# Piping echo:
+$ echo 'Hello World!' | slack send --channel='#channel'
+Sending: done
+
+# Piping ls:
+$ ls -1a | slack send --channel='#channel' --pretext='Listing:' --color=good
+Sending: done
+
+# Piping log contents:
+$ cat today.log | slack send --channel='#channel' --pretext='Prod issues log:' --color=danger
+Sending: done
 ```
 
 ## Recipes
