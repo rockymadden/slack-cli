@@ -3,13 +3,13 @@ PREFIX ?= ./build
 clean: | uninstall
 
 install:
-	@-mkdir -p ${PREFIX}/bin
-	@-rsync -a src/ ${PREFIX}/bin/
+	@mkdir -p ${PREFIX}/bin
+	@rsync -a src/ ${PREFIX}/bin/
 
 test: | install
-	@-test/slack
+	@test/slack
 
 uninstall:
-	@-rm -rf ${PREFIX}
+	@rm -rf ${PREFIX}
 
 .PHONY: clean install test uninstall
