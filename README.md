@@ -14,7 +14,7 @@ $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 ```
 > __PROTIP:__ Your Slack team must have one or more
-[incoming webhook integrations](https://api.slack.com/incoming-webhooks)
+[incoming webhook integrations](https://api.slack.com/incoming-webhooks).
 
 ## Usage
 
@@ -75,7 +75,7 @@ Sending: fail
 $ echo 'Hello World!' | slack send --channel='#channel'
 Sending: done
 
-# Piping listing:
+# Piping ls:
 $ ls -1a | slack send --channel='#channel' --pretext='Listing:' --color=good
 Sending: done
 
