@@ -1,4 +1,4 @@
-# slack-cli <sub><sup>| Insanely powerful Slack messaging CLI via pure bash</sup></sub>
+# slack-cli <sub><sup>| Powerful Slack messaging CLI via pure bash</sup></sub>
 [![version](http://img.shields.io/badge/version-v0.7.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
@@ -82,7 +82,7 @@ $ echo 'Hello World!' | slack send --channel='#channel'
 Sending: done
 
 # Piping ls:
-$ ls -ls | slack send --channel='#channel' --pretext='Directory:' --color=good
+$ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
 Sending: done
 
 # Piping cat:
@@ -96,26 +96,25 @@ $ echo $?
 1
 ```
 
-## Recipes
+## Useful Functions
 
 ### Send notification of a pull-request merge into master:
 
-__Input:__
-```bash
-$ git issue | grep 177 | cut -d ']' -f2 | slack send --channel="#channel" --pretext='Pull request merged into master:' --color=good
-Sending: done
-```
-
-__Output:__
-![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
-
-__As a function:__
+#### Function:
 ```bash
 function slack-pull-request() {
   git issue | grep "${1}" | cut -d ']' -f2 | slack send --channel="${2}" --pretext='Pull request merged into master:' --color=good
 }
 ```
 
+#### Function Usage:
+```bash
+$ slack-pull-request 177 '#channel'
+Sending: done
+```
+
+#### Slack Output:
+![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
 
 ## License
 ```
