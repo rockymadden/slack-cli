@@ -70,17 +70,19 @@ Sending: done
 # Sending to non-existent channel:
 $ slack send 'Hello World!' --channel='#nonexistentchannel'
 Sending: fail
+$ echo $?
+1
 
 # Piping echo:
 $ echo 'Hello World!' | slack send --channel='#channel'
 Sending: done
 
 # Piping ls:
-$ ls -1a | slack send --channel='#channel' --pretext='Listing:' --color=good
+$ ls -ls | slack send --channel='#channel' --pretext='Directory:' --color=good
 Sending: done
 
-# Piping log contents:
-$ cat today.log | slack send --channel='#channel' --pretext='Prod issues log:' --color=danger
+# Piping cat:
+$ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
 Sending: done
 ```
 
@@ -90,12 +92,20 @@ Sending: done
 
 __Input:__
 ```bash
-$ git issue | grep 177 | cut -d ']' -f2 | slack send --pretext='Pull request merged into master:' --color=good --channel="#channel"
+$ git issue | grep 177 | cut -d ']' -f2 | slack send --channel="#channel" --pretext='Pull request merged into master:' --color=good
 Sending: done
 ```
 
 __Output:__
 ![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
+
+__As a function:__
+```bash
+function slack-pull-request() {
+  git issue | grep "${1}" | cut -d ']' -f2 | slack send --channel="${2}" --pretext='Pull request merged into master:' --color=good
+}
+```
+
 
 ## License
 ```
