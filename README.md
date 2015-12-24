@@ -67,12 +67,6 @@ Sending: done
 $ slack send 'Hello World!' --channel='#channel'
 Sending: done
 
-# Sending to non-existent channel:
-$ slack send 'Hello World!' --channel='#nonexistentchannel'
-Sending: fail
-$ echo $?
-1
-
 # Piping echo:
 $ echo 'Hello World!' | slack send --channel='#channel'
 Sending: done
@@ -84,6 +78,12 @@ Sending: done
 # Piping cat:
 $ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
 Sending: done
+
+# Sending to non-existent channel:
+$ slack send 'Hello World!' --channel='#nonexistentchannel'
+Sending: fail
+$ echo $?
+1
 ```
 
 ## Recipes
