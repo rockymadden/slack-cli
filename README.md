@@ -82,7 +82,7 @@ $ echo 'Hello World!' | slack send --channel='#channel'
 Sending: done
 
 # Piping ls:
-$ ls -ls | slack send --channel='#channel' --pretext='Directory:' --color=good
+$ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
 Sending: done
 
 # Piping cat:
