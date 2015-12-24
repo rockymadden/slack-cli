@@ -96,26 +96,25 @@ $ echo $?
 1
 ```
 
-## Recipes
+## Useful Functions
 
 ### Send notification of a pull-request merge into master:
 
-__Input:__
-```bash
-$ git issue | grep 177 | cut -d ']' -f2 | slack send --channel="#channel" --pretext='Pull request merged into master:' --color=good
-Sending: done
-```
-
-__Output:__
-![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
-
-__As a function:__
+#### Function:
 ```bash
 function slack-pull-request() {
   git issue | grep "${1}" | cut -d ']' -f2 | slack send --channel="${2}" --pretext='Pull request merged into master:' --color=good
 }
 ```
 
+#### Function Usage:
+```bash
+$ slack-pull-request 177 '#channel'
+Sending: done
+```
+
+#### Slack Output:
+![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
 
 ## License
 ```
