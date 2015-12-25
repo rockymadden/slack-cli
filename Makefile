@@ -1,6 +1,21 @@
 PREFIX ?= ./build
+UNAME := $(shell uname -s)
+
+apt:
+ifeq (${UNAME}, Linux)
+	@add-apt-repository ppa:duggan/bats -y
+	@apt-get update
+	@apt-get install bats
+endif
+
+brew:
+ifeq (${UNAME}, Darwin)
+	@brew install bats
+endif
 
 clean: | uninstall
+
+dependencies: | apt brew
 
 install:
 	@mkdir -p ${PREFIX}/bin
@@ -12,4 +27,4 @@ test: | install
 uninstall:
 	@rm -rf ${PREFIX}
 
-.PHONY: clean install test uninstall
+.PHONY: apt brew clean dependencies install test uninstall

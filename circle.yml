@@ -1,8 +1,6 @@
 dependencies:
   pre:
-    - sudo add-apt-repository ppa:duggan/bats --yes
-    - sudo apt-get update
-    - sudo apt-get install bats
+    - make dependencies
 
 test:
   override:
