@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-function iconkey() {
-  if [[ ${1:0:1} == ":" ]] ; then echo 'icon_emoji' ; else echo 'icon_url' ; fi
-}
+config=
+
+function iconkey() { if [[ ${1:0:1} == ":" ]] ; then echo 'icon_emoji' ; else echo 'icon_url' ; fi }
 
 case "${1}" in
   init)
@@ -28,10 +28,10 @@ case "${1}" in
     test -z "${icon}" && read -e -p 'Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): ' icon
 
     test -z "${silent}" && echo -n 'Initializing: '
-    echo "${webhook}" > ~/.slack-cli && \
-    echo "${channel}" >> ~/.slack-cli && \
-    echo "${username}" >> ~/.slack-cli && \
-    echo "${icon}" >> ~/.slack-cli
+    echo "${webhook}" > "${config}" && \
+    echo "${channel}" >> "${config}" && \
+    echo "${username}" >> "${config}" && \
+    echo "${icon}" >> "${config}"
     case "$?" in
       0) test -z "${silent}" && echo 'done' ;;
       *) test -z "${silent}" && echo 'fail' ; exit 1 ;;
@@ -39,10 +39,10 @@ case "${1}" in
   ;;
 
   send)
-    channel=$(sed -n '2p' < ~/.slack-cli)
-    icon=$(sed -n '4p' < ~/.slack-cli)
-    username=$(sed -n '3p' < ~/.slack-cli)
-    webhook=$(sed -n '1p' < ~/.slack-cli)
+    channel=$(sed -n '2p' < "${config}")
+    icon=$(sed -n '4p' < "${config}")
+    username=$(sed -n '3p' < "${config}")
+    webhook=$(sed -n '1p' < "${config}")
     test -p /dev/stdin && stdin=$(cat <&0)
 
     while (( "$#" )); do

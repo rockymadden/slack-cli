@@ -1,5 +1,12 @@
+CONFIG ?= ./build/etc/.slack
 PREFIX ?= ./build
 UNAME := $(shell uname -s)
+
+ifeq (${UNAME}, Darwin)
+_CONFIG := $(shell greadlink -f ${CONFIG})
+else ifeq (${UNAME}, Linux)
+_CONFIG := $(shell readlink -f ${CONFIG})
+endif
 
 apt:
 ifeq (${UNAME}, Linux)
@@ -19,7 +26,13 @@ dependencies: | apt brew
 
 install:
 	@mkdir -p ${PREFIX}/bin
+	@mkdir -p ${PREFIX}/etc
 	@rsync -a src/ ${PREFIX}/bin/
+ifeq (${UNAME}, Darwin)
+	@sed -i ''  "s|config=|config=${_CONFIG}|g" ${PREFIX}/bin/slack
+else ifeq (${UNAME}, Linux)
+	@sed -i "s|config=|config=${_CONFIG}|g" ${PREFIX}/bin/slack
+endif
 
 test: | install
 	@test/slack
