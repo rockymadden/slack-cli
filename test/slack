@@ -1,5 +1,32 @@
 #!/usr/bin/env bats
 
+@test "init used correctly should succeed" {
+  if [ -z "${SLACK_CLI_CHANNEL}" ] || [ -z "${SLACK_CLI_ICON}" ] || [ -z "${SLACK_CLI_USERNAME}" ] || [ -z "${SLACK_CLI_WEBHOOK}" ]; then
+    skip "Environments variable(s) are not defined"
+  fi
+
+  run build/bin/slack init --channel="${SLACK_CLI_CHANNEL}" --icon="${SLACK_CLI_ICON}" --username="${SLACK_CLI_USERNAME}" --webhook="${SLACK_CLI_WEBHOOK}"
+  [ $status -eq 0 ]
+}
+
+@test "send used correctly should succeed" {
+  if ! [ -f 'build/etc/.slack' ]; then
+    skip "Not initialized"
+  fi
+
+  run build/bin/slack send 'Hello World!'
+  [ $status -eq 0 ]
+}
+
+@test "send used incorrectly should fail" {
+  if ! [ -f 'build/etc/.slack' ]; then
+    skip "Not initialized"
+  fi
+
+  run build/bin/slack send 'Hello World!' --channel='#channel'
+  [ $status -eq 1 ]
+}
+
 @test "--help should print usage" {
   run build/bin/slack --help
   [ $status -eq 0 ]

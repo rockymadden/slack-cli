@@ -72,8 +72,8 @@ case "${1}" in
         -t*) text=${3} ; shift ; shift ;;
         -T*) title=${3} ; shift ; shift ;;
         *)
-          test -z "${stdin}" && test -n "${2}" && test -z "${text}" && text=${2}
           test -z "${stdin}" && test -n "${2}" && test -n "${text}" && channel=${2}
+          test -z "${stdin}" && test -n "${2}" && test -z "${text}" && text=${2}
           test -n "${stdin}" && test -z "${text}" && text=${stdin//$'\n'/'\n'}
           shift
         ;;
