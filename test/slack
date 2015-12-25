@@ -2,7 +2,7 @@
 
 @test "init used correctly should succeed" {
   if [ -z "${SLACK_CLI_CHANNEL}" ] || [ -z "${SLACK_CLI_ICON}" ] || [ -z "${SLACK_CLI_USERNAME}" ] || [ -z "${SLACK_CLI_WEBHOOK}" ]; then
-    skip "Environments variable(s) are not defined"
+    skip "Environments variable(s) not defined"
   fi
 
   run build/bin/slack init --channel="${SLACK_CLI_CHANNEL}" --icon="${SLACK_CLI_ICON}" --username="${SLACK_CLI_USERNAME}" --webhook="${SLACK_CLI_WEBHOOK}"
