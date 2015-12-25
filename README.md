@@ -6,17 +6,7 @@
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 Full support for [rich message formatting](https://api.slack.com/docs/attachments) and extremely
-pipe friendly. Listening a-la `fswatch` currently in development for OS X:
-
-```bash
-$ slack listen | while read -d "" message \
-  do \
-    case "${message}" in \
-      'hey') slack send 'hey to you' ;; \
-      'server is on fire') restart-server ;; \
-    esac \
-  done
-```
+pipe friendly. Listening a-la `fswatch` currently in development for OS X.
 
 ## Installation
 ```bash
@@ -94,6 +84,20 @@ $ slack send 'Hello World!' --channel='#nonexistentchannel'
 Sending: fail
 $ echo $?
 1
+```
+
+### Listen for messages a-la `fswatch` (OS X only):
+
+> __NOTE:__ Currently in development.
+
+```bash
+$ slack listen | while read -d "" message \
+  do \
+    case "${message}" in \
+      'hey') slack send 'hey to you' ;; \
+      'server is on fire') restart-server ;; \
+    esac \
+  done
 ```
 
 ## Useful Functions

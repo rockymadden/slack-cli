@@ -1,104 +1,103 @@
 #!/usr/bin/env bash
 
-function iconkey() {
-  if [[ ${1:0:1} == ":" ]] ; then echo 'icon_emoji' ; else echo 'icon_url' ; fi
-}
+config=
+
+function iconkey() { if [[ ${1:0:1} == ":" ]] ; then echo 'icon_emoji' ; else echo 'icon_url' ; fi }
 
 case "${1}" in
   init)
     while (( "$#" )); do
       case "${2}" in
-        --channel=*) CHANNEL=${2/--channel=/''} ; shift ;;
-        --icon=*) ICON=${2/--icon=/''} ; shift ;;
-        --silent) SILENT='0' ; shift ;;
-        --username=*) USERNAME=${2/--username=/''} ; shift ;;
-        --webhook=*) WEBHOOK=${2/--webhook=/''} ; shift ;;
-        -c*) CHANNEL=${3} ; shift ; shift ;;
-        -i*) ICON=${3} ; shift ; shift ;;
-        -s) SILENT='0' ; shift ;;
-        -u*) USERNAME=${3} ; shift ; shift ;;
-        -w*) WEBHOOK=${3} ; shift ; shift ;;
+        --channel=*) channel=${2/--channel=/''} ; shift ;;
+        --icon=*) icon=${2/--icon=/''} ; shift ;;
+        --silent) silent='0' ; shift ;;
+        --username=*) username=${2/--username=/''} ; shift ;;
+        --webhook=*) webhook=${2/--webhook=/''} ; shift ;;
+        -c*) channel=${3} ; shift ; shift ;;
+        -i*) icon=${3} ; shift ; shift ;;
+        -s) silent='0' ; shift ;;
+        -u*) username=${3} ; shift ; shift ;;
+        -w*) webhook=${3} ; shift ; shift ;;
         *) shift ;;
       esac
     done
 
-    test -z "${WEBHOOK}" && read -e -p 'Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): ' WEBHOOK
-    test -z "${CHANNEL}" && read -e -p 'Enter default channel (e.g. #general): ' CHANNEL
-    test -z "${USERNAME}" && read -e -p 'Enter username (e.g. username-bot): ' USERNAME
-    test -z "${ICON}" && read -e -p 'Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): ' ICON
-    test -z "${SILENT}" && echo -n 'Initializing: '
+    test -z "${webhook}" && read -e -p 'Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): ' webhook
+    test -z "${channel}" && read -e -p 'Enter default channel (e.g. #general): ' channel
+    test -z "${username}" && read -e -p 'Enter username (e.g. username-bot): ' username
+    test -z "${icon}" && read -e -p 'Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): ' icon
 
-    echo "${WEBHOOK}" > ~/.slack-cli && \
-    echo "${CHANNEL}" >> ~/.slack-cli && \
-    echo "${USERNAME}" >> ~/.slack-cli && \
-    echo "${ICON}" >> ~/.slack-cli
-
+    test -z "${silent}" && echo -n 'Initializing: '
+    echo "${webhook}" > "${config}" && \
+    echo "${channel}" >> "${config}" && \
+    echo "${username}" >> "${config}" && \
+    echo "${icon}" >> "${config}"
     case "$?" in
-      0) test -z "${SILENT}" && echo 'done' ;;
-      *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
+      0) test -z "${silent}" && echo 'done' ;;
+      *) test -z "${silent}" && echo 'fail' ; exit 1 ;;
     esac
   ;;
 
   send)
-    CHANNEL=$(sed -n '2p' < ~/.slack-cli)
-    ICON=$(sed -n '4p' < ~/.slack-cli)
-    USERNAME=$(sed -n '3p' < ~/.slack-cli)
-    WEBHOOK=$(sed -n '1p' < ~/.slack-cli)
-    test -p /dev/stdin && STDIN=$(cat <&0)
+    channel=$(sed -n '2p' < "${config}")
+    icon=$(sed -n '4p' < "${config}")
+    username=$(sed -n '3p' < "${config}")
+    webhook=$(sed -n '1p' < "${config}")
+    test -p /dev/stdin && stdin=$(cat <&0)
 
     while (( "$#" )); do
       case "${2}" in
-        --author=*) AUTHOR=${2/--author=/''} ; shift ;;
-        --author-icon=*) AUTHORICON=${2/--author-icon=/''} ; shift ;;
-        --author-link=*) AUTHORLINK=${2/--author-link=/''} ; shift ;;
-        --channel=*) CHANNEL=${2/--channel=/''} ; shift ;;
-        --color=*) COLOR=${2/--color=/''} ; shift ;;
-        --image=*) IMAGE=${2/--image-url=/''} ; shift ;;
-        --pretext=*) PRETEXT=${2/--pretext=/''} ; shift ;;
-        --silent) SILENT='0' ; shift ;;
-        --text=*) TEXT=${2/--text=/''} ; shift ;;
-        --thumbnail=*) THUMBNAIL=${2/--thumbnail=/''} ; shift ;;
-        --title=*) TITLE=${2/--title=/''} ; shift ;;
-        --title-link=*) TITLELINK=${2/--title-link=/''} ; shift ;;
-        -a*) AUTHOR=${3} ; shift ; shift ;;
-        -c*) CHANNEL=${3} ; shift ; shift ;;
-        -C*) COLOR=${3} ; shift ; shift ;;
-        -h*) THUMBNAIL=${3} ; shift ; shift ;;
-        -i*) IMAGE=${3} ; shift ; shift ;;
-        -I*) AUTHORICON=${3} ; shift ; shift ;;
-        -l*) TITLELINK=${3} ; shift ; shift ;;
-        -L*) AUTHORLINK=${3} ; shift ; shift ;;
-        -p*) PRETEXT=${3} ; shift ; shift ;;
-        -s) SILENT='0' ; shift ;;
-        -t*) TEXT=${3} ; shift ; shift ;;
-        -T*) TITLE=${3} ; shift ; shift ;;
+        --author=*) author=${2/--author=/''} ; shift ;;
+        --author-icon=*) authoricon=${2/--author-icon=/''} ; shift ;;
+        --author-link=*) authorlink=${2/--author-link=/''} ; shift ;;
+        --channel=*) channel=${2/--channel=/''} ; shift ;;
+        --color=*) color=${2/--color=/''} ; shift ;;
+        --image=*) image=${2/--image-url=/''} ; shift ;;
+        --pretext=*) pretext=${2/--pretext=/''} ; shift ;;
+        --silent) silent='0' ; shift ;;
+        --text=*) text=${2/--text=/''} ; shift ;;
+        --thumbnail=*) thumbnail=${2/--thumbnail=/''} ; shift ;;
+        --title=*) title=${2/--title=/''} ; shift ;;
+        --title-link=*) titlelink=${2/--title-link=/''} ; shift ;;
+        -a*) author=${3} ; shift ; shift ;;
+        -c*) channel=${3} ; shift ; shift ;;
+        -C*) color=${3} ; shift ; shift ;;
+        -h*) thumbnail=${3} ; shift ; shift ;;
+        -i*) image=${3} ; shift ; shift ;;
+        -I*) authoricon=${3} ; shift ; shift ;;
+        -l*) titlelink=${3} ; shift ; shift ;;
+        -L*) authorlink=${3} ; shift ; shift ;;
+        -p*) pretext=${3} ; shift ; shift ;;
+        -s) silent='0' ; shift ;;
+        -t*) text=${3} ; shift ; shift ;;
+        -T*) title=${3} ; shift ; shift ;;
         *)
-          test -z "${STDIN}" && test -n "${2}" && test -z "${TEXT}" && TEXT=${2}
-          test -z "${STDIN}" && test -n "${2}" && test -n "${TEXT}" && CHANNEL=${2}
-          test -n "${STDIN}" && test -z "${TEXT}" && TEXT=${STDIN//$'\n'/'\n'}
+          test -z "${stdin}" && test -n "${2}" && test -n "${text}" && channel=${2}
+          test -z "${stdin}" && test -n "${2}" && test -z "${text}" && text=${2}
+          test -n "${stdin}" && test -z "${text}" && text=${stdin//$'\n'/'\n'}
           shift
         ;;
       esac
     done
 
-    test -z "${TEXT}" && read -e -p 'Enter text (e.g. Hello World!): ' TEXT
+    test -z "${text}" && read -e -p 'Enter text (e.g. Hello World!): ' text
 
-    test -n "${AUTHOR}" && _AUTHOR=", \"author_name\": \"${AUTHOR}\""
-    test -n "${AUTHORICON}" && _AUTHORICON=", \"author_icon\": \"${AUTHORICON}\""
-    test -n "${AUTHORLINK}" && _AUTHORLINK=", \"author_link\": \"${AUTHORLINK}\""
-    test -n "${COLOR}" && _COLOR=", \"color\": \"${COLOR}\""
-    test -n "${IMAGE}" && _IMAGE=", \"image_url\": \"${IMAGE}\""
-    test -n "${PRETEXT}" && _PRETEXT=", \"pretext\": \"${PRETEXT}\""
-    test -n "${THUMBNAIL}" && _THUMBNAIL=", \"thumb_url\": \"${THUMBNAIL}\""
-    test -n "${TITLE}" && _TITLE=", \"title\": \"${TITLE}\""
-    test -n "${TITLELINK}" && _TITLELINK=", \"title_link\": \"${TITLELINK}\""
-    _PAYLOAD="payload={\"attachments\": [{\"fallback\": \"${TEXT}\", \"text\": \"${TEXT}\"${_AUTHOR}${_AUTHORICON}${_AUTHORLINK}${_COLOR}${_IMAGE}${_PRETEXT}${_THUMBNAIL}${_TITLE}${_TITLELINK}}], \"channel\": \"${CHANNEL}\", \"username\": \"${USERNAME}\", \"$(iconkey ${ICON})\": \"${ICON}\"}"
+    test -n "${author}" && _author=", \"author_name\": \"${author}\""
+    test -n "${authoricon}" && _authoricon=", \"author_icon\": \"${authoricon}\""
+    test -n "${authorlink}" && _authorlink=", \"author_link\": \"${authorlink}\""
+    test -n "${color}" && _color=", \"color\": \"${color}\""
+    test -n "${image}" && _image=", \"image_url\": \"${image}\""
+    test -n "${pretext}" && _pretext=", \"pretext\": \"${pretext}\""
+    test -n "${thumbnail}" && _thumbnail=", \"thumb_url\": \"${thumbnail}\""
+    test -n "${title}" && _title=", \"title\": \"${title}\""
+    test -n "${titlelink}" && _titlelink=", \"title_link\": \"${titlelink}\""
+    _payload="payload={\"attachments\": [{\"fallback\": \"${text}\", \"text\": \"${text}\"${_author}${_authoricon}${_authorlink}${_color}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}}], \"channel\": \"${channel}\", \"username\": \"${username}\", \"$(iconkey ${icon})\": \"${icon}\"}"
 
-    test -z "${SILENT}" && echo -n 'Sending: '
-    curl --silent --fail -X POST --data-urlencode "${_PAYLOAD}" ${WEBHOOK} > /dev/null
+    test -z "${silent}" && echo -n 'Sending: '
+    curl --silent --fail --request POST --data-urlencode "${_payload}" "${webhook}" > /dev/null
     case "$?" in
-      0) test -z "${SILENT}" && echo 'done' ;;
-      *) test -z "${SILENT}" && echo 'fail' ; exit 1 ;;
+      0) test -z "${silent}" && echo 'done' ;;
+      *) test -z "${silent}" && echo 'fail' ; exit 1 ;;
     esac
   ;;
 
