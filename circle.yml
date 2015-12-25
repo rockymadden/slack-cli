@@ -1,6 +1,6 @@
 dependencies:
   pre:
-    - make dependencies
+    - sudo make dependencies
 
 test:
   override:
