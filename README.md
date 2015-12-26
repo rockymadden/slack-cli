@@ -6,7 +6,7 @@
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 Full support for [rich message formatting](https://api.slack.com/docs/attachments) and extremely
-pipe friendly. Listening a-la `fswatch` currently in development for OS X.
+pipe friendly. Listening a-la `fswatch` currently in development.
 
 ## Installation
 ```bash
@@ -86,7 +86,7 @@ $ echo $?
 1
 ```
 
-### Listen for messages a-la `fswatch` (OS X only):
+### Listen for messages a-la `fswatch`:
 
 > __NOTE:__ Currently in development.
 
