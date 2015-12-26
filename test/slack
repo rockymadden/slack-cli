@@ -10,7 +10,7 @@
 }
 
 @test "send used correctly should succeed" {
-  if ! [ -f 'build/etc/.slack' ]; then
+  if ! [ -f 'build/etc/slack-cli' ]; then
     skip "Not initialized"
   fi
 
@@ -19,7 +19,7 @@
 }
 
 @test "send used incorrectly should fail" {
-  if ! [ -f 'build/etc/.slack' ]; then
+  if ! [ -f 'build/etc/slack-cli' ]; then
     skip "Not initialized"
   fi
 
