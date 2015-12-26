@@ -104,6 +104,8 @@ $ slack listen | while read -d "" message \
 
 ### Send notification of a pull-request merge into master:
 
+![example](http://share.rockymadden.com/123Q1W1b200H/Image%202015-12-26%20at%202.13.54%20PM.png)
+
 #### Function:
 ```bash
 function slack-pull-request() {
@@ -122,11 +124,13 @@ function slack-pull-request() {
 
 #### Function Usage:
 ```bash
-$ slack-pull-request 177 #channel
+$ slack-pull-request 16 #general
 Sending: done
 ```
 
 ### Send notification of a collaborator state change:
+
+![example](http://share.rockymadden.com/3i3B3y2t2v0o/Image%202015-12-26%20at%202.15.02%20PM.png)
 
 #### Function:
 ```bash
@@ -145,7 +149,7 @@ function slack-collaborator() {
 
 #### Function Usage:
 ```bash
-$ slack-collaborator 'Added rockymadden' #channel
+$ slack-collaborator 'added <https://github.com/rockymadden|rockymadden> as admin' #general
 Sending: done
 ```
 
