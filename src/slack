@@ -91,7 +91,7 @@ case "${1}" in
     test -n "${thumbnail}" && _thumbnail=", \"thumb_url\": \"${thumbnail}\""
     test -n "${title}" && _title=", \"title\": \"${title}\""
     test -n "${titlelink}" && _titlelink=", \"title_link\": \"${titlelink}\""
-    _payload="payload={\"attachments\": [{\"fallback\": \"${text}\", \"text\": \"${text}\"${_author}${_authoricon}${_authorlink}${_color}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}}], \"channel\": \"${channel}\", \"username\": \"${username}\", \"$(iconkey ${icon})\": \"${icon}\"}"
+    _payload="payload={\"attachments\": [{\"mrkdwn_in\": [\"text\", \"pretext\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_author}${_authoricon}${_authorlink}${_color}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}}], \"channel\": \"${channel}\", \"username\": \"${username}\", \"$(iconkey ${icon})\": \"${icon}\"}"
 
     test -z "${silent}" && echo -n 'Sending: '
     curl --silent --fail --request POST --data-urlencode "${_payload}" "${webhook}" > /dev/null
