@@ -60,7 +60,7 @@ $ slack send 'Hello World!'
 Sending: done
 
 # Sending to specified channel via argument:
-$ slack send 'Hello World!' '#channel'
+$ slack send 'Hello World!' #channel
 Sending: done
 
 # Sending to specified channel via option:
@@ -107,18 +107,47 @@ $ slack listen | while read -d "" message \
 #### Function:
 ```bash
 function slack-pull-request() {
-  git issue | grep "${1}" | cut -d ']' -f2 | slack send --channel="${2}" --pretext='Pull request merged into master:' --color=good
+  local url=$(git browse -u)
+  local repo=$(git browse -u | sed -e 's|https://github.com/||g')
+  local desc=$(git issue | grep "${1}" | cut -d ']' -f2)
+
+  slack send "*Pull request merged into master:* ${desc}" \
+    --author="${repo}" \
+    --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+    --author-link="${url}" \
+    --channel="${2}" \
+    --color=good
 }
 ```
 
 #### Function Usage:
 ```bash
-$ slack-pull-request 177 '#channel'
+$ slack-pull-request 177 #channel
 Sending: done
 ```
 
-#### Slack Output:
-![example](http://share.rockymadden.com/0s3s231n260k/Image%202015-12-17%20at%2012.11.56%20PM.png)
+### Send notification of a collaborator state change:
+
+#### Function:
+```bash
+function slack-collaborator() {
+  local url=$(git browse -u)
+  local repo=$(git browse -u | sed -e 's|https://github.com/||g')
+
+  slack send "*Collaborator state change:* ${1}" \
+    --author="${repo}" \
+    --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+    --author-link="${url}" \
+    --channel="${2}" \
+    --color=good
+}
+```
+
+#### Function Usage:
+```bash
+$ slack-collaborator 'Added rockymadden' #channel
+Sending: done
+```
 
 ## License
 ```
