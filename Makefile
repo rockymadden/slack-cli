@@ -7,6 +7,7 @@ ifeq (${uname}, Linux)
 	@add-apt-repository ppa:duggan/bats -y
 	@apt-get update
 	@apt-get install bats
+	@apt-get install jq
 endif
 
 brew:
