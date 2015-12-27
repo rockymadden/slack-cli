@@ -13,16 +13,15 @@ pipe friendly. Listening a-la `fswatch` currently in development.
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 ```
-> __PROTIP:__ Your Slack team must have one or more
-[incoming webhook integrations](https://api.slack.com/incoming-webhooks).
+> __PROTIP:__ You must have a [Slack API bearer token issued](https://api.slack.com/web) for your
+account.
 
 ## Usage
 
 ```bash
 $ slack --help
 Usage:
-  slack init [--channel|-c <channel>] [--icon|-i <icon>] [--silent|-s]
-    [--username|-u <username>] [--webhook|-w <webhook>]
+  slack init [--channel|-c <channel>] [--silent|-s] [--token|-t <token>]
   slack send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]
@@ -45,10 +44,8 @@ arguments. This allows for both traditional usage and prompt-based usage.
 
 ```bash
 $ slack init
-Enter webhook (e.g. https://hooks.slack.com/services/XXX/XXX/XXX): https://hooks.slack.com/services/XXX/XXX/XXX
+Enter token: token
 Enter default channel (e.g. #general): #general
-Enter username (e.g. username-bot): username-bot
-Enter icon (e.g. :robot_face:, https://avatars3.githubusercontent.com/u/XXX): :robot_face:
 Initializing: done
 ```
 
