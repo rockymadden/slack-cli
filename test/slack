@@ -1,40 +1,94 @@
 #!/usr/bin/env bats
 
-@test "init used correctly should succeed" {
-  if [ -z "${SLACK_CLI_CHANNEL}" ] || [ -z "${SLACK_CLI_ICON}" ] || [ -z "${SLACK_CLI_USERNAME}" ] || [ -z "${SLACK_CLI_WEBHOOK}" ]; then
-    skip "Environments variable(s) not defined"
-  fi
-
-  run build/bin/slack init --channel="${SLACK_CLI_CHANNEL}" --icon="${SLACK_CLI_ICON}" --username="${SLACK_CLI_USERNAME}" --webhook="${SLACK_CLI_WEBHOOK}"
-  [ $status -eq 0 ]
+setup() {
+  sleep 2
 }
 
-@test "send used correctly should succeed" {
+@test "init passed valid channel and token should succeed" {
+  if [ -z "${SLACK_CLI_CHANNEL}" ] || [ -z "${SLACK_CLI_TOKEN}" ]; then
+    skip "Environments variables not defined"
+  fi
+
+  build/bin/slack init --channel="${SLACK_CLI_CHANNEL}" --token="${SLACK_CLI_TOKEN}"
+}
+
+@test "send using default public channel should succeed" {
   if ! [ -f 'build/etc/slack-cli' ]; then
     skip "Not initialized"
   fi
 
-  run build/bin/slack send 'Hello World!'
-  [ $status -eq 0 ]
+  build/bin/slack send '#general'
 }
 
-@test "send used incorrectly should fail" {
+@test "send using specified public channel should succeed" {
   if ! [ -f 'build/etc/slack-cli' ]; then
     skip "Not initialized"
   fi
 
-  run build/bin/slack send 'Hello World!' --channel='#channel'
+  build/bin/slack send '#random' '#random'
+}
+
+@test "send using specified private channel should succeed" {
+  if ! [ -f 'build/etc/slack-cli' ]; then
+    skip "Not initialized"
+  fi
+
+  build/bin/slack send private private
+}
+
+@test "send using specified direct channel should succeed" {
+  if ! [ -f 'build/etc/slack-cli' ]; then
+    skip "Not initialized"
+  fi
+
+  build/bin/slack send @circleci @circleci
+}
+
+@test "send using non-existent channel should fail" {
+  if ! [ -f 'build/etc/slack-cli' ]; then
+    skip "Not initialized"
+  fi
+
+  run build/bin/slack send '#nonexistent' --channel='#nonexistent'
   [ $status -eq 1 ]
 }
 
-@test "--help should print usage" {
+@test "send using rich formatting should succeed" {
+  if ! [ -f 'build/etc/slack-cli' ]; then
+    skip "Not initialized"
+  fi
+
+  build/bin/slack send '#general' --pretext='pretext'
+}
+
+@test "send via pipe should succeed" {
+  if ! [ -f 'build/etc/slack-cli' ]; then
+    skip "Not initialized"
+  fi
+
+  ls -al | build/bin/slack send
+}
+
+@test "-h should output usage" {
+  run build/bin/slack -h
+  [ $status -eq 0 ]
+  [ "${#lines[@]}" -gt 1 ]
+}
+
+@test "--help should output usage" {
   run build/bin/slack --help
   [ $status -eq 0 ]
   [ "${#lines[@]}" -gt 1 ]
 }
 
-@test "--version should print version" {
+@test "-v should output version" {
+  run build/bin/slack -v
+  [ $status -eq 0 ]
+  [ $(expr "$output" : "v*") -ne 0 ]
+}
+
+@test "--version should output version" {
   run build/bin/slack --version
   [ $status -eq 0 ]
-  [ $(expr "$output" : "v[0-9]\.[0-9]\.[0-9]") -ne 0 ]
+  [ $(expr "$output" : "v*") -ne 0 ]
 }
