@@ -6,7 +6,7 @@
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 The premise is simple: provide a unixy, extremely pipe friendly, focused, yet feature rich, command
-line interface for sending and listening for Slack messages on your own account. With it, you can:
+line interface for sending and listening for Slack messages with your own account. With it, you can:
 
 * __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
   * Automate your development workflows (e.g. Using [github/hub](https://github.com/github/hub),
