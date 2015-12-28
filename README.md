@@ -6,17 +6,15 @@
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 The premise is simple: provide a unixy, extremely pipe friendly, focused, yet feature rich, command
-line interface for sending and listening for Slack messages on your own account. With it, you can:
+line interface for sending and listening for Slack messages with your own account. With it, you can:
 
-* Send [richly formatted messages](https://api.slack.com/docs/attachments) to public channels,
-  private channels, and directly to other users to:
+* __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
   * Automate your development workflows (e.g. Using [github/hub](https://github.com/github/hub),
-    send a notification to your team that you are accepting a PR and close it -- all in one line of
-    bash)
+    send a notification to your team that you are accepting a pull request and close it -- all in
+    one line)
   * Automate your devops workflows (e.g. Send a notification that you are starting server
-    maintenance, perform said maintenance, and send a notification of completion -- all in one line
-    of bash)
-* Listen for messages, a la `fswatch`, to:
+    maintenance, perform said maintenance, and send a notification of completion -- all in one line)
+* __Listen for messages, a-la `fswatch`, allowing you to:__
   * Create your own personal bot (e.g. Listen for messages conforming to a specific pattern and
     reply back).
   * Create your own event stream processor (e.g. Listen for messages coming from DataDog stating a
