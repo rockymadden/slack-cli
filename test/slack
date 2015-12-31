@@ -17,7 +17,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  build/bin/slack send '#general'
+  build/bin/slack send 'send using default public channel should succeed'
 }
 
 @test "send using specified public channel should succeed" {
@@ -25,7 +25,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  build/bin/slack send '#random' '#random'
+  build/bin/slack send 'send using specified public channel should succeed' '#slack-cli'
 }
 
 @test "send using specified private channel should succeed" {
@@ -33,7 +33,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  build/bin/slack send private private
+  build/bin/slack send 'send using specified private channel should succeed' slack-cli-private
 }
 
 @test "send using specified direct channel should succeed" {
@@ -41,7 +41,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  build/bin/slack send @circleci @circleci
+  build/bin/slack send 'send using specified direct channel should succeed' @rockymadden
 }
 
 @test "send using non-existent channel should fail" {
@@ -49,7 +49,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  run build/bin/slack send '#nonexistent' --channel='#nonexistent'
+  run build/bin/slack send 'send using non-existent channel should fail' --channel='#nonexistent'
   [ $status -eq 1 ]
 }
 
@@ -58,7 +58,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  build/bin/slack send '#general' --pretext='pretext'
+  build/bin/slack send 'text' --pretext='send using rich formatting should succeed'
 }
 
 @test "send via pipe should succeed" {
@@ -66,7 +66,7 @@ setup() {
     skip "Not initialized"
   fi
 
-  ls -al | build/bin/slack send
+  ls -al | build/bin/slack send --pretext='send via pipe should succeed'
 }
 
 @test "-h should output usage" {

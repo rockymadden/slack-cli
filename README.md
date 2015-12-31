@@ -3,6 +3,7 @@
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
+[![slack](http://img.shields.io/badge/slack-join-e01563.svg)](https://rockymadden-slackin.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 The premise is simple: provide a unixy, extremely pipe friendly, focused, yet feature rich, command
@@ -69,7 +70,7 @@ $ slack send 'Hello World!'
 Sending: done
 
 # Sending to specified channel via argument:
-$ slack send 'Hello World!' #channel
+$ slack send 'Hello World!' '#channel'
 Sending: done
 
 # Sending to specified channel via option:
@@ -133,7 +134,7 @@ function slack-pull-request() {
 
 #### Function Usage:
 ```bash
-$ slack-pull-request 16 #general
+$ slack-pull-request 16 '#general'
 Sending: done
 ```
 
@@ -158,7 +159,7 @@ function slack-collaborator() {
 
 #### Function Usage:
 ```bash
-$ slack-collaborator 'added <https://github.com/rockymadden|rockymadden> as admin' #general
+$ slack-collaborator 'added <https://github.com/rockymadden|rockymadden> as admin' '#general'
 Sending: done
 ```
 
