@@ -132,7 +132,7 @@ case "${1}" in
     echo "  send     Send message"
   ;;
 
-  --version|-v) echo 'v0.8.0' ;;
+  --version|-v) echo 'v0.8.1' ;;
 
   *) ${0} --help ; exit 1 ;;
 esac
