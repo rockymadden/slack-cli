@@ -6,8 +6,8 @@
 [![slack](http://img.shields.io/badge/slack-join-e01563.svg)](https://rockymadden-slackin.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-The premise is simple: provide a unixy, extremely pipe friendly, focused, yet feature rich, command
-line interface for sending and listening for Slack messages with your own account. With it, you can:
+The premise is simple: provide pure bash, extremely pipe friendly, focused, yet feature rich,
+command line interface for sending and listening for Slack messages. With it, you can:
 
 * __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
   * Automate your development workflows (e.g. Using [github/hub](https://github.com/github/hub),
