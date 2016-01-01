@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-config=
+bindir=
+etcdir=
 
 function _channel() {
   case "${1}" in
@@ -36,8 +37,8 @@ case "${1}" in
     test -z "${channel}" && read -e -p 'Enter default channel (e.g. #general): ' channel
 
     test -z "${silent}" && echo -n 'Initializing: '
-    echo "${token}" > "${config}" && \
-    echo "${channel}" >> "${config}"
+    echo "${token}" > "${etcdir}/slack-cli" && \
+    echo "${channel}" >> "${etcdir}/slack-cli"
     case "$?" in
       0) test -z "${silent}" && echo 'done' ;;
       *) test -z "${silent}" && echo 'fail' ; exit 1 ;;
@@ -45,8 +46,8 @@ case "${1}" in
   ;;
 
   send)
-    channel=$(sed -n '2p' < "${config}")
-    token=$(sed -n '1p' < "${config}")
+    channel=$(sed -n '2p' < "${etcdir}/slack-cli")
+    token=$(sed -n '1p' < "${etcdir}/slack-cli")
     test -p /dev/stdin && stdin=$(cat <&0)
 
     while (( "$#" )); do
