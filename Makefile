@@ -13,6 +13,7 @@ endif
 brew:
 ifeq (${uname}, Darwin)
 	@brew install bats
+	@brew install jq
 endif
 
 clean: | uninstall
