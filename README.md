@@ -64,24 +64,32 @@ more information about `send` command option meanings.
 * All commands prompt for required arguments which were not provided via options or arguments. This
 allows for both traditional usage and prompt-based usage.
 
-### Send message:
+
+## Examples and Recipes
+
+### `send`:
 
 ```bash
 $ # Sending to default channel:
 $ slack send 'Hello World!'
+
 $ # Sending to specified channel via argument:
 $ slack send 'Hello World!' '#channel'
+
 $ # Sending to specified channel via option:
 $ slack send 'Hello World!' --channel='#channel'
+
 $ # Piping echo:
 $ echo 'Hello World!' | slack send --channel='#channel'
+
 $ # Piping ls:
 $ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
+
 $ # Piping cat:
 $ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
 ```
 
-### Listen for messages a-la `fswatch`:
+### `listen`:
 
 > __NOTE:__ Currently in development.
 
