@@ -7,8 +7,8 @@
 [![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-The premise is simple: A pure bash, extremely pipe friendly, focused, yet feature rich,
-command line interface for sending and listening for Slack messages. Deep integration with
+The premise is simple: A pure bash, pipe friendly, focused, yet feature rich, command line
+interface for sending and listening for Slack messages. Deep integration with
 [jq](https://github.com/stedolan/jq) allows for the ability to perform complex
 declarative/higher-order operations on responses, helping you perform complex compositional
 operations with relative ease.
