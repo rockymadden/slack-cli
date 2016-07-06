@@ -7,7 +7,7 @@
 [![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-The premise is simple: provide pure bash, extremely pipe friendly, focused, yet feature rich,
+The premise is simple: A pure bash, extremely pipe friendly, focused, yet feature rich,
 command line interface for sending and listening for Slack messages. Deep integration with
 [jq](https://github.com/stedolan/jq) allows for the ability to perform complex
 declarative/higher-order operations on responses, helping you perform complex compositional
@@ -58,11 +58,11 @@ Core Commands:
   send    Send message
 ```
 
-> __PROTIPS:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
-more information about `send` option meanings.
-
-> __PROTIP:__ All commands prompt for required arguments which were not provided via options or
-arguments. This allows for both traditional usage and prompt-based usage.
+> __PROTIPS:__
+* See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+more information about `send` command option meanings.
+* All commands prompt for required arguments which were not provided via options or arguments. This
+allows for both traditional usage and prompt-based usage.
 
 ### Send message:
 
