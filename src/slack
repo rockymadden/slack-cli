@@ -4,6 +4,7 @@ bindir=
 etcdir=
 token=$(test -f "${etcdir}/slack" && sed -n '1p' < "${etcdir}/slack")
 channel=$(test -f "${etcdir}/slack" && sed -n '2p' < "${etcdir}/slack")
+test -p /dev/stdin && stdin=$(cat <&0)
 
 ## Command parsing ################################################################################
 cmd="${1}" ; shift
@@ -42,10 +43,8 @@ while (( "$#" )); do
     *)
       case "${cmd}" in
         send)
-          test -p /dev/stdin && stdin=$(cat <&0)
           test -z "${stdin}" && test -n "${1}" && test -n "${text}" && channel=${1}
           test -z "${stdin}" && test -n "${1}" && test -z "${text}" && text=${1}
-          test -n "${stdin}" && test -z "${text}" && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
         ;;
       esac
       shift
@@ -122,6 +121,10 @@ function init() {
 }
 
 function send() {
+  # Because of limitations that subshells impose on reading from pipes, this MUST be located here
+  # and not in the argument and option parsing block.
+  test -n "${stdin}" && test -z "${text}" && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+
   test -n "${author}" && authorjson=", \"author_name\": \"${author}\""
   test -n "${authoricon}" && authoriconjson=", \"author_icon\": \"${authoricon}\""
   test -n "${authorlink}" && authorlinkjson=", \"author_link\": \"${authorlink}\""
