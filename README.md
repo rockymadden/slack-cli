@@ -61,9 +61,12 @@ Core Commands:
 > __PROTIPS:__
 * See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about `send` command option meanings.
-* The `--compact` option is passed directly to [jq](https://stedolan.github.io/jq/manual/)
-* The `--filter` option is passed directly to [jq](https://stedolan.github.io/jq/manual/)
-* The `--monochrome` option is passed directly to [jq](https://stedolan.github.io/jq/manual/)
+* The `--compact` option is passed directly to [jq](https://stedolan.github.io/jq/manual/) via the
+  `--compact-output` option
+* The `--filter` option is passed directly to [jq](https://stedolan.github.io/jq/manual/) as a
+  jq filter
+* The `--monochrome` option is passed directly to [jq](https://stedolan.github.io/jq/manual/) via
+  the `--monochrome-output` option
 * All commands prompt for required arguments which were not provided via options or arguments. This
 allows for both traditional usage and prompt-based usage.
 
