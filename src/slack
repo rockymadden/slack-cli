@@ -116,7 +116,7 @@ function init() {
 
   case "$?" in
     0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
-    *) echo '{"ok": false}' | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
+    *) echo '{"ok": false, "error": "not_writable"}' | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
   esac
 }
 
@@ -163,7 +163,7 @@ case "${cmd}" in
   init) "${cmd}" ; exit $? ;;
   send)
     if test -z "${token}" || test -z "${channel}"; then
-      echo '{"ok": false, "error": "missing_init"}' |
+      echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}"
       exit 1
     else
