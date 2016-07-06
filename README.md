@@ -3,7 +3,8 @@
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
-[![slack](http://img.shields.io/badge/slack-join-e01563.svg)](https://rockymadden-slackin.herokuapp.com/)
+[![pm](http://img.shields.io/badge/pm-zenhub-blue.svg)](https://www.zenhub.io/)
+[![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 The premise is simple: provide pure bash, extremely pipe friendly, focused, yet feature rich,
@@ -57,7 +58,7 @@ Core Commands:
   send    Send message
 ```
 
-> __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+> __PROTIPS:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about `send` option meanings.
 
 > __PROTIP:__ All commands prompt for required arguments which were not provided via options or
