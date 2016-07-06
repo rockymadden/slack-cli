@@ -18,9 +18,10 @@ With `slack-cli`, you can:
 * __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
   * Automate your development workflows
   * Automate your devops workflows
+  * Create your own CLI-based notification bots
 * __Listen for messages, a-la `fswatch`, allowing you to:__
-  * Create your own personal bot
-  * Create your own event stream processor
+  * Create your own CLI-based conversational bots
+  * Create your own CLI-based event stream processors
 
 ## Installation
 ```bash
