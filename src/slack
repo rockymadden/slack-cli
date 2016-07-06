@@ -118,8 +118,7 @@ function init() {
     0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
     *)
       echo '{"ok": false, "error": "not_writable"}' |
-        jq -r ${compact} ${monochrome} "${filter:=.}"
-      return 1
+        jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1
     ;;
   esac
 }
@@ -168,8 +167,7 @@ case "${cmd}" in
   send)
     if test -z "${token}" || test -z "${channel}"; then
       echo '{"ok": false, "error": "not_inited"}' |
-        jq -r ${compact} ${monochrome} "${filter:=.}"
-      exit 1
+        jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
     else
       "${cmd}" ; exit $?
     fi
