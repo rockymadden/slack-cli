@@ -116,7 +116,11 @@ function init() {
 
   case "$?" in
     0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
-    *) echo '{"ok": false, "error": "not_writable"}' | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
+    *)
+      echo '{"ok": false, "error": "not_writable"}' |
+        jq -r ${compact} ${monochrome} "${filter:=.}"
+      return 1
+    ;;
   esac
 }
 
