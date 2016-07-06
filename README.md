@@ -31,13 +31,9 @@ With `slack-cli`, you can:
 $ # Install from tap:
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
+
 $ # Initialize:
 $ slack init
-Enter Slack API token: token
-Enter default channel (e.g. #general): #general
-{
-  "ok": true
-}
 ```
 > __PROTIP:__ Ensure you have a [Slack API token](https://api.slack.com/web).
 
