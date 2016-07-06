@@ -55,8 +55,6 @@ Core Commands:
 ```
 
 > __PROTIPS:__
-* See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
-more information about `send` command option meanings.
 * The `--compact` option is a wrapper around the [jq](https://stedolan.github.io/jq/manual/)
   `--compact-output` option
 * The `--filter` option is passed directly to [jq](https://stedolan.github.io/jq/manual/) as a
@@ -90,6 +88,9 @@ $ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
 $ # Piping cat:
 $ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
 ```
+
+> __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+more information about option meanings.
 
 ### `listen`:
 
