@@ -1,6 +1,9 @@
 dependencies:
   pre:
-    - sudo make dependencies
+    - sudo add-apt-repository ppa:duggan/bats -y
+    - sudo apt-get update
+    - sudo apt-get install bats
+    - sudo apt-get install jq
 
 test:
   override:

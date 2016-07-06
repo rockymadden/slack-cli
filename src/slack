@@ -2,8 +2,79 @@
 
 bindir=
 etcdir=
+token=$(test -f "${etcdir}/slack" && sed -n '1p' < "${etcdir}/slack")
+channel=$(test -f "${etcdir}/slack" && sed -n '2p' < "${etcdir}/slack")
 
-function _channel() {
+## Command parsing ################################################################################
+cmd="${1}" ; shift
+
+## Argument and option parsing ####################################################################
+while (( "$#" )); do
+  case "${1}" in
+    --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
+    --author-icon*|-I*) authoricon=${2} ; shift ; shift ;;
+    --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
+    --author-link*|-l*) titlelink=${2} ; shift ; shift ;;
+    --author=*) author=${1/--author=/''} ; shift ;;
+    --author*|-a*) author=${2} ; shift ; shift ;;
+    --channel=*) channel=${1/--channel=/''} ; shift ;;
+    --channel*|-c*) channel=${2} ; shift ; shift ;;
+    --color=*) color=${1/--color=/''} ; shift ;;
+    --color*|-C*) color=${2} ; shift ; shift ;;
+    --compact|-c) compact='-c' ; shift ;;
+    --filter=*) filter=${1/--filter=/''} ; shift ;;
+    --filter*|-f*) filter=${2} ; shift ; shift ;;
+    --image=*) image=${1/--image-url=/''} ; shift ;;
+    --image*|-i*) image=${2} ; shift ; shift ;;
+    --monochrome|-m) monochrome='-M' ; shift ;;
+    --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
+    --pretext*|-p*) pretext=${2} ; shift ; shift ;;
+    --text=*) text=${1/--text=/''} ; shift ;;
+    --text*|-t*) text=${2} ; shift ; shift ;;
+    --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
+    --thumbnail*|-h*) thumbnail=${2} ; shift ; shift ;;
+    --title-link=*) titlelink=${1/--title-link=/''} ; shift ;;
+    --title-link*|-L*) titlelink=${2} ; shift ; shift ;;
+    --title=*) title=${1/--title=/''} ; shift ;;
+    --title*|-T*) title=${2} ; shift ; shift ;;
+    --token=*) token=${1/--token=/''} ; shift ;;
+    --token|-t*) token=${2} ; shift ; shift ;;
+    *)
+      case "${cmd}" in
+        send)
+          test -p /dev/stdin && stdin=$(cat <&0)
+          test -z "${stdin}" && test -n "${1}" && test -n "${text}" && channel=${1}
+          test -z "${stdin}" && test -n "${1}" && test -z "${text}" && text=${1}
+          test -n "${stdin}" && test -z "${text}" && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+        ;;
+      esac
+      shift
+    ;;
+  esac
+done
+
+## Argument and option prompting ##################################################################
+case "${cmd}" in
+  init)
+    _token=$(test -f "${etcdir}/slack" && sed -n '1p' < "${etcdir}/slack")
+    _channel=$(test -f "${etcdir}/slack" && sed -n '2p' < "${etcdir}/slack")
+
+    if test -z "${token}" || test "${token}" == "${_token}"; then
+      read -e -p 'Enter Slack API token: ' token
+    fi
+    if test -z "${channel}" || test "${channel}" == "${_channel}"; then
+      read -e -p 'Enter default channel (e.g. #general): ' channel
+    fi
+  ;;
+esac
+case "${cmd}" in
+  send)
+    test -z "${text}" && read -e -p 'Enter text (e.g. Hello World!): ' text
+  ;;
+esac
+
+## Command utility functions ######################################################################
+function chan() {
   case "${1}" in
     @*)
       local user=$(\
@@ -19,122 +90,82 @@ function _channel() {
   esac
 }
 
-case "${1}" in
-  init)
-    while (( "$#" )); do
-      case "${2}" in
-        --channel=*) channel=${2/--channel=/''} ; shift ;;
-        --silent) silent='0' ; shift ;;
-        --token=*) token=${2/--token=/''} ; shift ;;
-        -c*) channel=${3} ; shift ; shift ;;
-        -s) silent='0' ; shift ;;
-        -t*) token=${3} ; shift ; shift ;;
-        *) shift ;;
-      esac
-    done
+## Command functions ##############################################################################
+function help() {
+  local a=(${0//\// })
+  local bin=${a[${#a[@]}-1]}
 
-    test -z "${token}" && read -e -p 'Enter token: ' token
-    test -z "${channel}" && read -e -p 'Enter default channel (e.g. #general): ' channel
+  echo 'Usage:'
+  echo "  ${bin} init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]"
+  echo '    [--monochrome|-m] [--token|-t <token>]'
+  echo "  ${bin} send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
+  echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
+  echo '    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]'
+  echo '    [--title-link|-l <title-link>]'
+  echo
+  echo 'Configuration Commands:'
+  echo '  init    Initialize'
+  echo
+  echo 'Core Commands:'
+  echo '  send    Send message'
+}
 
-    test -z "${silent}" && echo -n 'Initializing: '
-    echo "${token}" > "${etcdir}/slack-cli" && \
-    echo "${channel}" >> "${etcdir}/slack-cli"
-    case "$?" in
-      0) test -z "${silent}" && echo 'done' ;;
-      *) test -z "${silent}" && echo 'fail' ; exit 1 ;;
-    esac
-  ;;
+function init() {
+  echo "${token}" > "${etcdir}/slack"
+  echo "${channel}" >> "${etcdir}/slack"
 
+  case "$?" in
+    0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *) echo '{"ok": false}' | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
+  esac
+}
+
+function send() {
+  test -n "${author}" && authorjson=", \"author_name\": \"${author}\""
+  test -n "${authoricon}" && authoriconjson=", \"author_icon\": \"${authoricon}\""
+  test -n "${authorlink}" && authorlinkjson=", \"author_link\": \"${authorlink}\""
+  test -n "${color}" && colorjson=", \"color\": \"${color}\""
+  test -n "${image}" && imagejson=", \"image_url\": \"${image}\""
+  test -n "${pretext}" && pretextjson=", \"pretext\": \"${pretext}\""
+  test -n "${thumbnail}" && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
+  test -n "${title}" && titlejson=", \"title\": \"${title}\""
+  test -n "${titlelink}" && titlelinkjson=", \"title_link\": \"${titlelink}\""
+  json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
+  test -z "${json}" && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
+  test -n "${json}" && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
+
+  msg=$(\
+    curl -s -X POST \
+      --data-urlencode "as_user=true" \
+      --data-urlencode "channel=$(chan ${channel} ${token})" \
+      --data-urlencode "attachments=${attachments}" \
+      --data-urlencode "token=${token}" \
+      https://slack.com/api/chat.postMessage)
+
+  case "$(echo ${msg} | jq -r '.ok')" in
+    true) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1 ;;
+  esac
+}
+
+function version() {
+  echo 'v0.8.1'
+}
+
+## Command routing ################################################################################
+case "${cmd}" in
+  --help|-h) help ; exit 0 ;;
+  --version|-v) version ; exit 0 ;;
+  init) "${cmd}" ; exit $? ;;
   send)
-    channel=$(sed -n '2p' < "${etcdir}/slack-cli")
-    token=$(sed -n '1p' < "${etcdir}/slack-cli")
-    test -p /dev/stdin && stdin=$(cat <&0)
-
-    while (( "$#" )); do
-      case "${2}" in
-        --author=*) author=${2/--author=/''} ; shift ;;
-        --author-icon=*) authoricon=${2/--author-icon=/''} ; shift ;;
-        --author-link=*) authorlink=${2/--author-link=/''} ; shift ;;
-        --channel=*) channel=${2/--channel=/''} ; shift ;;
-        --color=*) color=${2/--color=/''} ; shift ;;
-        --image=*) image=${2/--image-url=/''} ; shift ;;
-        --pretext=*) pretext=${2/--pretext=/''} ; shift ;;
-        --silent) silent='0' ; shift ;;
-        --text=*) text=${2/--text=/''} ; shift ;;
-        --thumbnail=*) thumbnail=${2/--thumbnail=/''} ; shift ;;
-        --title=*) title=${2/--title=/''} ; shift ;;
-        --title-link=*) titlelink=${2/--title-link=/''} ; shift ;;
-        -a*) author=${3} ; shift ; shift ;;
-        -c*) channel=${3} ; shift ; shift ;;
-        -C*) color=${3} ; shift ; shift ;;
-        -h*) thumbnail=${3} ; shift ; shift ;;
-        -i*) image=${3} ; shift ; shift ;;
-        -I*) authoricon=${3} ; shift ; shift ;;
-        -l*) titlelink=${3} ; shift ; shift ;;
-        -L*) authorlink=${3} ; shift ; shift ;;
-        -p*) pretext=${3} ; shift ; shift ;;
-        -s) silent='0' ; shift ;;
-        -t*) text=${3} ; shift ; shift ;;
-        -T*) title=${3} ; shift ; shift ;;
-        *)
-          test -z "${stdin}" && test -n "${2}" && test -n "${text}" && channel=${2}
-          test -z "${stdin}" && test -n "${2}" && test -z "${text}" && text=${2}
-          test -n "${stdin}" && test -z "${text}" && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
-          shift
-        ;;
-      esac
-    done
-
-    test -z "${text}" && read -e -p 'Enter text (e.g. Hello World!): ' text
-
-    test -n "${author}" && authorjson=", \"author_name\": \"${author}\""
-    test -n "${authoricon}" && authoriconjson=", \"author_icon\": \"${authoricon}\""
-    test -n "${authorlink}" && authorlinkjson=", \"author_link\": \"${authorlink}\""
-    test -n "${color}" && colorjson=", \"color\": \"${color}\""
-    test -n "${image}" && imagejson=", \"image_url\": \"${image}\""
-    test -n "${pretext}" && pretextjson=", \"pretext\": \"${pretext}\""
-    test -n "${thumbnail}" && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
-    test -n "${title}" && titlejson=", \"title\": \"${title}\""
-    test -n "${titlelink}" && titlelinkjson=", \"title_link\": \"${titlelink}\""
-    json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
-    test -z "${json}" && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
-    test -n "${json}" && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
-
-    test -z "${silent}" && echo -n 'Sending: '
-    msg=$(\
-      curl -s -X POST \
-        --data-urlencode "as_user=true" \
-        --data-urlencode "channel=$(_channel ${channel} ${token})" \
-        --data-urlencode "attachments=${attachments}" \
-        --data-urlencode "token=${token}" \
-        https://slack.com/api/chat.postMessage)
-    case "$(echo ${msg} | jq -r '.ok')" in
-      true) test -z "${silent}" && echo 'done' ;;
-      *) test -z "${silent}" && echo 'fail' ; exit 1 ;;
-    esac
+    if test -z "${token}" || test -z "${channel}"; then
+      echo '{"ok": false, "error": "Init command should be run"}' |
+        jq -r ${compact} ${monochrome} "${filter:=.}"
+      exit 1
+    else
+      "${cmd}" ; exit $?
+    fi
   ;;
-
-  --help|-h)
-    a=(${0//\// })
-    bin=${a[${#a[@]}-1]}
-
-    echo 'Usage:'
-    echo "  ${bin} init [--channel|-c <channel>] [--silent|-s] [--token|-t <token>]"
-    echo "  ${bin} send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
-    echo "    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]"
-    echo "    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]"
-    echo "    [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]"
-    echo
-    echo "Setup Commands:"
-    echo "  init     Initialize"
-    echo
-    echo "Core Commands:"
-    echo "  send     Send message"
-  ;;
-
-  --version|-v) echo 'v0.8.1' ;;
-
-  *) ${0} --help ; exit 1 ;;
+  *) help ; exit 1 ;;
 esac
-
-exit 0

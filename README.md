@@ -7,7 +7,12 @@
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 The premise is simple: provide pure bash, extremely pipe friendly, focused, yet feature rich,
-command line interface for sending and listening for Slack messages. With it, you can:
+command line interface for sending and listening for Slack messages. Deep integration with
+[jq](https://github.com/stedolan/jq) allows for the ability to perform complex
+declarative/higher-order operations on responses, helping you perform complex compositional
+operations with relative ease.
+
+With `slack-cli`, you can:
 
 * __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
   * Automate your development workflows (e.g. Using [github/hub](https://github.com/github/hub),
@@ -23,28 +28,37 @@ command line interface for sending and listening for Slack messages. With it, yo
 
 ## Installation
 ```bash
+$ # Install from tap:
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
+$ # Initialize:
+$ slack init
+Enter Slack API token: token
+Enter default channel (e.g. #general): #general
+{
+  "ok": true
+}
 ```
-> __PROTIP:__ You must have a [Slack API bearer token issued](https://api.slack.com/web) for your
-account.
+> __PROTIP:__ Ensure you have a [Slack API token](https://api.slack.com/web).
 
 ## Usage
 
 ```bash
 $ slack --help
 Usage:
-  slack init [--channel|-c <channel>] [--silent|-s] [--token|-t <token>]
+  slack init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]
+    [--monochrome|-m] [--token|-t <token>]
   slack send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
-    [--image|-i <image-url>] [--pretext|-p <pretext>] [--silent|-s]
-    [--thumbnail|-H <thumbnail-url>] [--title|-t <title>] [--title-link|-l <title-link>]
+    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
+    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]
+    [--title-link|-l <title-link>]
 
-Setup Commands:
-  init     Initialize
+Configuration Commands:
+  init    Initialize
 
 Core Commands:
-  send     Send message
+  send    Send message
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
@@ -53,47 +67,21 @@ more information about `send` option meanings.
 > __PROTIP:__ All commands prompt for required arguments which were not provided via options or
 arguments. This allows for both traditional usage and prompt-based usage.
 
-### Initialize:
-
-```bash
-$ slack init
-Enter token: token
-Enter default channel (e.g. #general): #general
-Initializing: done
-```
-
 ### Send message:
 
 ```bash
-# Sending to default channel:
+$ # Sending to default channel:
 $ slack send 'Hello World!'
-Sending: done
-
-# Sending to specified channel via argument:
+$ # Sending to specified channel via argument:
 $ slack send 'Hello World!' '#channel'
-Sending: done
-
-# Sending to specified channel via option:
+$ # Sending to specified channel via option:
 $ slack send 'Hello World!' --channel='#channel'
-Sending: done
-
-# Piping echo:
+$ # Piping echo:
 $ echo 'Hello World!' | slack send --channel='#channel'
-Sending: done
-
-# Piping ls:
+$ # Piping ls:
 $ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
-Sending: done
-
-# Piping cat:
+$ # Piping cat:
 $ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
-Sending: done
-
-# Sending to non-existent channel:
-$ slack send 'Hello World!' --channel='#nonexistentchannel'
-Sending: fail
-$ echo $?
-1
 ```
 
 ### Listen for messages a-la `fswatch`:
@@ -108,59 +96,6 @@ $ slack listen | while read -d "" message \
       'server is on fire') restart-server ;; \
     esac \
   done
-```
-
-## Useful Functions
-
-### Send notification of a pull-request merge into master:
-
-![example](http://share.rockymadden.com/123Q1W1b200H/Image%202015-12-26%20at%202.13.54%20PM.png)
-
-#### Function:
-```bash
-function slack-pull-request() {
-  local url=$(git browse -u)
-  local repo=$(git browse -u | sed -e 's|https://github.com/||g')
-  local desc=$(git issue | grep "${1}" | cut -d ']' -f2)
-
-  slack send "*Pull request merged into master:* ${desc}" \
-    --author="${repo}" \
-    --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
-    --author-link="${url}" \
-    --channel="${2}" \
-    --color=good
-}
-```
-
-#### Function Usage:
-```bash
-$ slack-pull-request 16 '#general'
-Sending: done
-```
-
-### Send notification of a collaborator state change:
-
-![example](http://share.rockymadden.com/3i3B3y2t2v0o/Image%202015-12-26%20at%202.15.02%20PM.png)
-
-#### Function:
-```bash
-function slack-collaborator() {
-  local url=$(git browse -u)
-  local repo=$(git browse -u | sed -e 's|https://github.com/||g')
-
-  slack send "*Collaborator state change:* ${1}" \
-    --author="${repo}" \
-    --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
-    --author-link="${url}" \
-    --channel="${2}" \
-    --color=good
-}
-```
-
-#### Function Usage:
-```bash
-$ slack-collaborator 'added <https://github.com/rockymadden|rockymadden> as admin' '#general'
-Sending: done
 ```
 
 ## License
