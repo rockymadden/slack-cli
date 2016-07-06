@@ -16,16 +16,11 @@ operations with relative ease.
 With `slack-cli`, you can:
 
 * __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
-  * Automate your development workflows (e.g. Using [github/hub](https://github.com/github/hub),
-    send a notification to your team that you are accepting a pull request and close it -- all in
-    one line)
-  * Automate your devops workflows (e.g. Send a notification that you are starting server
-    maintenance, perform said maintenance, and send a notification of completion -- all in one line)
+  * Automate your development workflows
+  * Automate your devops workflows
 * __Listen for messages, a-la `fswatch`, allowing you to:__
-  * Create your own personal bot (e.g. Listen for messages conforming to a specific pattern and
-    reply back).
-  * Create your own event stream processor (e.g. Listen for messages coming from DataDog stating a
-    server is down and automatically restart said server)
+  * Create your own personal bot
+  * Create your own event stream processor
 
 ## Installation
 ```bash
