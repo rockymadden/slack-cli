@@ -145,7 +145,7 @@ function send() {
   test -z "${json}" && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
   test -n "${json}" && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
-  msg=$(\
+  local msg=$(\
     curl -s -X POST \
       --data-urlencode "as_user=true" \
       --data-urlencode "channel=$(chan ${channel} ${token})" \
