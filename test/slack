@@ -4,67 +4,53 @@ setup() {
   sleep 2
 }
 
-@test "init passed valid channel and token should succeed" {
+@test "init should succeed" {
   if [ -z "${SLACK_CLI_CHANNEL}" ] || [ -z "${SLACK_CLI_TOKEN}" ]; then
     skip "Environments variables not defined"
   fi
 
-  build/bin/slack init --channel="${SLACK_CLI_CHANNEL}" --token="${SLACK_CLI_TOKEN}"
+  echo -e "${SLACK_CLI_TOKEN}\n${SLACK_CLI_CHANNEL}" | build/bin/slack init
 }
 
 @test "send using default public channel should succeed" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
   build/bin/slack send 'send using default public channel should succeed'
 }
 
-@test "send using specified public channel should succeed" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+@test "send using public channel via argument should succeed" {
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
-  build/bin/slack send 'send using specified public channel should succeed' '#slack-cli'
+  build/bin/slack send 'send using public channel via argument should succeed' '#slack-cli'
 }
 
-@test "send using specified private channel should succeed" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+@test "send using private channel via argument should succeed" {
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
-  build/bin/slack send 'send using specified private channel should succeed' slack-cli-private
+  build/bin/slack send 'send using private channel via argument should succeed' slack-cli-private
 }
 
-@test "send using specified direct channel should succeed" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+@test "send using direct channel via argument should succeed" {
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
-  build/bin/slack send 'send using specified direct channel should succeed' @rockymadden
+  build/bin/slack send 'send using direct channel via argument should succeed' @rockymadden
 }
 
 @test "send using non-existent channel should fail" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
   run build/bin/slack send 'send using non-existent channel should fail' --channel='#nonexistent'
   [ $status -eq 1 ]
 }
 
 @test "send using rich formatting should succeed" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
   build/bin/slack send 'text' --pretext='send using rich formatting should succeed'
 }
 
 @test "send via pipe should succeed" {
-  if ! [ -f 'build/etc/slack-cli' ]; then
-    skip "Not initialized"
-  fi
+  if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
   ls -al | build/bin/slack send --pretext='send via pipe should succeed'
 }
