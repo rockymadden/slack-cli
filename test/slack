@@ -12,10 +12,10 @@ setup() {
   echo -e "${SLACK_CLI_TOKEN}\n${SLACK_CLI_CHANNEL}" | build/bin/slack init
 }
 
-@test "send using default public channel should succeed" {
+@test "send using default channel should succeed" {
   if ! [ -f 'build/etc/slack' ]; then skip "Not initialized"; fi
 
-  build/bin/slack send 'send using default public channel should succeed'
+  build/bin/slack send 'send using default channel should succeed'
 }
 
 @test "send using public channel via argument should succeed" {
