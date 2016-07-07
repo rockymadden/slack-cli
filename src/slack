@@ -4,12 +4,16 @@ bindir=
 etcdir=
 token=$(test -f "${etcdir}/slack" && sed -n '1p' < "${etcdir}/slack")
 channel=$(test -f "${etcdir}/slack" && sed -n '2p' < "${etcdir}/slack")
-test -p /dev/stdin && stdin=$(cat <&0)
 
-## Command parsing ################################################################################
+# COMMAND PARSING #################################################################################
 cmd="${1}" ; shift
 
-## Argument and option parsing ####################################################################
+# PIPE FRIENDLINESS ###############################################################################
+case "${cmd}" in
+  send) test -p /dev/stdin && stdin=$(cat <&0) ;;
+esac
+
+# ARGUMENT AND OPTION PARSING #####################################################################
 while (( "$#" )); do
   case "${1}" in
     --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
@@ -52,7 +56,7 @@ while (( "$#" )); do
   esac
 done
 
-## Argument and option prompting ##################################################################
+# ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}" in
   init)
     _token=$(test -f "${etcdir}/slack" && sed -n '1p' < "${etcdir}/slack")
@@ -72,7 +76,7 @@ case "${cmd}" in
   ;;
 esac
 
-## Command utility functions ######################################################################
+# COMMAND UTILITY FUNCTIONS #######################################################################
 function chan() {
   case "${1}" in
     @*)
@@ -89,7 +93,7 @@ function chan() {
   esac
 }
 
-## Command functions ##############################################################################
+# COMMAND FUNCTIONS ###############################################################################
 function help() {
   local a=(${0//\// })
   local bin=${a[${#a[@]}-1]}
@@ -159,7 +163,7 @@ function version() {
   echo 'v0.8.1'
 }
 
-## Command routing ################################################################################
+# COMMAND ROUTING #################################################################################
 case "${cmd}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
