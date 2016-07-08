@@ -114,9 +114,6 @@ $ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' 
 
 $ # Sending message and returning just the timestamp via filter option:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts'
-
-$ # Sending message and using filter option and xargs to immediately update message:
-$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
@@ -133,6 +130,9 @@ $ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
 
 $ # Updating message via options:
 $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
+
+$ # Sending message and immediately update:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
@@ -149,6 +149,9 @@ $ slack chat delete 1405894322.002768 '#channel'
 
 $ # Updating message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
+
+$ # Sending message and immediately delete:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat delete
 ```
 
 ## Coverage
