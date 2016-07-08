@@ -9,9 +9,9 @@
 
 A pure bash, pipe friendly, feature rich, command line interface for Slack. Deep integration with
 [jq](https://github.com/stedolan/jq) allows for the ability to perform complex
-declarative/higher-order operations on responses, helping you perform complex compositional
-operations with relative ease. As a simple example, take the task of sending a message, updating
-it, and finally deleting it:
+declarative/higher-order operations on responses, helping you perform compositional operations with
+relative ease. As a simple example, take the task of sending a message to a user, updating the
+message, and finally deleting the message:
 
 ```bash
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
