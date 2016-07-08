@@ -12,47 +12,47 @@ setup() {
   echo -e "${SLACK_CLI_TOKEN}\n${SLACK_CLI_CHANNEL}" | build/bin/slack init
 }
 
-@test 'send using default channel should succeed' {
+@test 'chat send using default channel should succeed' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  build/bin/slack send 'send using default channel should succeed'
+  build/bin/slack chat send 'chat send using default channel should succeed'
 }
 
-@test 'send using public channel via argument should succeed' {
+@test 'chat send using public channel via argument should succeed' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  build/bin/slack send 'send using public channel via argument should succeed' '#slack-cli'
+  build/bin/slack chat send 'chat send using public channel via argument should succeed' '#slack-cli'
 }
 
-@test 'send using private channel via argument should succeed' {
+@test 'chat send using private channel via argument should succeed' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  build/bin/slack send 'send using private channel via argument should succeed' slack-cli-private
+  build/bin/slack chat send 'chat send using private channel via argument should succeed' slack-cli-private
 }
 
-@test 'send using direct channel via argument should succeed' {
+@test 'chat send using direct channel via argument should succeed' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  build/bin/slack send 'send using direct channel via argument should succeed' @rockymadden
+  build/bin/slack chat send 'chat send using direct channel via argument should succeed' @rockymadden
 }
 
-@test 'send using non-existent channel should fail' {
+@test 'chat send using non-existent channel should fail' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  run build/bin/slack send 'send using non-existent channel should fail' --channel='#nonexistent'
+  run build/bin/slack chat send 'chat send using non-existent channel should fail' --channel='#nonexistent'
   [ $status -eq 1 ]
 }
 
-@test 'send using rich formatting should succeed' {
+@test 'chat send using rich formatting should succeed' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  build/bin/slack send 'text' --pretext='send using rich formatting should succeed'
+  build/bin/slack chat send 'text' --pretext='chat send using rich formatting should succeed'
 }
 
 @test 'send via pipe should succeed' {
   if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
 
-  ls -al | build/bin/slack send --pretext='send via pipe should succeed'
+  ls -al | build/bin/slack chat send --pretext='send via pipe should succeed'
 }
 
 @test '-h should output usage' {

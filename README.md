@@ -1,4 +1,4 @@
-# slack-cli <sub><sup>| Powerful Slack messaging CLI via pure bash</sup></sub>
+# slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
 [![version](http://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
@@ -7,21 +7,10 @@
 [![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-The premise is simple: A pure bash, pipe friendly, focused, yet feature rich, command line
-interface for sending and listening for Slack messages. Deep integration with
+A pure bash, pipe friendly, feature rich, command line interface for Slack. Deep integration with
 [jq](https://github.com/stedolan/jq) allows for the ability to perform complex
 declarative/higher-order operations on responses, helping you perform complex compositional
 operations with relative ease.
-
-With `slack-cli`, you can:
-
-* __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
-  * Automate your development workflows
-  * Automate your devops workflows
-  * Create your own CLI-based notification bots
-* __Listen for messages, a-la `fswatch`, allowing you to:__
-  * Create your own CLI-based conversational bots
-  * Create your own CLI-based event stream processors
 
 ## Installation
 ```bash

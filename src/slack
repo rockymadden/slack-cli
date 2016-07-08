@@ -8,9 +8,14 @@ channel=$([ -f "${etcdir}/slack" ] && sed -n '2p' < "${etcdir}/slack")
 # COMMAND PARSING #################################################################################
 cmd="${1}" ; shift
 
+# SUBCOMMAND PARSING ##############################################################################
+case "${cmd}${1}" in
+  chatsend) sub=${1} ; shift ;;
+esac
+
 # PIPE FRIENDLINESS ###############################################################################
-case "${cmd}" in
-  send) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
+case "${cmd}${sub}" in
+  chatsend) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
 esac
 
 # ARGUMENT AND OPTION PARSING #####################################################################
@@ -45,10 +50,10 @@ while (( "$#" )); do
     --token=*) token=${1/--token=/''} ; shift ;;
     --token|-t*) token=${2} ; shift ; shift ;;
     *)
-      case "${cmd}" in
-        send)
-          [ -z "${stdin}" ] && [ -n "${1}" ] && [ -n "${text}" ] && channel=${1}
-          [ -z "${stdin}" ] && [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+      case "${cmd}${sub}" in
+        chatsend)
+          [ -n "${1}" ] && [ -n "${text}" ] && channel=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
       esac
       shift
@@ -57,7 +62,7 @@ while (( "$#" )); do
 done
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
-case "${cmd}" in
+case "${cmd}${sub}" in
   init)
     _token=$([ -f "${etcdir}/slack" ] && sed -n '1p' < "${etcdir}/slack")
     _channel=$([ -f "${etcdir}/slack" ] && sed -n '2p' < "${etcdir}/slack")
@@ -70,10 +75,8 @@ case "${cmd}" in
     fi
   ;;
 esac
-case "${cmd}" in
-  send)
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
-  ;;
+case "${cmd}${sub}" in
+  chatsend) [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text ;;
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
@@ -99,19 +102,19 @@ function help() {
   local bin=${a[${#a[@]}-1]}
 
   echo 'Usage:'
-  echo "  ${bin} init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]"
-  echo '    [--monochrome|-m] [--token|-t <token>]'
-  echo "  ${bin} send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
+  echo "  ${bin} chat send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
   echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
   echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]'
   echo '    [--title-link|-l <title-link>]'
+  echo "  ${bin} init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]"
+  echo '    [--monochrome|-m] [--token|-t <token>]'
   echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
   echo
-  echo 'Core Commands:'
-  echo '  send    Send message'
+  echo 'Chat Commands:'
+  echo '  chat send    Send chat message'
 }
 
 function init() {
@@ -127,7 +130,7 @@ function init() {
   esac
 }
 
-function send() {
+function chatsend() {
   # Because of limitations that subshells impose on reading from pipes, this MUST be located here
   # and not in the argument and option parsing block.
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
@@ -163,17 +166,17 @@ function version() {
 }
 
 # COMMAND ROUTING #################################################################################
-case "${cmd}" in
+case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) "${cmd}" ; exit $? ;;
-  send)
+  chatsend)
     if [ -z "${token}" ] || [ -z "${channel}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
-    else
-      "${cmd}" ; exit $?
     fi
+
+    ${cmd}${sub} ; exit $?
   ;;
   *) help ; exit 1 ;;
 esac
