@@ -28,20 +28,23 @@ $ slack init
 ```bash
 $ slack --help
 Usage:
-  slack chat delete [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]
-    [--monochrome|-m] [--timestamp|-ts <timestamp>]
-  slack chat send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+  slack chat delete [timestamp] [channel]
+    [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
+    [--timestamp|-ts <timestamp>]
+  slack chat send [text] [channel]
+    [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
-    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]
-    [--title-link|-l <title-link>]
-  slack chat update <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]
+    [--title|-t <title>] [--title-link|-l <title-link>]
+  slack chat update [text] [timestamp] [channel]
+    [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
-    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>]
+    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]
     [--timestamp|-ts <timestamp>] [--title|-t <title>] [--title-link|-l <title-link>]
-  slack init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]
-    [--monochrome|-m] [--token|-t <token>]
+  slack init
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-t <token>]
 
 Configuration Commands:
   init    Initialize
@@ -68,8 +71,14 @@ allows for both traditional usage and prompt-based usage.
 ### `chat send`:
 
 ```bash
-$ # Sending message:
-$ slack chat send 'Hello world!' --channel '#channel'
+$ # Sending message via prompts:
+$ slack chat send
+
+$ # Sending message via arguments:
+$ slack chat send 'Hello world!' '#channel'
+
+$ # Sending message via options:
+$ slack chat send --text 'Hello world!' --channel '#channel'
 
 $ # Sending message via piped echo:
 $ echo 'Hello world!' | slack chat send --channel '#channel'
@@ -87,8 +96,14 @@ more information about option meanings.
 ### `chat update`
 
 ```bash
-$ # Updating message:
-$ slack chat update 'Hello world, again!' --channel '#channel' --timestamp 1405894322.002768
+$ # Updating message via prompts:
+$ slack chat update
+
+$ # Updating message via arguments:
+$ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
+
+$ # Updating message via options:
+$ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
@@ -97,8 +112,14 @@ more information about option meanings.
 ### `chat delete`
 
 ```bash
-$ # Updating message:
-$ slack chat delete --channel '#channel' --timestamp 1405894322.002768
+$ # Updating message via prompts:
+$ slack chat delete
+
+$ # Updating message via arguments:
+$ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
+
+$ # Updating message via options:
+$ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 ```
 
 ## License

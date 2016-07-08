@@ -52,7 +52,19 @@ while (( "$#" )); do
     --token|-t*) token=${2} ; shift ; shift ;;
     *)
       case "${cmd}${sub}" in
-        chatsend|chatupdate) [ -n "${1}" ] && [ -z "${text}" ] && text=${1} ;;
+        chatdelete)
+          [ -n "${1}" ] && [ -n "${timestamp}" ] && channel=${1}
+          [ -n "${1}" ] && [ -z "${timestamp}" ] && timestamp=${1}
+        ;;
+        chatsend)
+          [ -n "${1}" ] && [ -n "${text}" ] && channel=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+        ;;
+        chatupdate)
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -n "${timestamp}" ] && channel=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && timestamp=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+        ;;
       esac
       shift
     ;;
@@ -180,19 +192,23 @@ function help() {
   local bin=${a[${#a[@]}-1]}
 
   echo 'Usage:'
-  echo "  ${bin} chat delete [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]"
-  echo '    [--monochrome|-m] [--timestamp|-ts <timestamp>]'
-  echo "  ${bin} chat send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
+  echo "  ${bin} chat delete [timestamp] [channel]"
+  echo '    [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--timestamp|-ts <timestamp>]'
+  echo "  ${bin} chat send [text] [channel]"
+  echo '    [--author|-a <author>] [--author-icon|-I <author-icon-url>]'
   echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
   echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
-  echo '    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]'
-  echo '    [--title-link|-l <title-link>]'
-  echo "  ${bin} chat update <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
+  echo '    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]'
+  echo '    [--title|-t <title>] [--title-link|-l <title-link>]'
+  echo "  ${bin} chat update [text] [timestamp] [channel]"
+  echo '    [--author|-a <author>] [--author-icon|-I <author-icon-url>]'
   echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
   echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
-  echo '    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>]'
+  echo '    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]'
   echo '    [--timestamp|-ts <timestamp>] [--title|-t <title>] [--title-link|-l <title-link>]'
-  echo "  ${bin} init [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-t <token>]"
+  echo "  ${bin} init"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-t <token>]'
   echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
