@@ -54,18 +54,21 @@ Usage:
   slack chat delete [<timestamp> [channel]]
     [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
     [--timestamp|-ts <timestamp>]
+
   slack chat send [<text> [channel]]
     [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
     [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
     [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
     [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
     [--title|-ti <title>] [--title-link|-tl <title-link>]
+
   slack chat update [<text> [<timestamp> [channel]]]
     [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
     [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
     [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
     [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
     [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]
+
   slack init
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 

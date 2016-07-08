@@ -195,18 +195,21 @@ function help() {
   echo "  ${bin} chat delete [<timestamp> [channel]]"
   echo '    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo '    [--timestamp|-ts <timestamp>]'
+  echo
   echo "  ${bin} chat send [<text> [channel]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
   echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
   echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
   echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
   echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
