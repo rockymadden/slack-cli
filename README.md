@@ -28,19 +28,25 @@ $ slack init
 ```bash
 $ slack --help
 Usage:
-  slack init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]
-    [--monochrome|-m] [--token|-t <token>]
-  slack send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+  slack chat send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
     [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]
     [--title-link|-l <title-link>]
+  slack chat update <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]
+    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
+    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
+    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>]
+    [--timestamp|-ts <timestamp>] [--title|-t <title>] [--title-link|-l <title-link>]
+  slack init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]
+    [--monochrome|-m] [--token|-t <token>]
 
 Configuration Commands:
   init    Initialize
 
-Core Commands:
-  send    Send message
+Chat Commands:
+  chat send      Send chat message
+  chat update    Update chat message
 ```
 
 > __PROTIPS:__
@@ -56,44 +62,27 @@ allows for both traditional usage and prompt-based usage.
 
 ## Examples and Recipes
 
-### `send`:
+### `chat send`:
 
 ```bash
-$ # Sending to default channel:
+$ # Sending message to default channel:
 $ slack send 'Hello World!'
 
-$ # Sending to specified channel via argument:
-$ slack send 'Hello World!' '#channel'
+$ # Sending message to channel via option:
+$ slack send 'Hello World!' --channel '#channel'
 
-$ # Sending to specified channel via option:
-$ slack send 'Hello World!' --channel='#channel'
+$ # Sending message via piped echo:
+$ echo 'Hello World!' | slack send --channel '#channel'
 
-$ # Piping echo:
-$ echo 'Hello World!' | slack send --channel='#channel'
+$ # Sending message via piped ls:
+$ ls -al | slack send --channel '#channel' --pretext 'Directory:' --color good
 
-$ # Piping ls:
-$ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
-
-$ # Piping cat:
-$ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
+$ # Sending message via piped cat:
+$ cat today.log | slack send --channel '#channel' --pretext 'Prod issues:' --color danger
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
-
-### `listen`:
-
-> __NOTE:__ Currently in development.
-
-```bash
-$ slack listen | while read -d "" message \
-  do \
-    case "${message}" in \
-      'hey') slack send 'hey to you' ;; \
-      'server is on fire') restart-server ;; \
-    esac \
-  done
-```
 
 ## License
 ```
