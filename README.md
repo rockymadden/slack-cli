@@ -29,22 +29,22 @@ $ slack init
 $ slack --help
 Usage:
   slack chat delete [<timestamp> [channel]]
-    [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
+    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
     [--timestamp|-ts <timestamp>]
   slack chat send [<text> [channel]]
-    [--author|-a <author>] [--author-icon|-I <author-icon-url>]
-    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
-    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
-    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]
-    [--title|-t <title>] [--title-link|-l <title-link>]
+    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
+    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
+    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
+    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
+    [--title|-ti <title>] [--title-link|-tl <title-link>]
   slack chat update [<text> [<timestamp> [channel]]]
-    [--author|-a <author>] [--author-icon|-I <author-icon-url>]
-    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
-    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
-    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]
-    [--timestamp|-ts <timestamp>] [--title|-t <title>] [--title-link|-l <title-link>]
+    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
+    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
+    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
+    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
+    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]
   slack init
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-t <token>]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 
 Configuration Commands:
   init    Initialize

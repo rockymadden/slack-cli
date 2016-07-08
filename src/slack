@@ -25,21 +25,21 @@ while (( "$#" )); do
     --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
     --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
-    --author*|-a*) author=${2} ; shift ; shift ;;
+    --author*|-at*) author=${2} ; shift ; shift ;;
     --channel=*) channel=${1/--channel=/''} ; shift ;;
-    --channel*|-c*) channel=${2} ; shift ; shift ;;
+    --channel*|-ch*) channel=${2} ; shift ; shift ;;
     --color=*) color=${1/--color=/''} ; shift ;;
     --color*|-cl*) color=${2} ; shift ; shift ;;
     --compact|-cp) compact='-c' ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
-    --image*|-i*) image=${2} ; shift ; shift ;;
+    --image*|-im*) image=${2} ; shift ; shift ;;
     --monochrome|-m) monochrome='-M' ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
-    --pretext*|-p*) pretext=${2} ; shift ; shift ;;
+    --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
-    --text*|-t*) text=${2} ; shift ; shift ;;
+    --text*|-tx*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
     --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
     --timestamp=*) timestamp=${1/--timestamp=/''} ; shift ;;
@@ -47,9 +47,9 @@ while (( "$#" )); do
     --title-link=*) titlelink=${1/--title-link=/''} ; shift ;;
     --title-link*|-tl*) titlelink=${2} ; shift ; shift ;;
     --title=*) title=${1/--title=/''} ; shift ;;
-    --title*|-t*) title=${2} ; shift ; shift ;;
+    --title*|-ti*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
-    --token|-to*) token=${2} ; shift ; shift ;;
+    --token|-tk*) token=${2} ; shift ; shift ;;
     *)
       case "${cmd}${sub}" in
         chatdelete)
@@ -193,22 +193,22 @@ function help() {
 
   echo 'Usage:'
   echo "  ${bin} chat delete [<timestamp> [channel]]"
-  echo '    [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo '    [--timestamp|-ts <timestamp>]'
   echo "  ${bin} chat send [<text> [channel]]"
-  echo '    [--author|-a <author>] [--author-icon|-I <author-icon-url>]'
-  echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
-  echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
-  echo '    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]'
-  echo '    [--title|-t <title>] [--title-link|-l <title-link>]'
+  echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
+  echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
+  echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
+  echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
+  echo '    [--title|-ti <title>] [--title-link|-tl <title-link>]'
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
-  echo '    [--author|-a <author>] [--author-icon|-I <author-icon-url>]'
-  echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
-  echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
-  echo '    [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]'
-  echo '    [--timestamp|-ts <timestamp>] [--title|-t <title>] [--title-link|-l <title-link>]'
+  echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
+  echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
+  echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
+  echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
+  echo '    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
   echo "  ${bin} init"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-t <token>]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
