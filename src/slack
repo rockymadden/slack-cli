@@ -63,6 +63,10 @@ done
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}${sub}" in
+  chatsend)
+    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
+    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+  ;;
   init)
     _token=$([ -f "${etcdir}/slack" ] && sed -n '1p' < "${etcdir}/slack")
     _channel=$([ -f "${etcdir}/slack" ] && sed -n '2p' < "${etcdir}/slack")
@@ -74,9 +78,6 @@ case "${cmd}${sub}" in
       read -e -p 'Enter default channel (e.g. #general): ' channel
     fi
   ;;
-esac
-case "${cmd}${sub}" in
-  chatsend) [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text ;;
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
