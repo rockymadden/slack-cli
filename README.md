@@ -1,4 +1,4 @@
-# slack-cli <sub><sup>| Powerful Slack messaging CLI via pure bash</sup></sub>
+# slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
 [![version](http://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
@@ -7,21 +7,17 @@
 [![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-The premise is simple: A pure bash, pipe friendly, focused, yet feature rich, command line
-interface for sending and listening for Slack messages. Deep integration with
+A pure bash, pipe friendly, feature rich, command line interface for Slack. Deep integration with
 [jq](https://github.com/stedolan/jq) allows for the ability to perform complex
-declarative/higher-order operations on responses, helping you perform complex compositional
-operations with relative ease.
+declarative/higher-order operations on responses, helping you perform compositional operations with
+relative ease. As a simple example, take the task of sending a message to a user, updating the
+message, and finally deleting the message:
 
-With `slack-cli`, you can:
-
-* __Send [richly formatted messages](https://api.slack.com/docs/attachments), allowing you to:__
-  * Automate your development workflows
-  * Automate your devops workflows
-  * Create your own CLI-based notification bots
-* __Listen for messages, a-la `fswatch`, allowing you to:__
-  * Create your own CLI-based conversational bots
-  * Create your own CLI-based event stream processors
+```bash
+$ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat delete
+```
 
 ## Installation
 ```bash
@@ -39,19 +35,31 @@ $ slack init
 ```bash
 $ slack --help
 Usage:
-  slack init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]
-    [--monochrome|-m] [--token|-t <token>]
-  slack send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]
-    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
-    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
-    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]
-    [--title-link|-l <title-link>]
+  slack chat delete [<timestamp> [channel]]
+    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
+    [--timestamp|-ts <timestamp>]
+  slack chat send [<text> [channel]]
+    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
+    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
+    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
+    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
+    [--title|-ti <title>] [--title-link|-tl <title-link>]
+  slack chat update [<text> [<timestamp> [channel]]]
+    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
+    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
+    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
+    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
+    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]
+  slack init
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 
 Configuration Commands:
   init    Initialize
 
-Core Commands:
-  send    Send message
+Chat Commands:
+  chat delete    Delete chat message
+  chat send      Send chat message
+  chat update    Update chat message
 ```
 
 > __PROTIPS:__
@@ -67,44 +75,76 @@ allows for both traditional usage and prompt-based usage.
 
 ## Examples and Recipes
 
-### `send`:
+### `chat send`:
 
 ```bash
-$ # Sending to default channel:
-$ slack send 'Hello World!'
+$ # Sending message via prompts:
+$ slack chat send
 
-$ # Sending to specified channel via argument:
-$ slack send 'Hello World!' '#channel'
+$ # Sending message via arguments:
+$ slack chat send 'Hello world!' '#channel'
 
-$ # Sending to specified channel via option:
-$ slack send 'Hello World!' --channel='#channel'
+$ # Sending message via options:
+$ slack chat send --text 'Hello world!' --channel '#channel'
 
-$ # Piping echo:
-$ echo 'Hello World!' | slack send --channel='#channel'
+$ # Sending message via piped echo:
+$ echo 'Hello world!' | slack chat send --channel '#channel'
 
-$ # Piping ls:
-$ ls -al | slack send --channel='#channel' --pretext='Directory:' --color=good
+$ # Sending message via piped ls:
+$ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color good
 
-$ # Piping cat:
-$ cat today.log | slack send --channel='#channel' --pretext='Prod issues:' --color=danger
+$ # Sending message via piped cat:
+$ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' --color danger
+
+$ # Sending message and returning just the timestamp via filter option:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts'
+
+$ # Sending message and using filter option and xargs to immediately update message:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `listen`:
-
-> __NOTE:__ Currently in development.
+### `chat update`
 
 ```bash
-$ slack listen | while read -d "" message \
-  do \
-    case "${message}" in \
-      'hey') slack send 'hey to you' ;; \
-      'server is on fire') restart-server ;; \
-    esac \
-  done
+$ # Updating message via prompts:
+$ slack chat update
+
+$ # Updating message via arguments:
+$ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
+
+$ # Updating message via options:
+$ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
 ```
+
+> __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+more information about option meanings.
+
+### `chat delete`
+
+```bash
+$ # Updating message via prompts:
+$ slack chat delete
+
+$ # Updating message via arguments:
+$ slack chat delete 1405894322.002768 '#channel'
+
+$ # Updating message via options:
+$ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
+```
+
+## TODO
+
+* [ ] channels
+* [ ] dnd
+* [ ] files
+* [ ] groups
+* [ ] pins
+* [ ] search
+* [ ] usergroups
+* [ ] users
 
 ## License
 ```

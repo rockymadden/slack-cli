@@ -3,52 +3,67 @@
 bindir=
 etcdir=
 token=$([ -f "${etcdir}/slack" ] && sed -n '1p' < "${etcdir}/slack")
-channel=$([ -f "${etcdir}/slack" ] && sed -n '2p' < "${etcdir}/slack")
 
 # COMMAND PARSING #################################################################################
 cmd="${1}" ; shift
 
+# SUBCOMMAND PARSING ##############################################################################
+case "${cmd}${1}" in
+  chatdelete|chatsend|chatupdate) sub=${1} ; shift ;;
+esac
+
 # PIPE FRIENDLINESS ###############################################################################
-case "${cmd}" in
-  send) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
+case "${cmd}${sub}" in
+  chatsend|chatupdate) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
 esac
 
 # ARGUMENT AND OPTION PARSING #####################################################################
 while (( "$#" )); do
   case "${1}" in
     --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
-    --author-icon*|-I*) authoricon=${2} ; shift ; shift ;;
+    --author-icon*|-ai*) authoricon=${2} ; shift ; shift ;;
     --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
-    --author-link*|-l*) titlelink=${2} ; shift ; shift ;;
+    --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
-    --author*|-a*) author=${2} ; shift ; shift ;;
+    --author*|-at*) author=${2} ; shift ; shift ;;
     --channel=*) channel=${1/--channel=/''} ; shift ;;
-    --channel*|-c*) channel=${2} ; shift ; shift ;;
+    --channel*|-ch*) channel=${2} ; shift ; shift ;;
     --color=*) color=${1/--color=/''} ; shift ;;
-    --color*|-C*) color=${2} ; shift ; shift ;;
-    --compact|-c) compact='-c' ; shift ;;
+    --color*|-cl*) color=${2} ; shift ; shift ;;
+    --compact|-cp) compact='-c' ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
-    --image*|-i*) image=${2} ; shift ; shift ;;
+    --image*|-im*) image=${2} ; shift ; shift ;;
     --monochrome|-m) monochrome='-M' ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
-    --pretext*|-p*) pretext=${2} ; shift ; shift ;;
+    --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
-    --text*|-t*) text=${2} ; shift ; shift ;;
+    --text*|-tx*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
-    --thumbnail*|-h*) thumbnail=${2} ; shift ; shift ;;
+    --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
+    --timestamp=*) timestamp=${1/--timestamp=/''} ; shift ;;
+    --timestamp*|-ts*) timestamp=${2} ; shift ; shift ;;
     --title-link=*) titlelink=${1/--title-link=/''} ; shift ;;
-    --title-link*|-L*) titlelink=${2} ; shift ; shift ;;
+    --title-link*|-tl*) titlelink=${2} ; shift ; shift ;;
     --title=*) title=${1/--title=/''} ; shift ;;
-    --title*|-T*) title=${2} ; shift ; shift ;;
+    --title*|-ti*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
-    --token|-t*) token=${2} ; shift ; shift ;;
+    --token|-tk*) token=${2} ; shift ; shift ;;
     *)
-      case "${cmd}" in
-        send)
-          [ -z "${stdin}" ] && [ -n "${1}" ] && [ -n "${text}" ] && channel=${1}
-          [ -z "${stdin}" ] && [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+      case "${cmd}${sub}" in
+        chatdelete)
+          [ -n "${1}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
+          [ -n "${1}" ] && [ -z "${timestamp}" ] && timestamp=${1}
+        ;;
+        chatsend)
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${channel}" ] && channel=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+        ;;
+        chatupdate)
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
       esac
       shift
@@ -57,22 +72,26 @@ while (( "$#" )); do
 done
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
-case "${cmd}" in
+case "${cmd}${sub}" in
+  chatdelete)
+    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+    [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+  ;;
+  chatsend)
+    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
+    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+  ;;
+  chatupdate)
+    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
+    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+    [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+  ;;
   init)
     _token=$([ -f "${etcdir}/slack" ] && sed -n '1p' < "${etcdir}/slack")
-    _channel=$([ -f "${etcdir}/slack" ] && sed -n '2p' < "${etcdir}/slack")
 
     if [ -z "${token}" ] || [ "${token}" == "${_token}" ]; then
       read -e -p 'Enter Slack API token: ' token
     fi
-    if [ -z "${channel}" ] || [ "${channel}" == "${_channel}" ]; then
-      read -e -p 'Enter default channel (e.g. #general): ' channel
-    fi
-  ;;
-esac
-case "${cmd}" in
-  send)
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
   ;;
 esac
 
@@ -94,42 +113,22 @@ function chan() {
 }
 
 # COMMAND FUNCTIONS ###############################################################################
-function help() {
-  local a=(${0//\// })
-  local bin=${a[${#a[@]}-1]}
+function chatdelete() {
+  local msg=$(\
+    curl -s -X POST \
+      --data-urlencode "as_user=true" \
+      --data-urlencode "channel=$(chan ${channel} ${token})" \
+      --data-urlencode "ts=${timestamp}" \
+      --data-urlencode "token=${token}" \
+      https://slack.com/api/chat.delete)
 
-  echo 'Usage:'
-  echo "  ${bin} init [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]"
-  echo '    [--monochrome|-m] [--token|-t <token>]'
-  echo "  ${bin} send <text> [channel] [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
-  echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
-  echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
-  echo '    [--pretext|-p <pretext>] [--thumbnail|-H <thumbnail-url>] [--title|-t <title>]'
-  echo '    [--title-link|-l <title-link>]'
-  echo
-  echo 'Configuration Commands:'
-  echo '  init    Initialize'
-  echo
-  echo 'Core Commands:'
-  echo '  send    Send message'
-}
-
-function init() {
-  echo "${token}" > "${etcdir}/slack"
-  echo "${channel}" >> "${etcdir}/slack"
-
-  case "$?" in
-    0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
-    *)
-      echo '{"ok": false, "error": "not_writable"}' |
-        jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1
-    ;;
+  case "$(echo ${msg} | jq -r '.ok')" in
+    true) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1 ;;
   esac
 }
 
-function send() {
-  # Because of limitations that subshells impose on reading from pipes, this MUST be located here
-  # and not in the argument and option parsing block.
+function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
   [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
   [ -n "${authoricon}" ] && authoriconjson=", \"author_icon\": \"${authoricon}\""
@@ -147,8 +146,8 @@ function send() {
   local msg=$(\
     curl -s -X POST \
       --data-urlencode "as_user=true" \
-      --data-urlencode "channel=$(chan ${channel} ${token})" \
       --data-urlencode "attachments=${attachments}" \
+      --data-urlencode "channel=$(chan ${channel} ${token})" \
       --data-urlencode "token=${token}" \
       https://slack.com/api/chat.postMessage)
 
@@ -158,22 +157,96 @@ function send() {
   esac
 }
 
+function chatupdate() {
+  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+  [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
+  [ -n "${authoricon}" ] && authoriconjson=", \"author_icon\": \"${authoricon}\""
+  [ -n "${authorlink}" ] && authorlinkjson=", \"author_link\": \"${authorlink}\""
+  [ -n "${color}" ] && colorjson=", \"color\": \"${color}\""
+  [ -n "${image}" ] && imagejson=", \"image_url\": \"${image}\""
+  [ -n "${pretext}" ] && pretextjson=", \"pretext\": \"${pretext}\""
+  [ -n "${thumbnail}" ] && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
+  [ -n "${title}" ] && titlejson=", \"title\": \"${title}\""
+  [ -n "${titlelink}" ] && titlelinkjson=", \"title_link\": \"${titlelink}\""
+  json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
+  [ -z "${json}" ] && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
+  [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
+
+  local msg=$(\
+    curl -s -X POST \
+      --data-urlencode "as_user=true" \
+      --data-urlencode "attachments=${attachments}" \
+      --data-urlencode "channel=$(chan ${channel} ${token})" \
+      --data-urlencode "ts=${timestamp}" \
+      --data-urlencode "token=${token}" \
+      https://slack.com/api/chat.update)
+
+  case "$(echo ${msg} | jq -r '.ok')" in
+    true) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1 ;;
+  esac
+}
+
+function help() {
+  local a=(${0//\// })
+  local bin=${a[${#a[@]}-1]}
+
+  echo 'Usage:'
+  echo "  ${bin} chat delete [<timestamp> [channel]]"
+  echo '    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--timestamp|-ts <timestamp>]'
+  echo "  ${bin} chat send [<text> [channel]]"
+  echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
+  echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
+  echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
+  echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
+  echo '    [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
+  echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
+  echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
+  echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
+  echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
+  echo '    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo "  ${bin} init"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
+  echo
+  echo 'Configuration Commands:'
+  echo '  init    Initialize'
+  echo
+  echo 'Chat Commands:'
+  echo '  chat delete    Delete chat message'
+  echo '  chat send      Send chat message'
+  echo '  chat update    Update chat message'
+}
+
+function init() {
+  echo "${token}" > "${etcdir}/slack"
+
+  case "${?}" in
+    0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *)
+      echo '{"ok": false, "error": "not_writable"}' |
+        jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1
+    ;;
+  esac
+}
+
 function version() {
   echo 'v0.9.0'
 }
 
 # COMMAND ROUTING #################################################################################
-case "${cmd}" in
+case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
-  init) "${cmd}" ; exit $? ;;
-  send)
-    if [ -z "${token}" ] || [ -z "${channel}" ]; then
+  init) init ; exit $? ;;
+  chatdelete|chatsend|chatupdate)
+    if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
-    else
-      "${cmd}" ; exit $?
     fi
+
+    ${cmd}${sub} ; exit $?
   ;;
   *) help ; exit 1 ;;
 esac
