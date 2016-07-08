@@ -14,8 +14,8 @@ operations with relative ease. As a simple example, take the task of sending a m
 it, and finally deleting it:
 
 ```bash
-$ slack chat send Hi @slackbot --filter '.ts + "\n" + .channel' |
-  xargs -n2 slack chat update Bye --filter '.ts + "\n" + .channel' |
+$ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
 
