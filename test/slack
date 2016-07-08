@@ -5,17 +5,11 @@ setup() {
 }
 
 @test 'init should succeed' {
-  if [ -z "${SLACK_CLI_CHANNEL}" ] || [ -z "${SLACK_CLI_TOKEN}" ]; then
+  if [ -z "${SLACK_CLI_TOKEN}" ]; then
     skip 'project environment variables should be defined'
   fi
 
-  echo -e "${SLACK_CLI_TOKEN}\n${SLACK_CLI_CHANNEL}" | build/bin/slack init
-}
-
-@test 'chat send using default channel should succeed' {
-  if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
-
-  build/bin/slack chat send 'chat send using default channel should succeed'
+  echo -e "${SLACK_CLI_TOKEN}" | build/bin/slack init
 }
 
 @test 'chat send using public channel via argument should succeed' {

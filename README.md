@@ -68,10 +68,7 @@ allows for both traditional usage and prompt-based usage.
 ### `chat send`:
 
 ```bash
-$ # Sending message to default channel:
-$ slack chat send 'Hello world!'
-
-$ # Sending message to channel via option:
+$ # Sending message:
 $ slack chat send 'Hello world!' --channel '#channel'
 
 $ # Sending message via piped echo:
