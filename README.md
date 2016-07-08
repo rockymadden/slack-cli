@@ -10,7 +10,14 @@
 A pure bash, pipe friendly, feature rich, command line interface for Slack. Deep integration with
 [jq](https://github.com/stedolan/jq) allows for the ability to perform complex
 declarative/higher-order operations on responses, helping you perform complex compositional
-operations with relative ease.
+operations with relative ease. As a simple example, take the task of sending a message, updating
+it, and finally deleting it:
+
+```bash
+$ slack chat send Hi @slackbot --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat update Bye --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat delete
+```
 
 ## Installation
 ```bash
@@ -88,6 +95,12 @@ $ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color g
 
 $ # Sending message via piped cat:
 $ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' --color danger
+
+$ # Sending message and returning just the timestamp via filter option:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts'
+
+$ # Sending message and using filter option and xargs to immediately update message:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
