@@ -7,17 +7,41 @@
 [![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-A pure bash, pipe friendly, feature rich, command line interface for Slack. Deep integration with
-[jq](https://github.com/stedolan/jq) allows for the ability to perform complex
-declarative/higher-order operations on responses, helping you perform compositional operations with
-relative ease. As a simple example, take the task of sending a message to a user, updating the
-message, and finally deleting the message:
+A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
+messages are a first class concept, helping you send
+[beautiful messages](https://api.slack.com/docs/message-formatting) with ease. Deep integration
+with [jq](https://github.com/stedolan/jq) allows for the ability to perform complex operations upon
+JSON responses, helping you perform compositional operations (i.e. pipe chaining) with ease.
+
+__Richly formatted message example:__
+```bash
+$ slack chat send '*New version released:* v0.10.0' \
+  --author='rockymadden/slack-cli' \
+  --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --author-link='https://github.com/rockymadden/slack-cli' \
+  --channel='#slack-cli' \
+  --color=good
+```
+
+__Pipe chaining example:__
+Sending a message to a user, updating the message, and finally deleting the message:
 
 ```bash
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
+
+__Command coverage:__
+* [ ] channels
+* [x] chat
+* [ ] dnd
+* [ ] files
+* [ ] groups
+* [ ] pins
+* [ ] search
+* [ ] usergroups
+* [ ] users
 
 ## Installation
 ```bash
@@ -134,18 +158,6 @@ $ slack chat delete 1405894322.002768 '#channel'
 $ # Updating message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 ```
-
-## TODO
-
-* [ ] channels
-* [x] chat
-* [ ] dnd
-* [ ] files
-* [ ] groups
-* [ ] pins
-* [ ] search
-* [ ] usergroups
-* [ ] users
 
 ## License
 ```
