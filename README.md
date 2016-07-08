@@ -28,16 +28,16 @@ $ slack init
 ```bash
 $ slack --help
 Usage:
-  slack chat delete [[timestamp] [channel]]
+  slack chat delete [<timestamp> [channel]]
     [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
     [--timestamp|-ts <timestamp>]
-  slack chat send [[text] [channel]]
+  slack chat send [<text> [channel]]
     [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
     [--pretext|-p <pretext>] [--text|-t <text>] [--thumbnail|-H <thumbnail-url>]
     [--title|-t <title>] [--title-link|-l <title-link>]
-  slack chat update [[text] [timestamp] [channel]]
+  slack chat update [<text> [<timestamp> [channel]]]
     [--author|-a <author>] [--author-icon|-I <author-icon-url>]
     [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]
     [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]
