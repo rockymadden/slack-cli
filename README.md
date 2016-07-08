@@ -138,6 +138,7 @@ $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 ## TODO
 
 * [ ] channels
+* [x] chat
 * [ ] dnd
 * [ ] files
 * [ ] groups
