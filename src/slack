@@ -21,16 +21,16 @@ esac
 while (( "$#" )); do
   case "${1}" in
     --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
-    --author-icon*|-I*) authoricon=${2} ; shift ; shift ;;
+    --author-icon*|-ai*) authoricon=${2} ; shift ; shift ;;
     --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
-    --author-link*|-l*) titlelink=${2} ; shift ; shift ;;
+    --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
     --author*|-a*) author=${2} ; shift ; shift ;;
     --channel=*) channel=${1/--channel=/''} ; shift ;;
     --channel*|-c*) channel=${2} ; shift ; shift ;;
     --color=*) color=${1/--color=/''} ; shift ;;
-    --color*|-C*) color=${2} ; shift ; shift ;;
-    --compact|-c) compact='-c' ; shift ;;
+    --color*|-cl*) color=${2} ; shift ; shift ;;
+    --compact|-cp) compact='-c' ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
@@ -41,15 +41,15 @@ while (( "$#" )); do
     --text=*) text=${1/--text=/''} ; shift ;;
     --text*|-t*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
-    --thumbnail*|-h*) thumbnail=${2} ; shift ; shift ;;
+    --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
     --timestamp=*) timestamp=${1/--timestamp=/''} ; shift ;;
     --timestamp*|-ts*) timestamp=${2} ; shift ; shift ;;
     --title-link=*) titlelink=${1/--title-link=/''} ; shift ;;
-    --title-link*|-L*) titlelink=${2} ; shift ; shift ;;
+    --title-link*|-tl*) titlelink=${2} ; shift ; shift ;;
     --title=*) title=${1/--title=/''} ; shift ;;
-    --title*|-T*) title=${2} ; shift ; shift ;;
+    --title*|-t*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
-    --token|-t*) token=${2} ; shift ; shift ;;
+    --token|-to*) token=${2} ; shift ; shift ;;
     *)
       case "${cmd}${sub}" in
         chatdelete)
