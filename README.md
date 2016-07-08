@@ -116,7 +116,7 @@ $ # Updating message via prompts:
 $ slack chat delete
 
 $ # Updating message via arguments:
-$ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
+$ slack chat delete 1405894322.002768 '#channel'
 
 $ # Updating message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
