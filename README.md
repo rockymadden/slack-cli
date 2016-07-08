@@ -66,19 +66,29 @@ allows for both traditional usage and prompt-based usage.
 
 ```bash
 $ # Sending message to default channel:
-$ slack chat send 'Hello World!'
+$ slack chat send 'Hello world!'
 
 $ # Sending message to channel via option:
-$ slack chat send 'Hello World!' --channel '#channel'
+$ slack chat send 'Hello world!' --channel '#channel'
 
 $ # Sending message via piped echo:
-$ echo 'Hello World!' | slack chat send --channel '#channel'
+$ echo 'Hello world!' | slack chat send --channel '#channel'
 
 $ # Sending message via piped ls:
 $ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color good
 
 $ # Sending message via piped cat:
 $ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' --color danger
+```
+
+> __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
+more information about option meanings.
+
+### `chat update`
+
+```bash
+$ # Updating message:
+$ slack chat update 'Hello world, again!' --channel '#channel' --timestamp 1405894322.002768
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
