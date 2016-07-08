@@ -61,6 +61,20 @@ setup() {
   build/bin/slack chat send 'text' '#slack-cli' --pretext 'chat send with rich formatting should succeed'
 }
 
+@test 'chat update should succeed' {
+  if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
+
+  build/bin/slack chat send 'chat update should not fail' '#slack-cli' --filter '.ts + "\n" + .channel' |
+    xargs -n2 build/bin/slack chat update 'chat update should succeed'
+}
+
+@test 'chat delete should succeed' {
+  if ! [ -f 'build/etc/slack' ]; then skip 'project should be initialized'; fi
+
+  build/bin/slack chat send 'chat delete should not fail' '#slack-cli' --filter '.ts + "\n" + .channel' |
+    xargs -n2 build/bin/slack chat delete
+}
+
 @test '-h should output usage' {
   run build/bin/slack -h
   [ $status -eq 0 ]
