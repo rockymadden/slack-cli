@@ -1,5 +1,5 @@
 # slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
-[![version](http://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
+[![version](http://img.shields.io/badge/version-v0.10.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
