@@ -34,19 +34,8 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
 
-__Command coverage:__
-
-* [ ] channels
-* [x] chat
-* [ ] dnd
-* [ ] files
-* [ ] groups
-* [ ] pins
-* [ ] search
-* [ ] usergroups
-* [ ] users
-
 ## Installation
+
 ```bash
 $ # Install from tap:
 $ brew tap rockymadden/rockymadden
@@ -133,7 +122,7 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | x
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `chat update`
+### `chat update`:
 
 ```bash
 $ # Updating message via prompts:
@@ -149,7 +138,7 @@ $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 -
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `chat delete`
+### `chat delete`:
 
 ```bash
 $ # Updating message via prompts:
@@ -161,6 +150,18 @@ $ slack chat delete 1405894322.002768 '#channel'
 $ # Updating message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 ```
+
+## Coverage
+
+* [ ] channels
+* [x] chat
+* [ ] dnd
+* [ ] files
+* [ ] groups
+* [ ] pins
+* [ ] search
+* [ ] usergroups
+* [ ] users
 
 ## License
 ```
