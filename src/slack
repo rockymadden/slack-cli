@@ -53,16 +53,16 @@ while (( "$#" )); do
     *)
       case "${cmd}${sub}" in
         chatdelete)
-          [ -n "${1}" ] && [ -n "${timestamp}" ] && channel=${1}
+          [ -n "${1}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
           [ -n "${1}" ] && [ -z "${timestamp}" ] && timestamp=${1}
         ;;
         chatsend)
-          [ -n "${1}" ] && [ -n "${text}" ] && channel=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${channel}" ] && channel=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
         chatupdate)
-          [ -n "${1}" ] && [ -n "${text}" ] && [ -n "${timestamp}" ] && channel=${1}
-          [ -n "${1}" ] && [ -n "${text}" ] && timestamp=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
       esac
