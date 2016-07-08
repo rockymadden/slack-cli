@@ -131,7 +131,7 @@ $ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
 $ # Updating message via options:
 $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
 
-$ # Sending message and immediately update:
+$ # Sending message and immediately updating:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
@@ -141,16 +141,16 @@ more information about option meanings.
 ### `chat delete`:
 
 ```bash
-$ # Updating message via prompts:
+$ # Deleting message via prompts:
 $ slack chat delete
 
-$ # Updating message via arguments:
+$ # Deleting message via arguments:
 $ slack chat delete 1405894322.002768 '#channel'
 
-$ # Updating message via options:
+$ # Deleting message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 
-$ # Sending message and immediately delete:
+$ # Sending message and immediately deleting:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat delete
 ```
 
