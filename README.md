@@ -122,6 +122,17 @@ $ # Updating message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 ```
 
+## TODO
+
+* [ ] channels
+* [ ] dnd
+* [ ] files
+* [ ] groups
+* [ ] pins
+* [ ] search
+* [ ] usergroups
+* [ ] users
+
 ## License
 ```
 The MIT License (MIT)
