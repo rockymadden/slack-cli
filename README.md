@@ -7,11 +7,26 @@
 [![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-A pure bash, pipe friendly, feature rich, command line interface for Slack. Deep integration with
-[jq](https://github.com/stedolan/jq) allows for the ability to perform complex
-declarative/higher-order operations on responses, helping you perform compositional operations with
-relative ease. As a simple example, take the task of sending a message to a user, updating the
-message, and finally deleting the message:
+A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
+messages are a first class concept, helping you send
+[beautiful messages](https://api.slack.com/docs/message-formatting) with ease. Deep integration
+with [jq](https://github.com/stedolan/jq) allows for the ability to perform complex operations upon
+JSON responses, helping you perform compositional operations (i.e. pipe chaining) with ease.
+
+__Richly formatted message example:__
+
+```bash
+$ slack chat send '*New version released:* v0.10.0' \
+  --author='rockymadden/slack-cli' \
+  --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --author-link='https://github.com/rockymadden/slack-cli' \
+  --channel='#slack-cli' \
+  --color=good
+```
+
+__Pipe chaining example:__
+
+Sending a message to a user, updating the message, and finally deleting the message:
 
 ```bash
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
@@ -20,6 +35,7 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 ```
 
 ## Installation
+
 ```bash
 $ # Install from tap:
 $ brew tap rockymadden/rockymadden
@@ -98,15 +114,12 @@ $ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' 
 
 $ # Sending message and returning just the timestamp via filter option:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts'
-
-$ # Sending message and using filter option and xargs to immediately update message:
-$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `chat update`
+### `chat update`:
 
 ```bash
 $ # Updating message via prompts:
@@ -117,27 +130,34 @@ $ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
 
 $ # Updating message via options:
 $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
+
+$ # Sending message and immediately updating:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `chat delete`
+### `chat delete`:
 
 ```bash
-$ # Updating message via prompts:
+$ # Deleting message via prompts:
 $ slack chat delete
 
-$ # Updating message via arguments:
+$ # Deleting message via arguments:
 $ slack chat delete 1405894322.002768 '#channel'
 
-$ # Updating message via options:
+$ # Deleting message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
+
+$ # Sending message and immediately deleting:
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat delete
 ```
 
-## TODO
+## Coverage
 
 * [ ] channels
+* [x] chat
 * [ ] dnd
 * [ ] files
 * [ ] groups
