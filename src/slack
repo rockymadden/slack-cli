@@ -10,7 +10,7 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatsend|chatupdate) sub=${1} ; shift ;;
+  chatdelete|chatsend|chatupdate) sub=${1} ; shift ;;
 esac
 
 # PIPE FRIENDLINESS ###############################################################################
@@ -62,6 +62,10 @@ done
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}${sub}" in
+  chatdelete)
+    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+    [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+  ;;
   chatsend)
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
@@ -102,6 +106,21 @@ function chan() {
 }
 
 # COMMAND FUNCTIONS ###############################################################################
+function chatdelete() {
+  local msg=$(\
+    curl -s -X POST \
+      --data-urlencode "as_user=true" \
+      --data-urlencode "channel=$(chan ${channel} ${token})" \
+      --data-urlencode "ts=${timestamp}" \
+      --data-urlencode "token=${token}" \
+      https://slack.com/api/chat.delete)
+
+  case "$(echo ${msg} | jq -r '.ok')" in
+    true) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *) echo ${msg} | jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1 ;;
+  esac
+}
+
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
   [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
@@ -166,6 +185,8 @@ function help() {
   local bin=${a[${#a[@]}-1]}
 
   echo 'Usage:'
+  echo "  ${bin} chat delete [--channel|-c <channel>] [--compact|-c] [--filter|-f <filter>]"
+  echo '    [--monochrome|-m] [--timestamp|-ts <timestamp>]'
   echo "  ${bin} chat send <text> [--author|-a <author>] [--author-icon|-I <author-icon-url>]"
   echo '    [--author-link|-L <author-link>] [--channel|-c <channel>] [--color|-C <color>]'
   echo '    [--compact|-c] [--filter|-f <filter>] [--image|-i <image-url>] [--monochrome|-m]'
@@ -183,6 +204,7 @@ function help() {
   echo '  init    Initialize'
   echo
   echo 'Chat Commands:'
+  echo '  chat delete    Delete chat message'
   echo '  chat send      Send chat message'
   echo '  chat update    Update chat message'
 }
@@ -209,7 +231,7 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatsend|chatupdate)
+  chatdelete|chatsend|chatupdate)
     if [ -z "${token}" ] || [ -z "${channel}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1

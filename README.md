@@ -94,6 +94,13 @@ $ slack chat update 'Hello world, again!' --channel '#channel' --timestamp 14058
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
+### `chat delete`
+
+```bash
+$ # Updating message:
+$ slack chat delete --channel '#channel' --timestamp 1405894322.002768
+```
+
 ## License
 ```
 The MIT License (MIT)
