@@ -14,6 +14,7 @@ with [jq](https://github.com/stedolan/jq) allows for the ability to perform comp
 JSON responses, helping you perform compositional operations (i.e. pipe chaining) with ease.
 
 __Richly formatted message example:__
+
 ```bash
 $ slack chat send '*New version released:* v0.10.0' \
   --author='rockymadden/slack-cli' \
@@ -24,6 +25,7 @@ $ slack chat send '*New version released:* v0.10.0' \
 ```
 
 __Pipe chaining example:__
+
 Sending a message to a user, updating the message, and finally deleting the message:
 
 ```bash
@@ -33,6 +35,7 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 ```
 
 __Command coverage:__
+
 * [ ] channels
 * [x] chat
 * [ ] dnd
