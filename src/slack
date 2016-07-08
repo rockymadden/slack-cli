@@ -241,7 +241,7 @@ case "${cmd}${sub}" in
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
   chatdelete|chatsend|chatupdate)
-    if [ -z "${token}" ] || [ -z "${channel}" ]; then
+    if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
     fi
