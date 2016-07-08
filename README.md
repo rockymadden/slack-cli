@@ -79,6 +79,10 @@ Chat Commands:
   chat delete    Delete chat message
   chat send      Send chat message
   chat update    Update chat message
+
+More Information:
+  chat    https://rockymadden-slack.herokuapp.com
+  repo    https://github.com/rockymadden/slack-cli
 ```
 
 > __PROTIPS:__

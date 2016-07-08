@@ -220,6 +220,10 @@ function help() {
   echo '  chat delete    Delete chat message'
   echo '  chat send      Send chat message'
   echo '  chat update    Update chat message'
+  echo
+  echo 'More Information:'
+  echo '  chat    https://rockymadden-slack.herokuapp.com'
+  echo '  repo    https://github.com/rockymadden/slack-cli'
 }
 
 function init() {
