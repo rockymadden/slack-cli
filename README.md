@@ -72,6 +72,12 @@ Usage:
   slack init
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 
+  slack snooze end
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
+
+  slack snooze start [<minutes>]
+    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
+
 Configuration Commands:
   init    Initialize
 
@@ -79,6 +85,10 @@ Chat Commands:
   chat delete    Delete chat message
   chat send      Send chat message
   chat update    Update chat message
+
+Snooze Commands:
+  snooze end      End snooze
+  snooze start    Start snooze
 
 More Information:
   chat    https://rockymadden-slack.herokuapp.com
@@ -165,11 +175,11 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | x
 
 * [ ] channels
 * [x] chat
-* [ ] dnd
 * [ ] files
 * [ ] groups
 * [ ] pins
 * [ ] search
+* [x] snooze
 * [ ] usergroups
 * [ ] users
 

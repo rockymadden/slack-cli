@@ -23,11 +23,16 @@ stub:
 	@mkdir -p ${bindir}
 	@mkdir -p ${etcdir}
 
-test: | install
-	@test/slack
+test: | test-unit test-integration
+
+test-integration: | install
+	@bats test/integration
+
+test-unit: | install
+	@bats test/unit
 
 uninstall:
 	@rm -rf ${bindir}
 	@rm -rf ${etcdir}
 
-.PHONY: clean install stub test uninstall
+.PHONY: clean install stub test test-integration test-unit uninstall
