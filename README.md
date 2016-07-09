@@ -175,11 +175,11 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | x
 
 * [ ] channels
 * [x] chat
-* [ ] dnd
 * [ ] files
 * [ ] groups
 * [ ] pins
 * [ ] search
+* [x] snooze
 * [ ] usergroups
 * [ ] users
 
