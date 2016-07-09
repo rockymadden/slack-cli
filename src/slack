@@ -213,6 +213,12 @@ function help() {
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
+  echo "  ${bin} snooze end"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo
+  echo "  ${bin} snooze start [<minutes>]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
+  echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
   echo
@@ -220,6 +226,10 @@ function help() {
   echo '  chat delete    Delete chat message'
   echo '  chat send      Send chat message'
   echo '  chat update    Update chat message'
+  echo
+  echo 'Snooze Commands:'
+  echo '  snooze end      End snooze'
+  echo '  snooze start    Start snooze'
   echo
   echo 'More Information:'
   echo '  chat    https://rockymadden-slack.herokuapp.com'
