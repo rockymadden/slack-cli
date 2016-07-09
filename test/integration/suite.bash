@@ -5,7 +5,6 @@ function skip-env() {
 }
 
 function setup() {
-  sleep 2
   skip-env
   echo "${SLACK_CLI_TOKEN}" | build/bin/slack init
 }
