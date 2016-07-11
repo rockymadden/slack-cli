@@ -75,7 +75,7 @@ Usage:
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
 
-  slack snooze start [<minutes>]
+  slack snooze start [minutes]
     [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
 
 Configuration Commands:
