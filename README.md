@@ -75,6 +75,9 @@ Usage:
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
 
+  slack snooze info [user]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--user|-ur <user>]
+
   slack snooze start [minutes]
     [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
 
@@ -88,6 +91,7 @@ Chat Commands:
 
 Snooze Commands:
   snooze end      End snooze
+  snooze info     Info about snooze
   snooze start    Start snooze
 
 More Information:
