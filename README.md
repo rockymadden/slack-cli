@@ -17,11 +17,11 @@ __Richly formatted message example:__
 
 ```bash
 $ slack chat send '*New version released:* v0.11.0' \
-  --author='rockymadden/slack-cli' \
-  --author-icon='https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
-  --author-link='https://github.com/rockymadden/slack-cli' \
-  --channel='#slack-cli' \
-  --color=good
+  --author 'rockymadden/slack-cli' \
+  --author-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --author-link 'https://github.com/rockymadden/slack-cli' \
+  --channel '#slack-cli' \
+  --color good
 ```
 
 __Pipe chaining example:__
@@ -75,7 +75,7 @@ Usage:
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
 
-  slack snooze start [<minutes>]
+  slack snooze start [minutes]
     [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
 
 Configuration Commands:
@@ -120,6 +120,9 @@ $ slack chat send 'Hello world!' '#channel'
 $ # Sending message via options:
 $ slack chat send --text 'Hello world!' --channel '#channel'
 
+$ # Sending message via short form options:
+$ slack chat send -tx 'Hello world!' -ch '#channel'
+
 $ # Sending message via piped echo:
 $ echo 'Hello world!' | slack chat send --channel '#channel'
 
@@ -148,8 +151,12 @@ $ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
 $ # Updating message via options:
 $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
 
+$ # Updating message via short form options:
+$ slack chat update -tx 'Hello world, again!' -ts 1405894322.002768 -ch '#channel'
+
 $ # Sending message and immediately updating:
-$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
@@ -167,8 +174,35 @@ $ slack chat delete 1405894322.002768 '#channel'
 $ # Deleting message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 
+$ # Deleting message via short form options:
+$ slack chat delete -ts 1405894322.002768 -ch '#channel'
+
 $ # Sending message and immediately deleting:
-$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat delete
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat delete
+```
+
+### `snooze start`:
+
+```bash
+$ # Starting snooze via prompts:
+$ slack snooze start
+
+$ # Starting snooze via arguments:
+$ slack snooze start 60
+
+$ # Starting snooze via options:
+$ slack snooze start --minutes 60
+
+$ # Starting snooze via short form options:
+$ slack snooze start -mn 60
+```
+
+### `snooze end`:
+
+```bash
+$ # Ending snooze:
+$ slack snooze end
 ```
 
 ## Coverage

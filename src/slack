@@ -222,7 +222,7 @@ function help() {
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo
-  echo "  ${bin} snooze start [<minutes>]"
+  echo "  ${bin} snooze start [minutes]"
   echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
   echo
   echo 'Configuration Commands:'
