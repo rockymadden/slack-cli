@@ -198,6 +198,22 @@ $ # Starting snooze via short form options:
 $ slack snooze start -mn 60
 ```
 
+### `snooze info`:
+
+```bash
+$ # Info about your own snooze:
+$ slack snooze info
+
+$ # Info about another user's snooze via argument:
+$ slack snooze info @slackbot
+
+$ # Info about another user's snooze via options:
+$ slack snooze info --user @slackbot
+
+$ # Info about another user's snooze via short form options:
+$ slack snooze info -ur @slackbot
+```
+
 ### `snooze end`:
 
 ```bash

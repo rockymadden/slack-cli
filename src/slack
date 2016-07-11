@@ -9,7 +9,9 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatdelete|chatsend|chatupdate|snoozeend|snoozestart) sub=${1} ; shift ;;
+  chatdelete|chatsend|chatupdate|snoozeend|snoozeinfo|snoozestart)
+    sub=${1} ; shift
+  ;;
 esac
 
 # PIPE FRIENDLINESS ###############################################################################
@@ -52,6 +54,8 @@ while (( "$#" )); do
     --title*|-ti*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
     --token|-tk*) token=${2} ; shift ; shift ;;
+    --user=*) user=${1/--user=/''} ; shift ;;
+    --user|-ur*) user=${2} ; shift ; shift ;;
     *)
       case "${cmd}${sub}" in
         chatdelete)
@@ -66,6 +70,9 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -n "${text}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+        ;;
+        snoozeinfo)
+          [ -n "${1}" ] && [ -z "${user}" ] && user=${1}
         ;;
         snoozestart)
           [ -n "${1}" ] && [ -z "${minutes}" ] && minutes=${1}
@@ -104,14 +111,21 @@ case "${cmd}${sub}" in
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
-function chan() {
+function jqify() {
+  case "$(echo ${1} | jq -r '.ok')" in
+    true) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    *) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
+  esac
+}
+
+function lchannel() {
   case "${1}" in
     @*)
       local user=$(\
-        curl -s -X POST --data-urlencode "token=${2}" https://slack.com/api/users.list 2>&1 | \
+        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${2}" 2>&1 | \
         jq -r ".members | map(select(.name == \"${1/@/}\")) | .[].id")
       local channel=$(\
-        curl -s -X POST --data-urlencode "token=${2}" https://slack.com/api/im.list 2>&1 | \
+        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${2}" 2>&1 | \
         jq -r ".ims | map(select(.user == \"${user}\")) | .[].id")
 
       echo ${channel}
@@ -120,22 +134,27 @@ function chan() {
   esac
 }
 
-function jqify() {
-  case "$(echo ${1} | jq -r '.ok')" in
-    true) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
-    *) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
+function luser() {
+  case "${1}" in
+    @*)
+      local user=$(\
+        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${2}" 2>&1 | \
+        jq -r ".members | map(select(.name == \"${1/@/}\")) | .[].id")
+
+      echo ${user}
+    ;;
+    *) echo ${1} ;;
   esac
 }
 
 # COMMAND FUNCTIONS ###############################################################################
 function chatdelete() {
   local msg=$(\
-    curl -s -X POST \
+    curl -s -X POST https://slack.com/api/chat.delete \
       --data-urlencode "as_user=true" \
-      --data-urlencode "channel=$(chan ${channel} ${token})" \
+      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
       --data-urlencode "ts=${timestamp}" \
-      --data-urlencode "token=${token}" \
-      https://slack.com/api/chat.delete)
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
@@ -156,12 +175,11 @@ function chatsend() {
   [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
   local msg=$(\
-    curl -s -X POST \
+    curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
       --data-urlencode "attachments=${attachments}" \
-      --data-urlencode "channel=$(chan ${channel} ${token})" \
-      --data-urlencode "token=${token}" \
-      https://slack.com/api/chat.postMessage)
+      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
@@ -182,13 +200,12 @@ function chatupdate() {
   [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
   local msg=$(\
-    curl -s -X POST \
+    curl -s -X POST https://slack.com/api/chat.update \
       --data-urlencode "as_user=true" \
       --data-urlencode "attachments=${attachments}" \
-      --data-urlencode "channel=$(chan ${channel} ${token})" \
+      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
       --data-urlencode "ts=${timestamp}" \
-      --data-urlencode "token=${token}" \
-      https://slack.com/api/chat.update)
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
@@ -222,6 +239,9 @@ function help() {
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo
+  echo "  ${bin} snooze info [user]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--user|-ur <user>]'
+  echo
   echo "  ${bin} snooze start [minutes]"
   echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
   echo
@@ -235,6 +255,7 @@ function help() {
   echo
   echo 'Snooze Commands:'
   echo '  snooze end      End snooze'
+  echo '  snooze info     Info about snooze'
   echo '  snooze start    Start snooze'
   echo
   echo 'More Information:'
@@ -256,19 +277,35 @@ function init() {
 
 function snoozeend() {
   local msg=$(\
-    curl -s -X POST \
-      --data-urlencode "token=${token}" \
-      https://slack.com/api/dnd.endSnooze)
+    curl -s -X POST https://slack.com/api/dnd.endSnooze \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function snoozeinfo() {
+  case "${user}" in
+    '')
+      local msg=$(\
+        curl -s -X POST https://slack.com/api/dnd.info \
+          --data-urlencode "token=${token}")
+    ;;
+    *)
+      local msg=$(
+        curl -s -X POST https://slack.com/api/dnd.info \
+          --data-urlencode "user=$(luser ${user} ${token})" \
+          --data-urlencode "token=${token}")
+    ;;
+  esac
 
   jqify "${msg}"
 }
 
 function snoozestart() {
   local msg=$(\
-    curl -s -X POST \
+    curl -s -X POST https://slack.com/api/dnd.setSnooze \
       --data-urlencode "num_minutes=${minutes}" \
-      --data-urlencode "token=${token}" \
-      https://slack.com/api/dnd.setSnooze)
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
@@ -282,7 +319,7 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatdelete|chatsend|chatupdate|snoozeend|snoozestart)
+  chatdelete|chatsend|chatupdate|snoozeend|snoozeinfo|snoozestart)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
