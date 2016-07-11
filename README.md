@@ -75,6 +75,9 @@ Usage:
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
 
+  slack snooze info [user]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--user|-ur <user>]
+
   slack snooze start [minutes]
     [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
 
@@ -88,6 +91,7 @@ Chat Commands:
 
 Snooze Commands:
   snooze end      End snooze
+  snooze info     Info about snooze
   snooze start    Start snooze
 
 More Information:
@@ -111,28 +115,28 @@ allows for both traditional usage and prompt-based usage.
 ### `chat send`:
 
 ```bash
-$ # Sending message via prompts:
+$ # Send message via prompts:
 $ slack chat send
 
-$ # Sending message via arguments:
+$ # Send message via arguments:
 $ slack chat send 'Hello world!' '#channel'
 
-$ # Sending message via options:
+$ # Send message via options:
 $ slack chat send --text 'Hello world!' --channel '#channel'
 
-$ # Sending message via short form options:
+$ # Send message via short form options:
 $ slack chat send -tx 'Hello world!' -ch '#channel'
 
-$ # Sending message via piped echo:
+$ # Send message via piped echo:
 $ echo 'Hello world!' | slack chat send --channel '#channel'
 
-$ # Sending message via piped ls:
+$ # Send message via piped ls:
 $ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color good
 
-$ # Sending message via piped cat:
+$ # Send message via piped cat:
 $ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' --color danger
 
-$ # Sending message and returning just the timestamp via filter option:
+$ # Send message and returning just the timestamp via filter option:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts'
 ```
 
@@ -142,19 +146,19 @@ more information about option meanings.
 ### `chat update`:
 
 ```bash
-$ # Updating message via prompts:
+$ # Update message via prompts:
 $ slack chat update
 
-$ # Updating message via arguments:
+$ # Update message via arguments:
 $ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
 
-$ # Updating message via options:
+$ # Update message via options:
 $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
 
-$ # Updating message via short form options:
+$ # Update message via short form options:
 $ slack chat update -tx 'Hello world, again!' -ts 1405894322.002768 -ch '#channel'
 
-$ # Sending message and immediately updating:
+$ # Send message and immediately update:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat update 'Goodbye world!'
 ```
@@ -165,19 +169,19 @@ more information about option meanings.
 ### `chat delete`:
 
 ```bash
-$ # Deleting message via prompts:
+$ # Delete message via prompts:
 $ slack chat delete
 
-$ # Deleting message via arguments:
+$ # Delete message via arguments:
 $ slack chat delete 1405894322.002768 '#channel'
 
-$ # Deleting message via options:
+$ # Delete message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
 
-$ # Deleting message via short form options:
+$ # Delete message via short form options:
 $ slack chat delete -ts 1405894322.002768 -ch '#channel'
 
-$ # Sending message and immediately deleting:
+$ # Send message and immediately delete:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
@@ -185,16 +189,16 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
 ### `snooze start`:
 
 ```bash
-$ # Starting snooze via prompts:
+$ # Start snooze via prompts:
 $ slack snooze start
 
-$ # Starting snooze via arguments:
+$ # Start snooze via arguments:
 $ slack snooze start 60
 
-$ # Starting snooze via options:
+$ # Start snooze via options:
 $ slack snooze start --minutes 60
 
-$ # Starting snooze via short form options:
+$ # Start snooze via short form options:
 $ slack snooze start -mn 60
 ```
 
@@ -217,7 +221,7 @@ $ slack snooze info -ur @slackbot
 ### `snooze end`:
 
 ```bash
-$ # Ending snooze:
+$ # End snooze:
 $ slack snooze end
 ```
 
