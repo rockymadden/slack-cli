@@ -155,7 +155,8 @@ $ # Updating message via short form options:
 $ slack chat update -tx 'Hello world, again!' -ts 1405894322.002768 -ch '#channel'
 
 $ # Sending message and immediately updating:
-$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat update 'Goodbye world!'
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat update 'Goodbye world!'
 ```
 
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
@@ -177,7 +178,8 @@ $ # Deleting message via short form options:
 $ slack chat delete -ts 1405894322.002768 -ch '#channel'
 
 $ # Sending message and immediately deleting:
-$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' | xargs -n2 slack chat delete
+$ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat delete
 ```
 
 ### `snooze start`:
