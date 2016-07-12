@@ -127,14 +127,8 @@ $ slack chat send --text 'Hello world!' --channel '#channel'
 $ # Send message via short form options:
 $ slack chat send -tx 'Hello world!' -ch '#channel'
 
-$ # Send message via piped echo:
-$ echo 'Hello world!' | slack chat send --channel '#channel'
-
-$ # Send message via piped ls:
+$ # Send message via pipe:
 $ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color good
-
-$ # Send message via piped cat:
-$ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' --color danger
 
 $ # Send message and returning just the timestamp via filter option:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts'
