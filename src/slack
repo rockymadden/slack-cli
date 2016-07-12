@@ -348,7 +348,7 @@ function filelist() {
       ${timestampfrom:+ --data-urlencode "ts_from=${timestampfrom}"} \
       ${timestampto:+ --data-urlencode "ts_to=${timestampto}"} \
       ${types:+ --data-urlencode "types=${types}"} \
-      ${user:+ --data-urlencode "user=${user}"} \
+      ${user:+ --data-urlencode "user=$(luser)"} \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
