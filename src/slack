@@ -9,7 +9,7 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatdelete|chatsend|chatupdate|filelist|fileupload|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|fileinfo|filelist|fileupload|snoozeend|snoozeinfo|snoozestart)
     sub=${1} ; shift
   ;;
 esac
@@ -89,6 +89,9 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
+        fileinfo)
+          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
+        ;;
         fileupload)
           [ -n "${1}" ] && [ -n "${file}" ] && [ -z "${channels}" ] && channels=${1}
           [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
@@ -119,6 +122,9 @@ case "${cmd}${sub}" in
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+  ;;
+  fileinfo)
+    [ -z "${file}" ] && read -e -p 'Enter file (e.g. F2147483862): ' file
   ;;
   fileupload)
     [ -z "${file}" ] && read -e -p 'Enter file (e.g. file.log): ' file
@@ -255,6 +261,10 @@ function help() {
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
+  echo "  ${bin} file info [file]"
+  echo '    [--count|-cn <count>] [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--page|-pg <page>]'
+  echo
   echo "  ${bin} file list"
   echo '    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]'
   echo '    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]'
@@ -283,6 +293,7 @@ function help() {
   echo '  chat update    Update chat message'
   echo
   echo 'File Commands:'
+  echo '  file info      Info about file'
   echo '  file list      List files'
   echo '  file upload    Upload file'
   echo
@@ -294,6 +305,17 @@ function help() {
   echo 'More Information:'
   echo '  chat    https://rockymadden-slack.herokuapp.com'
   echo '  repo    https://github.com/rockymadden/slack-cli'
+}
+
+function fileinfo() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/files.info \
+      ${count:+ --data-urlencode "count=${count}"} \
+      --data-urlencode "file=${file}" \
+      ${page:+ --data-urlencode "page=${page}"} \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
 }
 
 function filelist() {
@@ -403,7 +425,7 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatdelete|chatsend|chatupdate|filelist|fileupload|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|fileinfo|filelist|fileupload|snoozeend|snoozeinfo|snoozestart)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
