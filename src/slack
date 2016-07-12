@@ -127,6 +127,23 @@ case "${cmd}${sub}" in
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
+function attachify() {
+  [ -n "${author}" ] && local _author=", \"author_name\": \"${author}\""
+  [ -n "${authoricon}" ] && local _authoricon=", \"author_icon\": \"${authoricon}\""
+  [ -n "${authorlink}" ] && local _authorlink=", \"author_link\": \"${authorlink}\""
+  [ -n "${color}" ] && local _color=", \"color\": \"${color}\""
+  [ -n "${image}" ] && local _image=", \"image_url\": \"${image}\""
+  [ -n "${pretext}" ] && local _pretext=", \"pretext\": \"${pretext}\""
+  [ -n "${thumbnail}" ] && local _thumbnail=", \"thumb_url\": \"${thumbnail}\""
+  [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
+  [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
+  local _json="${_author}${_authoricon}${_authorlink}${_color}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}"
+  [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
+  [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
+
+  echo "${_attachments}"
+}
+
 function jqify() {
   case "$(echo ${1} | jq -r '.ok')" in
     true) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
@@ -135,31 +152,31 @@ function jqify() {
 }
 
 function lchannel() {
-  case "${1}" in
+  case "${channel}" in
     @*)
-      local user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${2}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${1/@/}\")) | .[].id")
-      local channel=$(\
-        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${2}" 2>&1 | \
-        jq -r ".ims | map(select(.user == \"${user}\")) | .[].id")
+      local _user=$(\
+        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
+        jq -r ".members | map(select(.name == \"${channel/@/}\")) | .[].id")
+      local _channel=$(\
+        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
+        jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
 
-      echo ${channel}
+      echo ${_channel}
     ;;
-    *) echo ${1} ;;
+    *) echo ${channel} ;;
   esac
 }
 
 function luser() {
-  case "${1}" in
+  case "${user}" in
     @*)
-      local user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${2}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${1/@/}\")) | .[].id")
+      local _user=$(\
+        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
+        jq -r ".members | map(select(.name == \"${user/@/}\")) | .[].id")
 
-      echo ${user}
+      echo ${_user}
     ;;
-    *) echo ${1} ;;
+    *) echo ${user} ;;
   esac
 }
 
@@ -168,7 +185,7 @@ function chatdelete() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.delete \
       --data-urlencode "as_user=true" \
-      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "ts=${timestamp}" \
       --data-urlencode "token=${token}")
 
@@ -177,24 +194,12 @@ function chatdelete() {
 
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
-  [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
-  [ -n "${authoricon}" ] && authoriconjson=", \"author_icon\": \"${authoricon}\""
-  [ -n "${authorlink}" ] && authorlinkjson=", \"author_link\": \"${authorlink}\""
-  [ -n "${color}" ] && colorjson=", \"color\": \"${color}\""
-  [ -n "${image}" ] && imagejson=", \"image_url\": \"${image}\""
-  [ -n "${pretext}" ] && pretextjson=", \"pretext\": \"${pretext}\""
-  [ -n "${thumbnail}" ] && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
-  [ -n "${title}" ] && titlejson=", \"title\": \"${title}\""
-  [ -n "${titlelink}" ] && titlelinkjson=", \"title_link\": \"${titlelink}\""
-  json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
-  [ -z "${json}" ] && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
-  [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=${attachments}" \
-      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "attachments=$(attachify)" \
+      --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
@@ -202,24 +207,12 @@ function chatsend() {
 
 function chatupdate() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
-  [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
-  [ -n "${authoricon}" ] && authoriconjson=", \"author_icon\": \"${authoricon}\""
-  [ -n "${authorlink}" ] && authorlinkjson=", \"author_link\": \"${authorlink}\""
-  [ -n "${color}" ] && colorjson=", \"color\": \"${color}\""
-  [ -n "${image}" ] && imagejson=", \"image_url\": \"${image}\""
-  [ -n "${pretext}" ] && pretextjson=", \"pretext\": \"${pretext}\""
-  [ -n "${thumbnail}" ] && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
-  [ -n "${title}" ] && titlejson=", \"title\": \"${title}\""
-  [ -n "${titlelink}" ] && titlelinkjson=", \"title_link\": \"${titlelink}\""
-  json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
-  [ -z "${json}" ] && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
-  [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.update \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=${attachments}" \
-      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "attachments=$(attachify)" \
+      --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "ts=${timestamp}" \
       --data-urlencode "token=${token}")
 
@@ -355,7 +348,7 @@ function snoozeend() {
 function snoozeinfo() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/dnd.info \
-      ${user:+ --data-urlencode "user=$(luser ${user} ${token})"} \
+      ${user:+ --data-urlencode "user=$(luser)"} \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
