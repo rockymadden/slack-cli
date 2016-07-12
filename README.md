@@ -1,5 +1,5 @@
 # slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
-[![version](http://img.shields.io/badge/version-v0.11.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
+[![version](http://img.shields.io/badge/version-v0.12.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
@@ -16,7 +16,7 @@ JSON responses, helping you perform compositional operations (i.e. pipe chaining
 __Richly formatted message example:__
 
 ```bash
-$ slack chat send '*New version released:* v0.11.0' \
+$ slack chat send '*New version released:* v0.12.0' \
   --author 'rockymadden/slack-cli' \
   --author-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
   --author-link 'https://github.com/rockymadden/slack-cli' \
