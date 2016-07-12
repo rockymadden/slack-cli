@@ -41,6 +41,11 @@ $ # Install from tap:
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 
+$ # Install from source:
+$ git clone git@github.com:rockymadden/slack-cli.git
+$ cd slack-cli
+$ make install
+
 $ # Initialize:
 $ slack init
 ```
