@@ -9,14 +9,14 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatdelete|chatsend|chatupdate|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|fileupload|snoozeend|snoozeinfo|snoozestart)
     sub=${1} ; shift
   ;;
 esac
 
 # PIPE FRIENDLINESS ###############################################################################
 case "${cmd}${sub}" in
-  chatsend|chatupdate) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
+  chatsend|chatupdate|fileupload) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
 esac
 
 # ARGUMENT AND OPTION PARSING #####################################################################
@@ -28,11 +28,19 @@ while (( "$#" )); do
     --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
     --author*|-at*) author=${2} ; shift ; shift ;;
+    --channels=*) channels=${1/--channels=/''} ; shift ;;
+    --channels*|-chs*) channels=${2} ; shift ; shift ;;
     --channel=*) channel=${1/--channel=/''} ; shift ;;
     --channel*|-ch*) channel=${2} ; shift ; shift ;;
     --color=*) color=${1/--color=/''} ; shift ;;
     --color*|-cl*) color=${2} ; shift ; shift ;;
     --compact|-cp) compact='-c' ; shift ;;
+    --comment=*) comment=${1/--comment=/''} ; shift ;;
+    --comment*|-cm*) comment=${2} ; shift ; shift ;;
+    --filename=*) filename=${1/--filename=/''} ; shift ;;
+    --filename*|-fn*) filename=${2} ; shift ; shift ;;
+    --file=*) file=${1/--file=/''} ; shift ;;
+    --file*|-fi*) file=${2} ; shift ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
@@ -71,6 +79,10 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
+        fileupload)
+          [ -n "${1}" ] && [ -n "${file}" ] && [ -z "${channels}" ] && channels=${1}
+          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
+        ;;
         snoozeinfo)
           [ -n "${1}" ] && [ -z "${user}" ] && user=${1}
         ;;
@@ -98,8 +110,9 @@ case "${cmd}${sub}" in
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
   ;;
-  snoozestart)
-    [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
+  fileupload)
+    [ -z "${file}" ] && read -e -p 'Enter file (e.g. file.log): ' file
+    [ -z "${channels}" ] && read -e -p 'Enter channels (e.g. #general,C1234567890): ' channels
   ;;
   init)
     _token=$([ -f "${etcdir}/slack" ] && sed -n '1p' < "${etcdir}/slack")
@@ -107,6 +120,9 @@ case "${cmd}${sub}" in
     if [ -z "${token}" ] || [ "${token}" == "${_token}" ]; then
       read -e -p 'Enter Slack API token: ' token
     fi
+  ;;
+  snoozestart)
+    [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
   ;;
 esac
 
@@ -236,6 +252,11 @@ function help() {
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
+  echo "  ${bin} file upload [<file> [channels]]"
+  echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
+  echo '    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--title|-ti <title>]'
+  echo
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo
@@ -253,6 +274,9 @@ function help() {
   echo '  chat send      Send chat message'
   echo '  chat update    Update chat message'
   echo
+  echo 'File Commands:'
+  echo '  file upload    Upload file'
+  echo
   echo 'Snooze Commands:'
   echo '  snooze end      End snooze'
   echo '  snooze info     Info about snooze'
@@ -261,6 +285,51 @@ function help() {
   echo 'More Information:'
   echo '  chat    https://rockymadden-slack.herokuapp.com'
   echo '  repo    https://github.com/rockymadden/slack-cli'
+}
+
+function fileupload() {
+  [ -n "${stdin}" ] && [ -z "${file}" ] && file=${stdin}
+
+  if [ -f "${file}" ]; then
+    local _file=${file}
+
+    case "${filename}" in
+      '') local _filename=$(basename ${file}) ;;
+      *) local _filename=${filename} ;;
+    esac
+  else
+    local _content=${file}
+
+    case "${filename}" in
+      '') local _filename='stdin' ;;
+      *) local _filename=${filename} ;;
+    esac
+  fi
+
+  case "${_file}" in
+    '')
+      local msg=$(\
+        curl -s -X POST https://slack.com/api/files.upload \
+          ${channels:+ --data-urlencode "channels=${channels}"} \
+          ${comment:+ --data-urlencode "initial_comment=${comment}"} \
+          ${_content:+ --data-urlencode "content=${_content}"} \
+          ${_filename:+ --data-urlencode "filename=${_filename}"} \
+          ${title:+ --data-urlencode "title=${title}"} \
+          --data-urlencode "token=${token}")
+    ;;
+    *)
+      local msg=$(\
+        curl -s -X POST https://slack.com/api/files.upload \
+          ${channels:+ --form "channels=${channels}"} \
+          ${comment:+ --form "initial_comment=${comment}"} \
+          ${_file:+ --form "file=@${_file}"} \
+          ${_filename:+ --form "filename=${_filename}"} \
+          ${title:+ --form "title=${title}"} \
+          --form "token=${token}")
+    ;;
+  esac
+
+  jqify "${msg}"
 }
 
 function init() {
@@ -319,7 +388,7 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatdelete|chatsend|chatupdate|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|fileupload|snoozeend|snoozeinfo|snoozestart)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
