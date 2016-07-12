@@ -353,19 +353,10 @@ function snoozeend() {
 }
 
 function snoozeinfo() {
-  case "${user}" in
-    '')
-      local msg=$(\
-        curl -s -X POST https://slack.com/api/dnd.info \
-          --data-urlencode "token=${token}")
-    ;;
-    *)
-      local msg=$(
-        curl -s -X POST https://slack.com/api/dnd.info \
-          --data-urlencode "user=$(luser ${user} ${token})" \
-          --data-urlencode "token=${token}")
-    ;;
-  esac
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/dnd.info \
+      ${user:+ --data-urlencode "user=$(luser ${user} ${token})"} \
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
