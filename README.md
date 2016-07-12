@@ -41,6 +41,11 @@ $ # Install from tap:
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
 
+$ # Install from source:
+$ git clone git@github.com:rockymadden/slack-cli.git
+$ cd slack-cli
+$ make install
+
 $ # Initialize:
 $ slack init
 ```
@@ -72,6 +77,23 @@ Usage:
   slack init
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 
+  slack file delete [file]
+    [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>] [--monochrome|-m]
+
+  slack file info [file]
+    [--count|-cn <count>] [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>]
+    [--monochrome|-m] [--page|-pg <page>]
+
+  slack file list
+    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]
+    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]
+    [--timestamp-to|-tt <timestamp>] [--types|-ty <types>] [--user|-ur <user>]
+
+  slack file upload [<file> [channels]]
+    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]
+    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
+    [--monochrome|-m] [--title|-ti <title>]
+
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
 
@@ -88,6 +110,12 @@ Chat Commands:
   chat delete    Delete chat message
   chat send      Send chat message
   chat update    Update chat message
+
+File Commands:
+  file delete    Delete file
+  file info      Info about file
+  file list      List files
+  file upload    Upload file
 
 Snooze Commands:
   snooze end      End snooze
@@ -127,14 +155,8 @@ $ slack chat send --text 'Hello world!' --channel '#channel'
 $ # Send message via short form options:
 $ slack chat send -tx 'Hello world!' -ch '#channel'
 
-$ # Send message via piped echo:
-$ echo 'Hello world!' | slack chat send --channel '#channel'
-
-$ # Send message via piped ls:
+$ # Send message via pipe:
 $ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color good
-
-$ # Send message via piped cat:
-$ cat today.log | slack chat send --channel '#channel' --pretext 'Prod issues:' --color danger
 
 $ # Send message and returning just the timestamp via filter option:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts'
@@ -186,6 +208,61 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
 
+### `file upload`:
+
+```bash
+$ # Upload file via prompts:
+$ slack file upload
+
+$ # Upload file via arguments:
+$ slack file upload README.md '#channel'
+
+$ # Upload file via options:
+$ slack file upload --file README.md --channels '#channel'
+
+$ # Upload file via pipe:
+$ ls -al | slack file upload --channels '#channel'
+
+$ # Upload file with rich formatting:
+$ slack file upload README.md '#channel' --comment 'Comment' --title 'Title'
+```
+
+### `file list`:
+
+```bash
+$ # List files:
+$ slack file list
+
+$ # List files and output only ID and size:
+$ slack file list --filter '[.files[] | {id, size}]'
+```
+
+### `file info`:
+
+```bash
+$ # Info about file via prompts:
+$ slack file info
+
+$ # Info about file via arguments:
+$ slack file info F2147483862
+
+$ # Info about file via options:
+$ slack file info --file F2147483862
+```
+
+### `file delete`:
+
+```bash
+$ # Delete file via prompts:
+$ slack file delete
+
+$ # Delete file via arguments:
+$ slack file delete F2147483862
+
+$ # Delete file via options:
+$ slack file delete --file F2147483862
+```
+
 ### `snooze start`:
 
 ```bash
@@ -229,7 +306,7 @@ $ slack snooze end
 
 * [ ] channels
 * [x] chat
-* [ ] files
+* [x] files
 * [ ] groups
 * [ ] pins
 * [ ] search

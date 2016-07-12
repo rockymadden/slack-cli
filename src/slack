@@ -9,14 +9,16 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatdelete|chatsend|chatupdate|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|\
+  filedelete|fileinfo|filelist|fileupload|\
+  snoozeend|snoozeinfo|snoozestart)
     sub=${1} ; shift
   ;;
 esac
 
 # PIPE FRIENDLINESS ###############################################################################
 case "${cmd}${sub}" in
-  chatsend|chatupdate) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
+  chatsend|chatupdate|fileupload) [ -p /dev/stdin ] && stdin=$(cat <&0) ;;
 esac
 
 # ARGUMENT AND OPTION PARSING #####################################################################
@@ -28,11 +30,21 @@ while (( "$#" )); do
     --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
     --author*|-at*) author=${2} ; shift ; shift ;;
+    --channels=*) channels=${1/--channels=/''} ; shift ;;
+    --channels*|-chs*) channels=${2} ; shift ; shift ;;
     --channel=*) channel=${1/--channel=/''} ; shift ;;
     --channel*|-ch*) channel=${2} ; shift ; shift ;;
     --color=*) color=${1/--color=/''} ; shift ;;
     --color*|-cl*) color=${2} ; shift ; shift ;;
     --compact|-cp) compact='-c' ; shift ;;
+    --comment=*) comment=${1/--comment=/''} ; shift ;;
+    --comment*|-cm*) comment=${2} ; shift ; shift ;;
+    --count=*) count=${1/--count=/''} ; shift ;;
+    --count|-cn*) count=${2} ; shift ; shift ;;
+    --filename=*) filename=${1/--filename=/''} ; shift ;;
+    --filename*|-fn*) filename=${2} ; shift ; shift ;;
+    --file=*) file=${1/--file=/''} ; shift ;;
+    --file*|-fi*) file=${2} ; shift ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
@@ -40,12 +52,18 @@ while (( "$#" )); do
     --monochrome|-m) monochrome='-M' ; shift ;;
     --minutes=*) minutes=${1/--minutes=/''} ; shift ;;
     --minutes*|-mn*) minutes=${2} ; shift ; shift ;;
+    --page=*) page=${1/--page=/''} ; shift ;;
+    --page|-pg*) page=${2} ; shift ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
     --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
     --text*|-tx*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
     --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
+    --timestamp-from=*) timestampfrom=${1/--timestampfrom=/''} ; shift ;;
+    --timestamp-from|-tf*) timestampfrom=${2} ; shift ; shift ;;
+    --timestamp-to=*) timestampto=${1/--timestampto=/''} ; shift ;;
+    --timestamp-to|-tt*) timestampto=${2} ; shift ; shift ;;
     --timestamp=*) timestamp=${1/--timestamp=/''} ; shift ;;
     --timestamp*|-ts*) timestamp=${2} ; shift ; shift ;;
     --title-link=*) titlelink=${1/--title-link=/''} ; shift ;;
@@ -54,6 +72,8 @@ while (( "$#" )); do
     --title*|-ti*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
     --token|-tk*) token=${2} ; shift ; shift ;;
+    --types=*) types=${1/--types=/''} ; shift ;;
+    --types|-ty*) types=${2} ; shift ; shift ;;
     --user=*) user=${1/--user=/''} ; shift ;;
     --user|-ur*) user=${2} ; shift ; shift ;;
     *)
@@ -70,6 +90,16 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -n "${text}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+        ;;
+        filedelete)
+          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
+        ;;
+        fileinfo)
+          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
+        ;;
+        fileupload)
+          [ -n "${1}" ] && [ -n "${file}" ] && [ -z "${channels}" ] && channels=${1}
+          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
         ;;
         snoozeinfo)
           [ -n "${1}" ] && [ -z "${user}" ] && user=${1}
@@ -98,8 +128,15 @@ case "${cmd}${sub}" in
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
   ;;
-  snoozestart)
-    [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
+  filedelete)
+    [ -z "${file}" ] && read -e -p 'Enter file (e.g. F2147483862): ' file
+  ;;
+  fileinfo)
+    [ -z "${file}" ] && read -e -p 'Enter file (e.g. F2147483862): ' file
+  ;;
+  fileupload)
+    [ -z "${file}" ] && read -e -p 'Enter file (e.g. file.log): ' file
+    [ -z "${channels}" ] && read -e -p 'Enter channels (e.g. #general,C1234567890): ' channels
   ;;
   init)
     _token=$([ -f "${etcdir}/slack" ] && sed -n '1p' < "${etcdir}/slack")
@@ -108,9 +145,29 @@ case "${cmd}${sub}" in
       read -e -p 'Enter Slack API token: ' token
     fi
   ;;
+  snoozestart)
+    [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
+  ;;
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
+function attachify() {
+  [ -n "${author}" ] && local _author=", \"author_name\": \"${author}\""
+  [ -n "${authoricon}" ] && local _authoricon=", \"author_icon\": \"${authoricon}\""
+  [ -n "${authorlink}" ] && local _authorlink=", \"author_link\": \"${authorlink}\""
+  [ -n "${color}" ] && local _color=", \"color\": \"${color}\""
+  [ -n "${image}" ] && local _image=", \"image_url\": \"${image}\""
+  [ -n "${pretext}" ] && local _pretext=", \"pretext\": \"${pretext}\""
+  [ -n "${thumbnail}" ] && local _thumbnail=", \"thumb_url\": \"${thumbnail}\""
+  [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
+  [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
+  local _json="${_author}${_authoricon}${_authorlink}${_color}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}"
+  [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
+  [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
+
+  echo "${_attachments}"
+}
+
 function jqify() {
   case "$(echo ${1} | jq -r '.ok')" in
     true) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
@@ -119,31 +176,31 @@ function jqify() {
 }
 
 function lchannel() {
-  case "${1}" in
+  case "${channel}" in
     @*)
-      local user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${2}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${1/@/}\")) | .[].id")
-      local channel=$(\
-        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${2}" 2>&1 | \
-        jq -r ".ims | map(select(.user == \"${user}\")) | .[].id")
+      local _user=$(\
+        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
+        jq -r ".members | map(select(.name == \"${channel/@/}\")) | .[].id")
+      local _channel=$(\
+        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
+        jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
 
-      echo ${channel}
+      echo ${_channel}
     ;;
-    *) echo ${1} ;;
+    *) echo ${channel} ;;
   esac
 }
 
 function luser() {
-  case "${1}" in
+  case "${user}" in
     @*)
-      local user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${2}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${1/@/}\")) | .[].id")
+      local _user=$(\
+        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
+        jq -r ".members | map(select(.name == \"${user/@/}\")) | .[].id")
 
-      echo ${user}
+      echo ${_user}
     ;;
-    *) echo ${1} ;;
+    *) echo ${user} ;;
   esac
 }
 
@@ -152,7 +209,7 @@ function chatdelete() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.delete \
       --data-urlencode "as_user=true" \
-      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "ts=${timestamp}" \
       --data-urlencode "token=${token}")
 
@@ -161,24 +218,12 @@ function chatdelete() {
 
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
-  [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
-  [ -n "${authoricon}" ] && authoriconjson=", \"author_icon\": \"${authoricon}\""
-  [ -n "${authorlink}" ] && authorlinkjson=", \"author_link\": \"${authorlink}\""
-  [ -n "${color}" ] && colorjson=", \"color\": \"${color}\""
-  [ -n "${image}" ] && imagejson=", \"image_url\": \"${image}\""
-  [ -n "${pretext}" ] && pretextjson=", \"pretext\": \"${pretext}\""
-  [ -n "${thumbnail}" ] && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
-  [ -n "${title}" ] && titlejson=", \"title\": \"${title}\""
-  [ -n "${titlelink}" ] && titlelinkjson=", \"title_link\": \"${titlelink}\""
-  json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
-  [ -z "${json}" ] && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
-  [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=${attachments}" \
-      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "attachments=$(attachify)" \
+      --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
@@ -186,24 +231,12 @@ function chatsend() {
 
 function chatupdate() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
-  [ -n "${author}" ] && authorjson=", \"author_name\": \"${author}\""
-  [ -n "${authoricon}" ] && authoriconjson=", \"author_icon\": \"${authoricon}\""
-  [ -n "${authorlink}" ] && authorlinkjson=", \"author_link\": \"${authorlink}\""
-  [ -n "${color}" ] && colorjson=", \"color\": \"${color}\""
-  [ -n "${image}" ] && imagejson=", \"image_url\": \"${image}\""
-  [ -n "${pretext}" ] && pretextjson=", \"pretext\": \"${pretext}\""
-  [ -n "${thumbnail}" ] && thumbnailjson=", \"thumb_url\": \"${thumbnail}\""
-  [ -n "${title}" ] && titlejson=", \"title\": \"${title}\""
-  [ -n "${titlelink}" ] && titlelinkjson=", \"title_link\": \"${titlelink}\""
-  json="${authorjson}${authoriconjson}${authorlinkjson}${colorjson}${imagejson}${pretextjson}${thumbnailjson}${titlejson}${titlelinkjson}"
-  [ -z "${json}" ] && attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
-  [ -n "${json}" ] && attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${json}}]"
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.update \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=${attachments}" \
-      --data-urlencode "channel=$(lchannel ${channel} ${token})" \
+      --data-urlencode "attachments=$(attachify)" \
+      --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "ts=${timestamp}" \
       --data-urlencode "token=${token}")
 
@@ -236,6 +269,23 @@ function help() {
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
+  echo "  ${bin} file delete [file]"
+  echo '    [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>] [--monochrome|-m]'
+  echo
+  echo "  ${bin} file info [file]"
+  echo '    [--count|-cn <count>] [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--page|-pg <page>]'
+  echo
+  echo "  ${bin} file list"
+  echo '    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]'
+  echo '    [--timestamp-to|-tt <timestamp>] [--types|-ty <types>] [--user|-ur <user>]'
+  echo
+  echo "  ${bin} file upload [<file> [channels]]"
+  echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
+  echo '    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--title|-ti <title>]'
+  echo
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo
@@ -253,6 +303,12 @@ function help() {
   echo '  chat send      Send chat message'
   echo '  chat update    Update chat message'
   echo
+  echo 'File Commands:'
+  echo '  file delete    Delete file'
+  echo '  file info      Info about file'
+  echo '  file list      List files'
+  echo '  file upload    Upload file'
+  echo
   echo 'Snooze Commands:'
   echo '  snooze end      End snooze'
   echo '  snooze info     Info about snooze'
@@ -261,6 +317,86 @@ function help() {
   echo 'More Information:'
   echo '  chat    https://rockymadden-slack.herokuapp.com'
   echo '  repo    https://github.com/rockymadden/slack-cli'
+}
+
+function filedelete() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/files.delete \
+      --data-urlencode "file=${file}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function fileinfo() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/files.info \
+      ${count:+ --data-urlencode "count=${count}"} \
+      --data-urlencode "file=${file}" \
+      ${page:+ --data-urlencode "page=${page}"} \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function filelist() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/files.list \
+      ${channel:+ --data-urlencode "channel=${channel}"} \
+      ${count:+ --data-urlencode "count=${count}"} \
+      ${page:+ --data-urlencode "page=${page}"} \
+      ${timestampfrom:+ --data-urlencode "ts_from=${timestampfrom}"} \
+      ${timestampto:+ --data-urlencode "ts_to=${timestampto}"} \
+      ${types:+ --data-urlencode "types=${types}"} \
+      ${user:+ --data-urlencode "user=$(luser)"} \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function fileupload() {
+  [ -n "${stdin}" ] && [ -z "${file}" ] && file=${stdin}
+
+  if [ -f "${file}" ]; then
+    local _file=${file}
+
+    case "${filename}" in
+      '') local _filename=$(basename ${file}) ;;
+      *) local _filename=${filename} ;;
+    esac
+  else
+    local _content=${file}
+
+    case "${filename}" in
+      '') local _filename='stdin' ;;
+      *) local _filename=${filename} ;;
+    esac
+  fi
+
+  case "${_file}" in
+    '')
+      local msg=$(\
+        curl -s -X POST https://slack.com/api/files.upload \
+          ${channels:+ --data-urlencode "channels=${channels}"} \
+          ${comment:+ --data-urlencode "initial_comment=${comment}"} \
+          ${_content:+ --data-urlencode "content=${_content}"} \
+          ${_filename:+ --data-urlencode "filename=${_filename}"} \
+          ${title:+ --data-urlencode "title=${title}"} \
+          --data-urlencode "token=${token}")
+    ;;
+    *)
+      local msg=$(\
+        curl -s -X POST https://slack.com/api/files.upload \
+          ${channels:+ --form "channels=${channels}"} \
+          ${comment:+ --form "initial_comment=${comment}"} \
+          ${_file:+ --form "file=@${_file}"} \
+          ${_filename:+ --form "filename=${_filename}"} \
+          ${title:+ --form "title=${title}"} \
+          --form "token=${token}")
+    ;;
+  esac
+
+  jqify "${msg}"
 }
 
 function init() {
@@ -284,19 +420,10 @@ function snoozeend() {
 }
 
 function snoozeinfo() {
-  case "${user}" in
-    '')
-      local msg=$(\
-        curl -s -X POST https://slack.com/api/dnd.info \
-          --data-urlencode "token=${token}")
-    ;;
-    *)
-      local msg=$(
-        curl -s -X POST https://slack.com/api/dnd.info \
-          --data-urlencode "user=$(luser ${user} ${token})" \
-          --data-urlencode "token=${token}")
-    ;;
-  esac
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/dnd.info \
+      ${user:+ --data-urlencode "user=$(luser)"} \
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
@@ -319,7 +446,9 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatdelete|chatsend|chatupdate|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|\
+  filedelete|fileinfo|filelist|fileupload|\
+  snoozeend|snoozeinfo|snoozestart)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
