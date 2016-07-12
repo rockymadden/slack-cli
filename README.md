@@ -72,6 +72,23 @@ Usage:
   slack init
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 
+  slack file delete [file]
+    [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>] [--monochrome|-m]
+
+  slack file info [file]
+    [--count|-cn <count>] [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>]
+    [--monochrome|-m] [--page|-pg <page>]
+
+  slack file list
+    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]
+    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]
+    [--timestamp-to|-tt <timestamp>] [--types|-ty <types>] [--user|-ur <user>]
+
+  slack file upload [<file> [channels]]
+    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]
+    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
+    [--monochrome|-m] [--title|-ti <title>]
+
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
 
@@ -88,6 +105,12 @@ Chat Commands:
   chat delete    Delete chat message
   chat send      Send chat message
   chat update    Update chat message
+
+File Commands:
+  file delete    Delete file
+  file info      Info about file
+  file list      List files
+  file upload    Upload file
 
 Snooze Commands:
   snooze end      End snooze
@@ -180,6 +203,25 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
 
+### `file upload`:
+
+```bash
+$ # Upload file via prompts:
+$ slack file upload
+
+$ # Upload file via arguments:
+$ slack file upload README.md '#channel'
+
+$ # Upload file via options:
+$ slack file upload --file README.md --channels '#channel'
+
+$ # Upload file via pipe:
+$ ls -al | slack file upload --channels '#channel'
+
+$ # Upload file with rich formatting:
+$ slack file upload README.md '#channel' --comment 'Comment' --title 'Title'
+```
+
 ### `file list`:
 
 ```bash
@@ -188,6 +230,32 @@ $ slack file list
 
 $ # List files and output only ID and size:
 $ slack file list --filter '[.files[] | {id, size}]'
+```
+
+### `file info`:
+
+```bash
+$ # Info about file via prompts:
+$ slack file info
+
+$ # Info about file via arguments:
+$ slack file info F2147483862
+
+$ # Info about file via options:
+$ slack file info --file F2147483862
+```
+
+### `file delete`:
+
+```bash
+$ # Delete file via prompts:
+$ slack file delete
+
+$ # Delete file via arguments:
+$ slack file delete F2147483862
+
+$ # Delete file via options:
+$ slack file delete --file F2147483862
 ```
 
 ### `snooze start`:
