@@ -180,6 +180,16 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
 
+### `file list`:
+
+```bash
+$ # List files:
+$ slack file list
+
+$ # List files and output only ID and size:
+$ slack file list --filter '[.files[] | {id, size}]'
+```
+
 ### `snooze start`:
 
 ```bash
@@ -223,7 +233,7 @@ $ slack snooze end
 
 * [ ] channels
 * [x] chat
-* [ ] files
+* [x] files
 * [ ] groups
 * [ ] pins
 * [ ] search

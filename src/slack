@@ -9,7 +9,7 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatdelete|chatsend|chatupdate|fileupload|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|filelist|fileupload|snoozeend|snoozeinfo|snoozestart)
     sub=${1} ; shift
   ;;
 esac
@@ -37,6 +37,8 @@ while (( "$#" )); do
     --compact|-cp) compact='-c' ; shift ;;
     --comment=*) comment=${1/--comment=/''} ; shift ;;
     --comment*|-cm*) comment=${2} ; shift ; shift ;;
+    --count=*) count=${1/--count=/''} ; shift ;;
+    --count|-cn*) count=${2} ; shift ; shift ;;
     --filename=*) filename=${1/--filename=/''} ; shift ;;
     --filename*|-fn*) filename=${2} ; shift ; shift ;;
     --file=*) file=${1/--file=/''} ; shift ;;
@@ -48,12 +50,18 @@ while (( "$#" )); do
     --monochrome|-m) monochrome='-M' ; shift ;;
     --minutes=*) minutes=${1/--minutes=/''} ; shift ;;
     --minutes*|-mn*) minutes=${2} ; shift ; shift ;;
+    --page=*) page=${1/--page=/''} ; shift ;;
+    --page|-pg*) page=${2} ; shift ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
     --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
     --text*|-tx*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
     --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
+    --timestamp-from=*) timestampfrom=${1/--timestampfrom=/''} ; shift ;;
+    --timestamp-from|-tf*) timestampfrom=${2} ; shift ; shift ;;
+    --timestamp-to=*) timestampto=${1/--timestampto=/''} ; shift ;;
+    --timestamp-to|-tt*) timestampto=${2} ; shift ; shift ;;
     --timestamp=*) timestamp=${1/--timestamp=/''} ; shift ;;
     --timestamp*|-ts*) timestamp=${2} ; shift ; shift ;;
     --title-link=*) titlelink=${1/--title-link=/''} ; shift ;;
@@ -62,6 +70,8 @@ while (( "$#" )); do
     --title*|-ti*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
     --token|-tk*) token=${2} ; shift ; shift ;;
+    --types=*) types=${1/--types=/''} ; shift ;;
+    --types|-ty*) types=${2} ; shift ; shift ;;
     --user=*) user=${1/--user=/''} ; shift ;;
     --user|-ur*) user=${2} ; shift ; shift ;;
     *)
@@ -245,6 +255,11 @@ function help() {
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
+  echo "  ${bin} file list"
+  echo '    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]'
+  echo '    [--timestamp-to|-tt <timestamp>] [--types|-ty <types>] [--user|-ur <user>]'
+  echo
   echo "  ${bin} file upload [<file> [channels]]"
   echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
   echo '    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
@@ -268,6 +283,7 @@ function help() {
   echo '  chat update    Update chat message'
   echo
   echo 'File Commands:'
+  echo '  file list      List files'
   echo '  file upload    Upload file'
   echo
   echo 'Snooze Commands:'
@@ -278,6 +294,21 @@ function help() {
   echo 'More Information:'
   echo '  chat    https://rockymadden-slack.herokuapp.com'
   echo '  repo    https://github.com/rockymadden/slack-cli'
+}
+
+function filelist() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/files.list \
+      ${channel:+ --data-urlencode "channel=${channel}"} \
+      ${count:+ --data-urlencode "count=${count}"} \
+      ${page:+ --data-urlencode "page=${page}"} \
+      ${timestampfrom:+ --data-urlencode "ts_from=${timestampfrom}"} \
+      ${timestampto:+ --data-urlencode "ts_to=${timestampto}"} \
+      ${types:+ --data-urlencode "types=${types}"} \
+      ${user:+ --data-urlencode "user=${user}"} \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
 }
 
 function fileupload() {
@@ -372,7 +403,7 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatdelete|chatsend|chatupdate|fileupload|snoozeend|snoozeinfo|snoozestart)
+  chatdelete|chatsend|chatupdate|filelist|fileupload|snoozeend|snoozeinfo|snoozestart)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
