@@ -10,25 +10,38 @@
 A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
 messages are a first class concept, helping you send
 [beautiful messages](https://api.slack.com/docs/message-formatting) with ease. Deep integration
-with [jq](https://github.com/stedolan/jq) allows for the ability to perform complex operations upon
-JSON responses, helping you perform compositional operations (i.e. pipe chaining) with ease.
+with [jq](https://github.com/stedolan/jq) allows for the ability to perform advanced operations
+upon JSON responses, helping you perform complex queries and pipe chaining with ease.
+
+__Basic message example:__
+
+```bash
+$ slack chat send hi @slackbot
+```
 
 __Richly formatted message example:__
 
 ```bash
-$ slack chat send '*New version released:* v0.12.0' \
-  --author 'rockymadden/slack-cli' \
+$ slack chat send \
+  --author 'author' \
   --author-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
   --author-link 'https://github.com/rockymadden/slack-cli' \
-  --channel '#slack-cli' \
-  --color good
+  --channel '#channel' \
+  --color good \
+  --footer 'footer' \
+  --footer-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --image 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --pretext 'pretext'
+  --text 'text'
+  --timestamp 123456789
+  --title 'title'
+  --title-link 'https://github.com/rockymadden/slack-cli'
 ```
 
 __Pipe chaining example:__
 
-Sending a message to a user, updating the message, and finally deleting the message:
-
 ```bash
+$ # Send a message, update the message, and finally delete the message:
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
@@ -36,20 +49,48 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 
 ## Installation
 
+### Via `brew`:
+
 ```bash
-$ # Install from tap:
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
+```
 
-$ # Install from source:
+### Via `curl`:
+
+```bash
+$ curl -O https://raw.githubusercontent.com/rockymadden/slack-cli/master/src/slack
+$ chmod +x slack
+```
+
+> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+
+### Via `make`:
+
+```bash
 $ git clone git@github.com:rockymadden/slack-cli.git
 $ cd slack-cli
-$ make install
+$ make install bindir=/path/to/bin etcdir=/path/to/etc
+```
 
-$ # Initialize:
+> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+
+## Configuration
+
+Ensure you have a [Slack API token](https://api.slack.com/web) and use said token one of the
+following ways:
+
+### Via `init`:
+
+```bash
 $ slack init
 ```
-> __PROTIP:__ Ensure you have a [Slack API token](https://api.slack.com/web).
+
+### Via environment variable:
+
+```bash
+export SLACK_CLI_TOKEN='token'
+```
 
 ## Usage
 

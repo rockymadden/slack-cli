@@ -10,13 +10,13 @@ install: | stub
 ifeq (${uname}, Darwin)
 	@$(eval _bindir := $(shell greadlink -f ${bindir}))
 	@$(eval _etcdir := $(shell greadlink -f ${etcdir}))
-	@sed -i '' "s|bindir=|bindir=${_bindir}|g" ${bindir}/slack
-	@sed -i '' "s|etcdir=|etcdir=${_etcdir}|g" ${bindir}/slack
+	@sed -i '' "s|bindir=.*|bindir=${_bindir}|g" ${bindir}/slack
+	@sed -i '' "s|etcdir=.*|etcdir=${_etcdir}|g" ${bindir}/slack
 else ifeq (${uname}, Linux)
 	@$(eval _bindir := $(shell readlink -f ${bindir}))
 	@$(eval _etcdir := $(shell readlink -f ${etcdir}))
-	@sed -i "s|bindir=|bindir=${_bindir}|g" ${bindir}/slack
-	@sed -i "s|etcdir=|etcdir=${_etcdir}|g" ${bindir}/slack
+	@sed -i "s|bindir=.*|bindir=${_bindir}|g" ${bindir}/slack
+	@sed -i "s|etcdir=.*|etcdir=${_etcdir}|g" ${bindir}/slack
 endif
 
 stub:
