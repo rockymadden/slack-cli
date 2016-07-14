@@ -10,8 +10,8 @@
 A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
 messages are a first class concept, helping you send
 [beautiful messages](https://api.slack.com/docs/message-formatting) with ease. Deep integration
-with [jq](https://github.com/stedolan/jq) allows for the ability to perform complex operations upon
-JSON responses, helping you perform compositional operations (i.e. pipe chaining) with ease.
+with [jq](https://github.com/stedolan/jq) allows for the ability to perform advanced operations
+upon JSON responses, helping you perform complex queries and pipe chaining with ease.
 
 __Richly formatted message example:__
 
@@ -26,7 +26,7 @@ $ slack chat send '*New version released:* v0.12.0' \
 
 __Pipe chaining example:__
 
-Sending a message to a user, updating the message, and finally deleting the message:
+Send a message to a user, update the message, and finally delete the message:
 
 ```bash
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
