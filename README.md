@@ -26,9 +26,8 @@ $ slack chat send '*New version released:* v0.12.0' \
 
 __Pipe chaining example:__
 
-Send a message, update the message, and finally delete the message:
-
 ```bash
+$ # Send a message, update the message, and finally delete the message:
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
