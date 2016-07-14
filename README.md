@@ -36,20 +36,48 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 
 ## Installation
 
+### Via `brew`:
+
 ```bash
-$ # Install from tap:
 $ brew tap rockymadden/rockymadden
 $ brew install slack-cli
+```
 
-$ # Install from source:
+### Via `curl`:
+
+```bash
+$ curl -O https://raw.githubusercontent.com/rockymadden/slack-cli/master/src/slack
+$ chmod +x slack
+```
+
+> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+
+### Via `make`:
+
+```bash
 $ git clone git@github.com:rockymadden/slack-cli.git
 $ cd slack-cli
-$ make install
+$ make install bindir=/path/to/bin etcdir=/path/to/etc
+```
 
-$ # Initialize:
+> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+
+## Configuration
+
+Ensure you have a [Slack API token](https://api.slack.com/web) and use said token one of the
+following ways:
+
+### Via `init`:
+
+```bash
 $ slack init
 ```
-> __PROTIP:__ Ensure you have a [Slack API token](https://api.slack.com/web).
+
+### Via environment variable:
+
+```bash
+export SLACK_CLI_TOKEN='token'
+```
 
 ## Usage
 
