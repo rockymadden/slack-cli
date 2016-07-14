@@ -455,7 +455,7 @@ function snoozestart() {
 }
 
 function version() {
-  echo 'v0.12.0'
+  echo 'v0.13.0'
 }
 
 # COMMAND ROUTING #################################################################################
