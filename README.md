@@ -13,15 +13,29 @@ messages are a first class concept, helping you send
 with [jq](https://github.com/stedolan/jq) allows for the ability to perform advanced operations
 upon JSON responses, helping you perform complex queries and pipe chaining with ease.
 
+__Basic message example:__
+
+```bash
+$ slack chat send hi @slackbot
+```
+
 __Richly formatted message example:__
 
 ```bash
-$ slack chat send '*New version released:* v0.12.0' \
-  --author 'rockymadden/slack-cli' \
+$ slack chat send \
+  --author 'author' \
   --author-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
   --author-link 'https://github.com/rockymadden/slack-cli' \
-  --channel '#slack-cli' \
-  --color good
+  --channel '#channel' \
+  --color good \
+  --footer 'footer' \
+  --footer-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --image 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
+  --pretext 'pretext'
+  --text 'text'
+  --timestamp 123456789
+  --title 'title'
+  --title-link 'https://github.com/rockymadden/slack-cli'
 ```
 
 __Pipe chaining example:__
