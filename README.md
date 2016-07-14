@@ -63,14 +63,16 @@ Usage:
   slack chat send [<text> [channel]]
     [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
     [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
-    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
+    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]
+    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]
     [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
     [--title|-ti <title>] [--title-link|-tl <title-link>]
 
   slack chat update [<text> [<timestamp> [channel]]]
     [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
     [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
-    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]
+    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]
+    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]
     [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
     [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]
 
@@ -78,10 +80,10 @@ Usage:
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
 
   slack file delete [file]
-    [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>] [--monochrome|-m]
+    [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>] [--monochrome|-m]
 
   slack file info [file]
-    [--count|-cn <count>] [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>]
+    [--count|-cn <count>] [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>]
     [--monochrome|-m] [--page|-pg <page>]
 
   slack file list
@@ -91,7 +93,7 @@ Usage:
 
   slack file upload [<file> [channels]]
     [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]
-    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
+    [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
     [--monochrome|-m] [--title|-ti <title>]
 
   slack snooze end

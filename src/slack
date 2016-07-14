@@ -44,9 +44,13 @@ while (( "$#" )); do
     --filename=*) filename=${1/--filename=/''} ; shift ;;
     --filename*|-fn*) filename=${2} ; shift ; shift ;;
     --file=*) file=${1/--file=/''} ; shift ;;
-    --file*|-fi*) file=${2} ; shift ; shift ;;
+    --file*|-fl*) file=${2} ; shift ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
+    --footer-icon=*) footericon=${1/--footer-icon=/''} ; shift ;;
+    --footer-icon*|-fi*) footericon=${2} ; shift ; shift ;;
+    --footer=*) footer=${1/--footer=/''} ; shift ;;
+    --footer*|-ft*) footer=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
     --image*|-im*) image=${2} ; shift ; shift ;;
     --monochrome|-m) monochrome='-M' ; shift ;;
@@ -156,12 +160,14 @@ function attachify() {
   [ -n "${authoricon}" ] && local _authoricon=", \"author_icon\": \"${authoricon}\""
   [ -n "${authorlink}" ] && local _authorlink=", \"author_link\": \"${authorlink}\""
   [ -n "${color}" ] && local _color=", \"color\": \"${color}\""
+  [ -n "${footer}" ] && local _footer=", \"footer\": \"${footer}\""
+  [ -n "${footericon}" ] && local _footericon=", \"footer_icon\": \"${footericon}\""
   [ -n "${image}" ] && local _image=", \"image_url\": \"${image}\""
   [ -n "${pretext}" ] && local _pretext=", \"pretext\": \"${pretext}\""
   [ -n "${thumbnail}" ] && local _thumbnail=", \"thumb_url\": \"${thumbnail}\""
   [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
   [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
-  local _json="${_author}${_authoricon}${_authorlink}${_color}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}"
+  local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}"
   [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
   [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
 
@@ -255,14 +261,16 @@ function help() {
   echo "  ${bin} chat send [<text> [channel]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
   echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
-  echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
+  echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
+  echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--title|-ti <title>] [--title-link|-tl <title-link>]'
   echo
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
   echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
-  echo '    [--compact|-cp] [--filter|-f <filter>] [--image|-im <image-url>] [--monochrome|-m]'
+  echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
+  echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
   echo
@@ -270,10 +278,10 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
   echo
   echo "  ${bin} file delete [file]"
-  echo '    [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>] [--monochrome|-m]'
   echo
   echo "  ${bin} file info [file]"
-  echo '    [--count|-cn <count>] [--compact|-c] [--file|-fi <file>] [--filter|-f <filter>]'
+  echo '    [--count|-cn <count>] [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>]'
   echo '    [--monochrome|-m] [--page|-pg <page>]'
   echo
   echo "  ${bin} file list"
@@ -283,7 +291,7 @@ function help() {
   echo
   echo "  ${bin} file upload [<file> [channels]]"
   echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
-  echo '    [--file|fi <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
+  echo '    [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
   echo '    [--monochrome|-m] [--title|-ti <title>]'
   echo
   echo "  ${bin} snooze end"
