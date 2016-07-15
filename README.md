@@ -99,7 +99,7 @@ $ slack --help
 Usage:
   slack chat delete [<timestamp> [channel]]
     [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
-    [--timestamp|-ts <timestamp>]
+    [--timestamp|-ts <timestamp>] [--trace|-x]
 
   slack chat send [<text> [channel]]
     [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
@@ -107,7 +107,7 @@ Usage:
     [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]
     [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]
     [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
-    [--title|-ti <title>] [--title-link|-tl <title-link>]
+    [--title|-ti <title>] [--title-link|-tl <title-link>] [--trace|-x]
 
   slack chat update [<text> [<timestamp> [channel]]]
     [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
@@ -116,35 +116,41 @@ Usage:
     [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]
     [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
     [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]
+    [--trace|-x]
 
   slack init
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
+    [--trace|-x]
 
   slack file delete [file]
     [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>] [--monochrome|-m]
+    [--trace|-x]
 
   slack file info [file]
     [--count|-cn <count>] [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>]
-    [--monochrome|-m] [--page|-pg <page>]
+    [--monochrome|-m] [--page|-pg <page>] [--trace|-x]
 
   slack file list
     [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]
     [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]
-    [--timestamp-to|-tt <timestamp>] [--types|-ty <types>] [--user|-ur <user>]
+    [--timestamp-to|-tt <timestamp>] [--trace|-x] [--types|-ty <types>]
+    [--user|-ur <user>]
 
   slack file upload [<file> [channels]]
     [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]
     [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
-    [--monochrome|-m] [--title|-ti <title>]
+    [--monochrome|-m] [--title|-ti <title>] [--trace|-x]
 
   slack snooze end
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
 
   slack snooze info [user]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--user|-ur <user>]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
+    [--user|-ur <user>]
 
   slack snooze start [minutes]
     [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
+    [--trace|-x]
 
 Configuration Commands:
   init    Initialize
