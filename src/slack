@@ -81,6 +81,7 @@ while (( "$#" )); do
     --title*|-ti*) title=${2} ; shift ; shift ;;
     --token=*) token=${1/--token=/''} ; shift ;;
     --token|-tk*) token=${2} ; shift ; shift ;;
+    --trace|-x) trace='set -x' ; shift ;;
     --types=*) types=${1/--types=/''} ; shift ;;
     --types|-ty*) types=${2} ; shift ; shift ;;
     --user=*) user=${1/--user=/''} ; shift ;;
@@ -121,6 +122,9 @@ while (( "$#" )); do
     ;;
   esac
 done
+
+# TRACING #########################################################################################
+${trace}
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}${sub}" in
@@ -265,7 +269,7 @@ function help() {
   echo 'Usage:'
   echo "  ${bin} chat delete [<timestamp> [channel]]"
   echo '    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
-  echo '    [--timestamp|-ts <timestamp>]'
+  echo '    [--timestamp|-ts <timestamp>] [--trace|-x]'
   echo
   echo "  ${bin} chat send [<text> [channel]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
@@ -273,7 +277,7 @@ function help() {
   echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
-  echo '    [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo '    [--title|-ti <title>] [--title-link|-tl <title-link>] [--trace|-x]'
   echo
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
@@ -282,35 +286,41 @@ function help() {
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} file delete [file]"
   echo '    [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} file info [file]"
   echo '    [--count|-cn <count>] [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>]'
-  echo '    [--monochrome|-m] [--page|-pg <page>]'
+  echo '    [--monochrome|-m] [--page|-pg <page>] [--trace|-x]'
   echo
   echo "  ${bin} file list"
   echo '    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]'
   echo '    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]'
-  echo '    [--timestamp-to|-tt <timestamp>] [--types|-ty <types>] [--user|-ur <user>]'
+  echo '    [--timestamp-to|-tt <timestamp>] [--trace|-x] [--types|-ty <types>]'
+  echo '    [--user|-ur <user>]'
   echo
   echo "  ${bin} file upload [<file> [channels]]"
   echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
   echo '    [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
-  echo '    [--monochrome|-m] [--title|-ti <title>]'
+  echo '    [--monochrome|-m] [--title|-ti <title>] [--trace|-x]'
   echo
   echo "  ${bin} snooze end"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
   echo "  ${bin} snooze info [user]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--user|-ur <user>]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo '    [--user|-ur <user>]'
   echo
   echo "  ${bin} snooze start [minutes]"
   echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
+  echo '    [--trace|-x]'
   echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
