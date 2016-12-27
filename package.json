@@ -1,0 +1,8 @@
+{
+  "name": "slack-cli",
+  "version": "0.13.0",
+  "description": "Powerful Slack CLI via pure bash",
+  "bin": {
+    "slack": "./src/slack"
+  }
+}
