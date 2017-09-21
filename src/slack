@@ -487,7 +487,7 @@ function snoozestart() {
 
 function setstatus() {
   local msg=$(\
-    curl -v -G -X POST \
+    curl -G -X POST \
       https://slack.com/api/users.profile.set \
       --data-urlencode 'profile={"status_text":"'${text}'", "status_emoji":"'${emoji}'"}' \
       --data-urlencode "token=${USER_OAUTH_TOKEN}")
