@@ -118,8 +118,8 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -z "${minutes}" ] && minutes=${1}
         ;;
         setstatus)
-          [ -n "${1}" ] && [ -z "${emoji}" ] && [ -z "${text}" ] && text=${1}
-          [ -n "${1}" ] && [ -z "${emoji}" ] && emoji=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${emoji}" ] && emoji=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
       esac
       shift
@@ -475,12 +475,13 @@ function snoozestart() {
 
 function setstatus() {
   local msg=$(\
-    curl -sv -X POST https://slack.com/api/users.profile.set \
-      --data-urlencode "status_text=testing" \
-      --data-urlencode "status_emoji=:mountain_railway:}" \
-      --data-urlencode "token=${token}")
-
+    curl -v -G -X POST \
+      https://slack.com/api/users.profile.set \
+      --data-urlencode 'profile={"status_text":"'${text}'", "status_emoji":"'${emoji}'"}' \
+      --data-urlencode "token=${USER_OAUTH_TOKEN}")
+  # echo "sending '${payload}'"
   jqify "${msg}"
+
 }
 
 function version() {
