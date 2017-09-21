@@ -331,6 +331,18 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
   echo '    [--trace|-x]'
   echo
+  echo "  ${bin} setstatus [<status_text> <status_emoji>]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--trace|-x]'
+  echo
+  echo "  ${bin} setactive"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--trace|-x]'
+  echo
+  echo "  ${bin} setaway"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--trace|-x]'
+  echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
   echo
