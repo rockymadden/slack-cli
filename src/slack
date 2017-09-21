@@ -16,7 +16,7 @@ cmd="${1}" ; shift
 case "${cmd}${1}" in
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
-  snoozeend|snoozeinfo|snoozestart)
+  snoozeend|snoozeinfo|snoozestart|setstatus)
     sub=${1} ; shift
   ;;
 esac
@@ -117,6 +117,10 @@ while (( "$#" )); do
         snoozestart)
           [ -n "${1}" ] && [ -z "${minutes}" ] && minutes=${1}
         ;;
+        setstatus)
+          [ -n "${1}" ] && [ -z "${emoji}" ] && [ -z "${text}" ] && text=${1}
+          [ -n "${1}" ] && [ -z "${emoji}" ] && emoji=${1}
+        ;;
       esac
       shift
     ;;
@@ -165,6 +169,11 @@ case "${cmd}${sub}" in
   snoozestart)
     [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
   ;;
+  setstatus)
+    [ -z "${text}" ] && read -e -p 'Enter status message (e.g. "at lunch"): ' text
+    [ -z "${emoji}" ] && read -e -p 'Enter emoji code (e.g. ":keyboard:"): ' emoji
+  ;;
+
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
@@ -464,6 +473,16 @@ function snoozestart() {
   jqify "${msg}"
 }
 
+function setstatus() {
+  local msg=$(\
+    curl -sv -X POST https://slack.com/api/users.profile.set \
+      --data-urlencode "status_text=testing" \
+      --data-urlencode "status_emoji=:mountain_railway:}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
 function version() {
   echo 'v0.13.0'
 }
@@ -475,7 +494,7 @@ case "${cmd}${sub}" in
   init) init ; exit $? ;;
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
-  snoozeend|snoozeinfo|snoozestart)
+  snoozeend|snoozeinfo|snoozestart|setstatus)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
