@@ -16,7 +16,7 @@ cmd="${1}" ; shift
 case "${cmd}${1}" in
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
-  snoozeend|snoozeinfo|snoozestart|setstatus)
+  snoozeend|snoozeinfo|snoozestart|setstatus|setactive|setaway)
     sub=${1} ; shift
   ;;
 esac
@@ -484,6 +484,28 @@ function setstatus() {
 
 }
 
+function setactive() {
+   local msg1=$(\
+        curl -s -X POST https://slack.com/api/users.setPresence \
+          --data-urlencode "presence=auto" \
+          --data-urlencode "token=${USER_OAUTH_TOKEN}")
+
+  local msg2=$(\
+    curl -s -X POST https://slack.com/api/users.setActive \
+      --data-urlencode "token=${USER_OAUTH_TOKEN}")
+
+  jqify "${msg1} ${msg2}"
+}
+
+function setaway() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/users.setPresence \
+      --data-urlencode "presence=away" \
+      --data-urlencode "token=${USER_OAUTH_TOKEN}")
+
+  jqify "${msg}"
+}
+
 function version() {
   echo 'v0.13.0'
 }
@@ -495,7 +517,7 @@ case "${cmd}${sub}" in
   init) init ; exit $? ;;
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
-  snoozeend|snoozeinfo|snoozestart|setstatus)
+  snoozeend|snoozeinfo|snoozestart|setstatus|setactive|setaway)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
