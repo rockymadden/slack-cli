@@ -497,6 +497,8 @@ function setstatus() {
 }
 
 function setactive() {
+  # setting presence=auto + setActive works more consistently
+  # than just setActive
    local msg1=$(\
         curl -s -X POST https://slack.com/api/users.setPresence \
           --data-urlencode "presence=auto" \
