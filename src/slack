@@ -16,7 +16,9 @@ cmd="${1}" ; shift
 case "${cmd}${1}" in
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
-  snoozeend|snoozeinfo|snoozestart|setstatus|setactive|setaway)
+  presenceactive|presenceaway|\
+  snoozeend|snoozeinfo|snoozestart|\
+  statusedit)
     sub=${1} ; shift
   ;;
 esac
@@ -46,6 +48,8 @@ while (( "$#" )); do
     --comment*|-cm*) comment=${2} ; shift ; shift ;;
     --count=*) count=${1/--count=/''} ; shift ;;
     --count|-cn*) count=${2} ; shift ; shift ;;
+    --emoji=*) emoji=${1/--emoji=/''} ; shift ;;
+    --emoji*|-em*) emoji=${2} ; shift ; shift ;;
     --filename=*) filename=${1/--filename=/''} ; shift ;;
     --filename*|-fn*) filename=${2} ; shift ; shift ;;
     --file=*) file=${1/--file=/''} ; shift ;;
@@ -117,7 +121,7 @@ while (( "$#" )); do
         snoozestart)
           [ -n "${1}" ] && [ -z "${minutes}" ] && minutes=${1}
         ;;
-        setstatus)
+        statusedit)
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${emoji}" ] && emoji=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
@@ -169,9 +173,9 @@ case "${cmd}${sub}" in
   snoozestart)
     [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
   ;;
-  setstatus)
-    [ -z "${text}" ] && read -e -p 'Enter status message (e.g. "at lunch"): ' text
-    [ -z "${emoji}" ] && read -e -p 'Enter emoji code (e.g. ":keyboard:"): ' emoji
+  statusedit)
+    [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
+    [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
   ;;
 
 esac
@@ -320,6 +324,12 @@ function help() {
   echo '    [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
   echo '    [--monochrome|-m] [--title|-ti <title>] [--trace|-x]'
   echo
+  echo "  ${bin} presence active"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo
+  echo "  ${bin} presence away"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
@@ -331,17 +341,8 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
   echo '    [--trace|-x]'
   echo
-  echo "  ${bin} setstatus [<status_text> <status_emoji>]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
-  echo '    [--trace|-x]'
-  echo
-  echo "  ${bin} setactive"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
-  echo '    [--trace|-x]'
-  echo
-  echo "  ${bin} setaway"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
-  echo '    [--trace|-x]'
+  echo "  ${bin} status edit [<text> [<emoji>]]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
@@ -357,13 +358,19 @@ function help() {
   echo '  file list      List files'
   echo '  file upload    Upload file'
   echo
+  echo 'Presence Commands:'
+  echo '  presence active    Active presence'
+  echo '  presence away      Away presence'
+  echo
   echo 'Snooze Commands:'
   echo '  snooze end      End snooze'
   echo '  snooze info     Info about snooze'
   echo '  snooze start    Start snooze'
   echo
+  echo 'Status Commands:'
+  echo '  status edit    Edit status'
+  echo
   echo 'More Information:'
-  echo '  chat    https://rockymadden-slack.herokuapp.com'
   echo '  repo    https://github.com/rockymadden/slack-cli'
 }
 
@@ -459,6 +466,29 @@ function init() {
   esac
 }
 
+function presenceactive() {
+  # Setting presence=auto + setActive works more consistently than just setActive
+  local msg0=$(\
+    curl -s -X POST https://slack.com/api/users.setPresence \
+      --data-urlencode "presence=auto" \
+      --data-urlencode "token=${token}")
+
+  local msg1=$(\
+    curl -s -X POST https://slack.com/api/users.setActive \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg0}" && jqify "${msg1}" >/dev/null 2>&1
+}
+
+function presenceaway() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/users.setPresence \
+      --data-urlencode "presence=away" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
 function snoozeend() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/dnd.endSnooze \
@@ -485,37 +515,11 @@ function snoozestart() {
   jqify "${msg}"
 }
 
-function setstatus() {
+function statusedit() {
   local msg=$(\
-    curl -G -X POST \
-      https://slack.com/api/users.profile.set \
+    curl -s -X POST https://slack.com/api/users.profile.set \
       --data-urlencode 'profile={"status_text":"'${text}'", "status_emoji":"'${emoji}'"}' \
-      --data-urlencode "token=${USER_OAUTH_TOKEN}")
-  # echo "sending '${payload}'"
-  jqify "${msg}"
-
-}
-
-function setactive() {
-  # setting presence=auto + setActive works more consistently
-  # than just setActive
-   local msg1=$(\
-        curl -s -X POST https://slack.com/api/users.setPresence \
-          --data-urlencode "presence=auto" \
-          --data-urlencode "token=${USER_OAUTH_TOKEN}")
-
-  local msg2=$(\
-    curl -s -X POST https://slack.com/api/users.setActive \
-      --data-urlencode "token=${USER_OAUTH_TOKEN}")
-
-  jqify "${msg1} ${msg2}"
-}
-
-function setaway() {
-  local msg=$(\
-    curl -s -X POST https://slack.com/api/users.setPresence \
-      --data-urlencode "presence=away" \
-      --data-urlencode "token=${USER_OAUTH_TOKEN}")
+      --data-urlencode "token=${token}")
 
   jqify "${msg}"
 }
@@ -531,7 +535,9 @@ case "${cmd}${sub}" in
   init) init ; exit $? ;;
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
-  snoozeend|snoozeinfo|snoozestart|setstatus|setactive|setaway)
+  presenceactive|presenceaway|\
+  snoozeend|snoozeinfo|snoozestart|\
+  statusedit)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
