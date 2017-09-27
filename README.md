@@ -141,6 +141,12 @@ Usage:
     [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
     [--monochrome|-m] [--title|-ti <title>] [--trace|-x]
 
+  slack presence active
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
+
+  slack presence away
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
+
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
 
@@ -151,6 +157,9 @@ Usage:
   slack snooze start [minutes]
     [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
     [--trace|-x]
+
+  slack status edit [<text> [<emoji>]]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
 
 Configuration Commands:
   init    Initialize
@@ -166,13 +175,19 @@ File Commands:
   file list      List files
   file upload    Upload file
 
+Presence Commands:
+  presence active    Active presence
+  presence away      Away presence
+
 Snooze Commands:
   snooze end      End snooze
   snooze info     Info about snooze
   snooze start    Start snooze
 
+Status Commands:
+  status edit    Edit status
+
 More Information:
-  chat    https://rockymadden-slack.herokuapp.com
   repo    https://github.com/rockymadden/slack-cli
 ```
 
@@ -190,7 +205,6 @@ allows for both traditional usage and prompt-based usage.
 ## Examples and Recipes
 
 ### `chat send`:
-
 ```bash
 $ # Send message via prompts:
 $ slack chat send
@@ -215,7 +229,6 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts'
 more information about option meanings.
 
 ### `chat update`:
-
 ```bash
 $ # Update message via prompts:
 $ slack chat update
@@ -238,7 +251,6 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
 more information about option meanings.
 
 ### `chat delete`:
-
 ```bash
 $ # Delete message via prompts:
 $ slack chat delete
@@ -258,7 +270,6 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
 ```
 
 ### `file upload`:
-
 ```bash
 $ # Upload file via prompts:
 $ slack file upload
@@ -277,7 +288,6 @@ $ slack file upload README.md '#channel' --comment 'Comment' --title 'Title'
 ```
 
 ### `file list`:
-
 ```bash
 $ # List files:
 $ slack file list
@@ -287,7 +297,6 @@ $ slack file list --filter '[.files[] | {id, size}]'
 ```
 
 ### `file info`:
-
 ```bash
 $ # Info about file via prompts:
 $ slack file info
@@ -300,7 +309,6 @@ $ slack file info --file F2147483862
 ```
 
 ### `file delete`:
-
 ```bash
 $ # Delete file via prompts:
 $ slack file delete
@@ -312,8 +320,19 @@ $ # Delete file via options:
 $ slack file delete --file F2147483862
 ```
 
-### `snooze start`:
+### `presence active`:
+```bash
+$ # Active presence:
+$ slack presence active
+```
 
+### `presence away`:
+```bash
+$ # Away presence:
+$ slack presence away
+```
+
+### `snooze start`:
 ```bash
 $ # Start snooze via prompts:
 $ slack snooze start
@@ -329,7 +348,6 @@ $ slack snooze start -mn 60
 ```
 
 ### `snooze info`:
-
 ```bash
 $ # Info about your own snooze:
 $ slack snooze info
@@ -345,29 +363,31 @@ $ slack snooze info -ur @slackbot
 ```
 
 ### `snooze end`:
-
 ```bash
 $ # End snooze:
 $ slack snooze end
 ```
 
-## Coverage
+### `status edit`:
+```bash
+$ # Edit status:
+$ slack status edit
 
-* [ ] channels
-* [x] chat
-* [x] files
-* [ ] groups
-* [ ] pins
-* [ ] search
-* [x] snooze
-* [ ] usergroups
-* [ ] users
+$ # Edit status via arguments:
+$ slack status edit lunch :hamburger:
+
+$ # Edit status via options:
+$ slack status edit --text lunch --emoji :hamburger:
+
+$ # Edit status via short form options:
+$ slack status edit --tx lunch -em :hamburger:
+```
 
 ## License
 ```
 The MIT License (MIT)
 
-Copyright (c) 2016 Rocky Madden (https://rockymadden.com/)
+Copyright (c) 2017 Rocky Madden (https://rockymadden.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
