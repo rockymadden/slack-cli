@@ -525,7 +525,7 @@ function statusedit() {
 }
 
 function version() {
-  echo 'v0.13.0'
+  echo 'v0.14.0'
 }
 
 # COMMAND ROUTING #################################################################################
