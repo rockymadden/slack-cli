@@ -69,6 +69,10 @@ while (( "$#" )); do
     --page|-pg*) page=${2} ; shift ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
     --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
+	--reminder-text=*) remindertext=${1/--reminder-text=/''} ; shift ;;
+	--reminder-text*|-rti*) remindertext=${2} ; shift ; shift ;;
+	--reminder-time=*) remindertime=${1/--reminder-time=/''} ; shift ;;
+	--reminder-time*|-rti*) remindertime=${2} ; shift ; shift ;;
 	--reminder=*) reminder=${1/--reminder=/''} ; shift ;;
 	--reminder*) reminder=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
@@ -185,11 +189,11 @@ case "${cmd}${sub}" in
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
   ;;
-  reminderadd)
-    [ -z "${remindertext}" ] && read -e -p 'Enter reminder (e.g. eat a banana): ' remindertext
-    [ -z "${remindertime}" ] && read -e -p 'Enter time (e.g. Ex. "in 15 minutes," or "every Thursday"): ' remindertime
-	[ -z "${reminderuser}" ] && read -e -p 'Enter user (e.g. The user who will receive the reminder): ' reminderuser
-  ;;
+  # reminderadd)
+  #     [ -z "${remindertext}" ] && read -e -p 'Enter reminder (e.g. eat a banana): ' remindertext
+  #     [ -z "${remindertime}" ] && read -e -p 'Enter time (e.g. Ex. "in 15 minutes," or "every Thursday"): ' remindertime
+  # 	[ -z "${reminderuser}" ] && read -e -p 'Enter user (e.g. The user who will receive the reminder): ' reminderuser
+  #   ;;
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
