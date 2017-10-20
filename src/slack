@@ -18,7 +18,7 @@ case "${cmd}${1}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit|reminderlist|reminderadd)
+  statusedit|reminderlist|reminderadd|reminderinfo)
     sub=${1} ; shift
   ;;
 esac
@@ -69,6 +69,8 @@ while (( "$#" )); do
     --page|-pg*) page=${2} ; shift ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
     --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
+	--reminder=*) reminder=${1/--reminder=/''} ; shift ;;
+	--reminder*) reminder=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
     --text*|-tx*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
@@ -128,7 +130,9 @@ while (( "$#" )); do
         reminderadd)
           [ -n "${1}" ] && [ -z "${remindertext}" ] && [ -z "${remindertime}" ] && [ -z "${user}" ] && user=${1}
         ;;
-
+        reminderinfo)
+		  [ -n "${1}" ] && [ -z "${reminder}" ] && reminder=${1}
+		;;
       esac
       shift
     ;;
@@ -558,6 +562,16 @@ function reminderadd() {
   jqify "${msg}"
 }
 
+function reminderinfo() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.info \
+      --data-urlencode "reminder=${reminder}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+
 
 function version() {
   echo 'v0.15.0'
@@ -572,7 +586,7 @@ case "${cmd}${sub}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit|reminderlist|reminderadd)
+  statusedit|reminderlist|reminderadd|reminderinfo)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
