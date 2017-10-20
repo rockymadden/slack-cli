@@ -18,7 +18,7 @@ case "${cmd}${1}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit)
+  statusedit|reminderlist|reminderadd)
     sub=${1} ; shift
   ;;
 esac
@@ -125,6 +125,10 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${emoji}" ] && emoji=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
+        reminderadd)
+          [ -n "${1}" ] && [ -z "${remindertext}" ] && [ -z "${remindertime}" ] && [ -z "${user}" ] && user=${1}
+        ;;
+
       esac
       shift
     ;;
@@ -177,7 +181,11 @@ case "${cmd}${sub}" in
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
   ;;
-
+  reminderadd)
+    [ -z "${remindertext}" ] && read -e -p 'Enter reminder (e.g. eat a banana): ' remindertext
+    [ -z "${remindertime}" ] && read -e -p 'Enter time (e.g. Ex. "in 15 minutes," or "every Thursday"): ' remindertime
+	[ -z "${reminderuser}" ] && read -e -p 'Enter user (e.g. The user who will receive the reminder): ' reminderuser
+#   ;;
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
@@ -370,6 +378,13 @@ function help() {
   echo 'Status Commands:'
   echo '  status edit    Edit status'
   echo
+  echo 'Reminder Commands:'
+  echo '  reminder list		Show all reminders'
+  echo '  reminder info		Shows information about a reminder'
+  echo '  reminder add		Add reminder'
+  echo '  reminder complete	Complete a reminder'
+  echo '  reminder delete	Delete a reminder'
+  echo
   echo 'More Information:'
   echo '  repo    https://github.com/rockymadden/slack-cli'
 }
@@ -524,8 +539,28 @@ function statusedit() {
   jqify "${msg}"
 }
 
+function reminderlist() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.list \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function reminderadd() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.add \
+      --data-urlencode "text=${remindertext}" \
+      --data-urlencode "time=${remindertime}" \
+      ${user:+ --data-urlencode "user=$(luser)"} \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+
 function version() {
-  echo 'v0.14.0'
+  echo 'v0.15.0'
 }
 
 # COMMAND ROUTING #################################################################################
@@ -537,7 +572,7 @@ case "${cmd}${sub}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit)
+  statusedit|reminderlist|reminderadd)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
