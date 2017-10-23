@@ -187,6 +187,13 @@ Snooze Commands:
 Status Commands:
   status edit    Edit status
 
+Reminder Commands:
+  reminder list			Show all reminders
+  reminder info			Shows information about a reminder
+  reminder add			Add reminder
+  reminder complete		Complete a reminder
+  reminder delete		Delete a reminder
+
 More Information:
   repo    https://github.com/rockymadden/slack-cli
 ```
@@ -382,6 +389,46 @@ $ slack status edit --text lunch --emoji :hamburger:
 $ # Edit status via short form options:
 $ slack status edit --tx lunch -em :hamburger:
 ```
+
+### `reminder list`:
+```bash
+$ # Show all reminders:
+$ slack reminder list
+```
+
+### `reminder add`:
+```bash
+$ # Add reminder for user via options:
+$ slack reminder add --reminder-text="Feed the fish" --reminder-time="every day at 4pm" --user="U0KU81SBB"
+```
+
+### `reminder complete`:
+```bash
+$ # Complete reminder via arguments:
+$ slack reminder complete Rm7MGABKT6
+
+$ # Complete reminder via options:
+$ slack reminder complete --reminder="Rm7MGABKT6"
+```
+
+### `reminder delete`:
+```bash
+$ # Complete reminder via arguments:
+$ slack reminder delete "Rm7MGABKT6"
+
+$ # Complete reminder via options:
+$ slack reminder delete --reminder="Rm7MGABKT6"
+```
+
+### `reminder info`:
+```bash
+$ # Get info on a reminder via arguments:
+$ slack reminder info "Rm7MGABKT6"
+
+$ # Get info on a reminder via options:
+$ slack reminder info --reminder="Rm7MGABKT6"```
+```
+
 
 ## License
 ```
