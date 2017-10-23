@@ -195,11 +195,6 @@ case "${cmd}${sub}" in
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
   ;;
-  # reminderadd)
-  #     [ -z "${remindertext}" ] && read -e -p 'Enter reminder (e.g. eat a banana): ' remindertext
-  #     [ -z "${remindertime}" ] && read -e -p 'Enter time (e.g. Ex. "in 15 minutes," or "every Thursday"): ' remindertime
-  # 	[ -z "${reminderuser}" ] && read -e -p 'Enter user (e.g. The user who will receive the reminder): ' reminderuser
-  #   ;;
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
