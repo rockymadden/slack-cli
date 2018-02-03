@@ -18,7 +18,7 @@ case "${cmd}${1}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit)
+  statusedit|userlist)
     sub=${1} ; shift
   ;;
 esac
@@ -524,6 +524,12 @@ function statusedit() {
   jqify "${msg}"
 }
 
+userlist() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}")
+  jqify "${msg}"
+}
+
 function version() {
   echo 'v0.14.0'
 }
@@ -537,7 +543,7 @@ case "${cmd}${sub}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit)
+  statusedit|userlist)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
