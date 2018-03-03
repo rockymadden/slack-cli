@@ -3,8 +3,6 @@
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
-[![pm](http://img.shields.io/badge/pm-zenhub-blue.svg)](https://www.zenhub.io/)
-[![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
@@ -52,8 +50,7 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 ### Via `brew`:
 
 ```bash
-$ brew tap rockymadden/rockymadden
-$ brew install slack-cli
+$ brew tap rockymadden/rockymadden/slack-cli
 ```
 
 ### Via `curl`:
@@ -63,7 +60,7 @@ $ curl -O https://raw.githubusercontent.com/rockymadden/slack-cli/master/src/sla
 $ chmod +x slack
 ```
 
-> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+> __PROTIP:__ You are responsible for having `jq` on your `PATH`.
 
 ### Via `make`:
 
@@ -73,7 +70,7 @@ $ cd slack-cli
 $ make install bindir=/path/to/bin etcdir=/path/to/etc
 ```
 
-> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+> __PROTIP:__ You are responsible for having `jq` on your `PATH`.
 
 ## Configuration
 
