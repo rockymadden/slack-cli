@@ -50,7 +50,12 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 ### Via `brew`:
 
 ```bash
-$ brew tap rockymadden/rockymadden/slack-cli
+$ brew tap rockymadden/slack-cli
+```
+Or with a different protocol
+
+```bash
+$ brew tap rockymadden/slack-cli git@github.com:rockymadden/slack-cli.git
 ```
 
 ### Via `curl`:
