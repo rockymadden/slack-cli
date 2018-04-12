@@ -442,7 +442,7 @@ function fileupload() {
     *)
       local msg=$(\
         curl -s -X POST https://slack.com/api/files.upload \
-          ${channels:+ --form "channels=${channels}"} \
+          ${channels:+ --form-string "channels=${channels}"} \
           ${comment:+ --form "initial_comment=${comment}"} \
           ${_file:+ --form "file=@${_file}"} \
           ${_filename:+ --form "filename=${_filename}"} \
