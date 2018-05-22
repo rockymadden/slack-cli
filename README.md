@@ -479,6 +479,16 @@ $ # Edit status via short form options:
 $ slack status edit --tx lunch -em :hamburger:
 ```
 
+## Contributors
+
+A big thank you to the following contributors who have helped add features and/or fixes:
+
+* [nharsch](https://github.com/nharsch)
+* [funky-monkey](https://github.com/funky-monkey)
+* [bertag](https://github.com/bertag)
+* [leehuffman](https://github.com/leehuffman)
+* [raine](https://github.com/raine)
+
 ## License
 
 ```text
