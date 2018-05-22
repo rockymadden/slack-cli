@@ -1,4 +1,5 @@
 # slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
+
 [![version](http://img.shields.io/badge/version-0.14.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
@@ -13,13 +14,13 @@ upon JSON responses, helping you perform complex queries and pipe chaining with 
 
 __Basic message example:__
 
-```bash
+```console
 $ slack chat send hi @slackbot
 ```
 
 __Richly formatted message example:__
 
-```bash
+```console
 $ slack chat send \
   --author 'author' \
   --author-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
@@ -38,7 +39,7 @@ $ slack chat send \
 
 __Pipe chaining example:__
 
-```bash
+```console
 $ # Send a message, update the message, and finally delete the message:
 $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
@@ -47,25 +48,25 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 
 ## Installation
 
-### Via `brew`:
+### Via `brew`
 
-```bash
+```console
 $ brew tap rockymadden/rockymadden
 $ brew install rockymadden/rockymadden/slack-cli
 ```
 
-### Via `curl`:
+### Via `curl`
 
-```bash
+```console
 $ curl -O https://raw.githubusercontent.com/rockymadden/slack-cli/master/src/slack
 $ chmod +x slack
 ```
 
 > __PROTIP:__ You are responsible for having `jq` on your `PATH`.
 
-### Via `make`:
+### Via `make`
 
-```bash
+```console
 $ git clone git@github.com:rockymadden/slack-cli.git
 $ cd slack-cli
 $ make install bindir=/path/to/bin etcdir=/path/to/etc
@@ -75,26 +76,27 @@ $ make install bindir=/path/to/bin etcdir=/path/to/etc
 
 ## Configuration
 
-If you want to post from your own account, you need a legacy API token which can be found [here](https://api.slack.com/custom-integrations/legacy-tokens).
-If you want to post from a slackbot, [create one here](https://my.slack.com/services/new/bot).
-Otherwise you can create an app with an [Slack API token](https://api.slack.com/web) and use said api token one of the
+If you want to post from your own account, you need a legacy API token which can be found
+[here](https://api.slack.com/custom-integrations/legacy-tokens). If you want to post from a
+slackbot, [create one here](https://my.slack.com/services/new/bot). Otherwise, you can create an
+app with a [Slack API token](https://api.slack.com/web) and use said API token one of the
 following ways:
 
-### Via `init`:
+### Via `init`
 
-```bash
+```console
 $ slack init
 ```
 
-### Via environment variable:
+### Via environment variable
 
-```bash
+```console
 export SLACK_CLI_TOKEN='token'
 ```
 
 ## Usage
 
-```bash
+```console
 $ slack --help
 Usage:
   slack chat delete [<timestamp> [channel]]
@@ -147,6 +149,22 @@ Usage:
   slack presence away
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
 
+  slack reminder add [<user> [<text> [time]]]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--text|tx] [--time|tm]
+    [--trace|-x] [--user|-ur]
+
+  slack reminder complete [reminder]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
+
+  slack reminder delete [reminder]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
+
+  slack reminder info [reminder]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
+
+  slack reminder list
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
+
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
 
@@ -179,6 +197,13 @@ Presence Commands:
   presence active    Active presence
   presence away      Away presence
 
+Reminder Commands:
+  reminder add         Add reminder
+  reminder complete    Complete reminder
+  reminder delete      Delete reminder
+  reminder info        Info about reminder
+  reminder list        List reminders
+
 Snooze Commands:
   snooze end      End snooze
   snooze info     Info about snooze
@@ -199,28 +224,28 @@ More Information:
 * The `--monochrome` option a wrapper around the [jq](https://stedolan.github.io/jq/manual/)
   `--monochrome-output` option
 * All commands prompt for required arguments which were not provided via options or arguments. This
-allows for both traditional usage and prompt-based usage.
-
+  allows for both traditional usage and prompt-based usage.
 
 ## Examples and Recipes
 
-### `chat send`:
-```bash
+### `chat send`
+
+```console
 $ # Send message via prompts:
 $ slack chat send
-
+$
 $ # Send message via arguments:
 $ slack chat send 'Hello world!' '#channel'
-
+$
 $ # Send message via options:
 $ slack chat send --text 'Hello world!' --channel '#channel'
-
+$
 $ # Send message via short form options:
 $ slack chat send -tx 'Hello world!' -ch '#channel'
-
+$
 $ # Send message via pipe:
 $ ls -al | slack chat send --channel '#channel' --pretext 'Directory:' --color good
-
+$
 $ # Send message and returning just the timestamp via filter option:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts'
 ```
@@ -228,20 +253,21 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts'
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `chat update`:
-```bash
+### `chat update`
+
+```console
 $ # Update message via prompts:
 $ slack chat update
-
+$
 $ # Update message via arguments:
 $ slack chat update 'Hello world, again!' 1405894322.002768 '#channel'
-
+$
 $ # Update message via options:
 $ slack chat update --text 'Hello world, again!' --timestamp 1405894322.002768 --channel '#channel'
-
+$
 $ # Update message via short form options:
 $ slack chat update -tx 'Hello world, again!' -ts 1405894322.002768 -ch '#channel'
-
+$
 $ # Send message and immediately update:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat update 'Goodbye world!'
@@ -250,144 +276,215 @@ $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
 > __PROTIP:__ See the [Slack attachments documentation](https://api.slack.com/docs/attachments) for
 more information about option meanings.
 
-### `chat delete`:
-```bash
+### `chat delete`
+
+```console
 $ # Delete message via prompts:
 $ slack chat delete
-
+$
 $ # Delete message via arguments:
 $ slack chat delete 1405894322.002768 '#channel'
-
+$
 $ # Delete message via options:
 $ slack chat delete --timestamp 1405894322.002768 --channel '#channel'
-
+$
 $ # Delete message via short form options:
 $ slack chat delete -ts 1405894322.002768 -ch '#channel'
-
+$
 $ # Send message and immediately delete:
 $ slack chat send 'Hello world!' '#channel' --filter '.ts + "\n" + .channel' |
   xargs -n2 slack chat delete
 ```
 
-### `file upload`:
-```bash
+### `file upload`
+
+```console
 $ # Upload file via prompts:
 $ slack file upload
-
+$
 $ # Upload file via arguments:
 $ slack file upload README.md '#channel'
-
+$
 $ # Upload file via options:
 $ slack file upload --file README.md --channels '#channel'
-
+$
 $ # Upload file via pipe:
 $ ls -al | slack file upload --channels '#channel'
-
+$
 $ # Upload file with rich formatting:
 $ slack file upload README.md '#channel' --comment 'Comment' --title 'Title'
 ```
 
-### `file list`:
-```bash
+### `file list`
+
+```console
 $ # List files:
 $ slack file list
-
+$
 $ # List files and output only ID and size:
 $ slack file list --filter '[.files[] | {id, size}]'
 ```
 
-### `file info`:
-```bash
+### `file info`
+
+```console
 $ # Info about file via prompts:
 $ slack file info
-
+$
 $ # Info about file via arguments:
 $ slack file info F2147483862
-
+$
 $ # Info about file via options:
 $ slack file info --file F2147483862
 ```
 
-### `file delete`:
-```bash
+### `file delete`
+
+```console
 $ # Delete file via prompts:
 $ slack file delete
-
+$
 $ # Delete file via arguments:
 $ slack file delete F2147483862
-
+$
 $ # Delete file via options:
 $ slack file delete --file F2147483862
 ```
 
-### `presence active`:
-```bash
+### `presence active`
+
+```console
 $ # Active presence:
 $ slack presence active
 ```
 
-### `presence away`:
-```bash
+### `reminder list`
+
+```console
+$ # List reminders:
+$ slack reminder list
+```
+
+### `reminder add`
+
+```console
+$ # Add reminder via prompts:
+$ slack reminder add
+$
+$ # Add reminder via arguments:
+$ slack reminder add '@rockymadden' 'lunch' 1526995300
+$
+$ # Add reminder via options:
+$ slack reminder add --user="@rockymadden" --text="lunch" --time=1526995300
+```
+
+### `reminder complete`
+
+```console
+$ # Complete reminder via prompts:
+$ slack reminder complete
+$
+$ # Complete reminder via arguments:
+$ slack reminder complete Rm7MGABKT6
+$
+$ # Complete reminder via options:
+$ slack reminder complete --reminder="Rm7MGABKT6"
+```
+
+### `reminder delete`
+
+```console
+$ # Complete reminder via prompts:
+$ slack reminder delete
+$
+$ # Complete reminder via arguments:
+$ slack reminder delete "Rm7MGABKT6"
+$
+$ # Complete reminder via options:
+$ slack reminder delete --reminder="Rm7MGABKT6"
+```
+
+### `reminder info`
+
+```console
+$ # Info about reminder via prompts:
+$ slack reminder info
+$
+$ # Info about reminder via arguments:
+$ slack reminder info "Rm7MGABKT6"
+$
+$ # Info about reminder via options:
+$ slack reminder info --reminder="Rm7MGABKT6"
+```
+
+### `presence away`
+
+```console
 $ # Away presence:
 $ slack presence away
 ```
 
-### `snooze start`:
-```bash
+### `snooze start`
+
+```console
 $ # Start snooze via prompts:
 $ slack snooze start
-
+$
 $ # Start snooze via arguments:
 $ slack snooze start 60
-
+$
 $ # Start snooze via options:
 $ slack snooze start --minutes 60
-
+$
 $ # Start snooze via short form options:
 $ slack snooze start -mn 60
 ```
 
-### `snooze info`:
-```bash
+### `snooze info`
+
+```console
 $ # Info about your own snooze:
 $ slack snooze info
-
+$
 $ # Info about another user's snooze via argument:
 $ slack snooze info @slackbot
-
+$
 $ # Info about another user's snooze via options:
 $ slack snooze info --user @slackbot
-
+$
 $ # Info about another user's snooze via short form options:
 $ slack snooze info -ur @slackbot
 ```
 
-### `snooze end`:
-```bash
+### `snooze end`
+
+```console
 $ # End snooze:
 $ slack snooze end
 ```
 
-### `status edit`:
-```bash
+### `status edit`
+
+```console
 $ # Edit status:
 $ slack status edit
-
+$
 $ # Edit status via arguments:
 $ slack status edit lunch :hamburger:
-
+$
 $ # Edit status via options:
 $ slack status edit --text lunch --emoji :hamburger:
-
+$
 $ # Edit status via short form options:
 $ slack status edit --tx lunch -em :hamburger:
 ```
 
 ## License
-```
+
+```text
 The MIT License (MIT)
 
-Copyright (c) 2017 Rocky Madden (https://rockymadden.com/)
+Copyright (c) 2018 Rocky Madden (https://rockymadden.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

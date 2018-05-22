@@ -3,10 +3,10 @@
 bindir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 etcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -f "${etcdir}/.slack" ]; then
-  token=$(sed -n '1p' < "${etcdir}/.slack")
-else
+if [ -n "${SLACK_CLI_TOKEN}" ]; then
   token="${SLACK_CLI_TOKEN}"
+elif [ -r "${etcdir}/.slack" ] && [ -f "${etcdir}/.slack" ]; then
+  token=$(sed -n '1p' < "${etcdir}/.slack")
 fi
 
 # COMMAND PARSING #################################################################################
@@ -17,6 +17,7 @@ case "${cmd}${1}" in
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
+  reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist| \
   snoozeend|snoozeinfo|snoozestart|\
   statusedit)
     sub=${1} ; shift
@@ -69,10 +70,14 @@ while (( "$#" )); do
     --page|-pg*) page=${2} ; shift ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
     --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
+    --reminder=*) reminder=${1/--reminder=/''} ; shift ;;
+    --reminder|-rm*) reminder=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
     --text*|-tx*) text=${2} ; shift ; shift ;;
     --thumbnail=*) thumbnail=${1/--thumbnail=/''} ; shift ;;
     --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
+    --time=*) _time=${1/--time=/''} ; shift ;;
+    --time|-tm*) _time=${2} ; shift ; shift ;;
     --timestamp-from=*) timestampfrom=${1/--timestampfrom=/''} ; shift ;;
     --timestamp-from|-tf*) timestampfrom=${2} ; shift ; shift ;;
     --timestamp-to=*) timestampto=${1/--timestampto=/''} ; shift ;;
@@ -105,10 +110,7 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${timestamp}" ] && timestamp=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
-        filedelete)
-          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
-        ;;
-        fileinfo)
+        filedelete|fileinfo)
           [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
         ;;
         fileupload)
@@ -124,6 +126,14 @@ while (( "$#" )); do
         statusedit)
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${emoji}" ] && emoji=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+        ;;
+        reminderadd)
+          [ -n "${1}" ] && [ -n "${user}" ] && [ -n "${text}" ] && [ -z "${_time}" ] && _time=${1}
+          [ -n "${1}" ] && [ -n "${user}" ] && [ -z "${text}" ] && text=${1}
+          [ -n "${1}" ] && [ -z "${user}" ] && user=${1}
+        ;;
+        remindercomplete|reminderdelete|reminderinfo)
+          [ -n "${1}" ] && [ -z "${reminder}" ] && reminder=${1}
         ;;
       esac
       shift
@@ -146,8 +156,8 @@ case "${cmd}${sub}" in
   ;;
   chatupdate)
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
-    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
   ;;
   filedelete)
     [ -z "${file}" ] && read -e -p 'Enter file (e.g. F2147483862): ' file
@@ -160,15 +170,23 @@ case "${cmd}${sub}" in
     [ -z "${channels}" ] && read -e -p 'Enter channels (e.g. #general,C1234567890): ' channels
   ;;
   init)
-    if [ -f "${etcdir}/.slack" ]; then
-      _token=$(sed -n '1p' < "${etcdir}/.slack")
-    else
+    if [ -n "${SLACK_CLI_TOKEN}" ]; then
       _token="${SLACK_CLI_TOKEN}"
+    elif [ -r "${etcdir}/.slack" ] && [ -f "${etcdir}/.slack" ]; then
+      _token=$(sed -n '1p' < "${etcdir}/.slack")
     fi
 
     if [ -z "${token}" ] || [ "${token}" == "${_token}" ]; then
       read -e -p 'Enter Slack API token: ' token
     fi
+  ;;
+  reminderadd)
+    [ -z "${user}" ] && read -e -p 'Enter user (e.g. @foo): ' user
+    [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
+    [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 1526955300): ' _time
+  ;;
+  remindercomplete|reminderdelete|reminderinfo)
+    [ -z "${reminder}" ] && read -e -p 'Enter reminder (e.g. RmCT7QGVBF): ' reminder
   ;;
   snoozestart)
     [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
@@ -177,7 +195,6 @@ case "${cmd}${sub}" in
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
   ;;
-
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
@@ -330,6 +347,22 @@ function help() {
   echo "  ${bin} presence away"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
+  echo "  ${bin} reminder add [<user> [<text> [time]]]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--text|tx] [--time|tm]'
+  echo '    [--trace|-x] [--user|-ur]'
+  echo
+  echo "  ${bin} reminder complete [reminder]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo
+  echo "  ${bin} reminder delete [reminder]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo
+  echo "  ${bin} reminder info [reminder]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo
+  echo "  ${bin} reminder list"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
@@ -361,6 +394,13 @@ function help() {
   echo 'Presence Commands:'
   echo '  presence active    Active presence'
   echo '  presence away      Away presence'
+  echo
+  echo 'Reminder Commands:'
+  echo '  reminder add         Add reminder'
+  echo '  reminder complete    Complete reminder'
+  echo '  reminder delete      Delete reminder'
+  echo '  reminder info        Info about reminder'
+  echo '  reminder list        List reminders'
   echo
   echo 'Snooze Commands:'
   echo '  snooze end      End snooze'
@@ -466,8 +506,8 @@ function init() {
   esac
 }
 
+# Setting presence=auto + setActive works more consistently than just setActive.
 function presenceactive() {
-  # Setting presence=auto + setActive works more consistently than just setActive
   local msg0=$(\
     curl -s -X POST https://slack.com/api/users.setPresence \
       --data-urlencode "presence=auto" \
@@ -484,6 +524,52 @@ function presenceaway() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/users.setPresence \
       --data-urlencode "presence=away" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function reminderadd() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.add \
+      --data-urlencode "text=${text}" \
+      --data-urlencode "time=${_time}" \
+      ${user:+ --data-urlencode "user=$(luser)"} \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function remindercomplete() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.complete \
+      --data-urlencode "reminder=${reminder}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function reminderdelete() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.delete \
+      --data-urlencode "reminder=${reminder}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function reminderinfo() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.info \
+      --data-urlencode "reminder=${reminder}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function reminderlist() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/reminders.list \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
@@ -536,6 +622,7 @@ case "${cmd}${sub}" in
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
+  reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist|\
   snoozeend|snoozeinfo|snoozestart|\
   statusedit)
     if [ -z "${token}" ]; then
