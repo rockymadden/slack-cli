@@ -179,6 +179,8 @@ Usage:
   slack status edit [<text> [<emoji>]]
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
 
+  slack user list
+
 Configuration Commands:
   init    Initialize
 
