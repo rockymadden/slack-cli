@@ -50,7 +50,8 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 ### Via `brew`:
 
 ```bash
-$ brew tap rockymadden/rockymadden/slack-cli
+$ brew tap rockymadden/rockymadden
+$ brew install rockymadden/rockymadden/slack-cli
 ```
 
 ### Via `curl`:
@@ -74,7 +75,9 @@ $ make install bindir=/path/to/bin etcdir=/path/to/etc
 
 ## Configuration
 
-Ensure you have a [Slack API token](https://api.slack.com/web) and use said token one of the
+If you want to post from your own account, you need a legacy API token which can be found [here](https://api.slack.com/custom-integrations/legacy-tokens).
+If you want to post from a slackbot, [create one here](https://my.slack.com/services/new/bot).
+Otherwise you can create an app with an [Slack API token](https://api.slack.com/web) and use said api token one of the
 following ways:
 
 ### Via `init`:
