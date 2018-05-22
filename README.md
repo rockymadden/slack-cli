@@ -1,10 +1,8 @@
 # slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
-[![version](http://img.shields.io/badge/version-v0.14.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
+[![version](http://img.shields.io/badge/version-0.14.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
-[![pm](http://img.shields.io/badge/pm-zenhub-blue.svg)](https://www.zenhub.io/)
-[![chat](http://img.shields.io/badge/chat-slack-blue.svg)](https://rockymadden-slack.herokuapp.com/)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
 A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
@@ -53,7 +51,7 @@ $ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
 
 ```bash
 $ brew tap rockymadden/rockymadden
-$ brew install slack-cli
+$ brew install rockymadden/rockymadden/slack-cli
 ```
 
 ### Via `curl`:
@@ -63,7 +61,7 @@ $ curl -O https://raw.githubusercontent.com/rockymadden/slack-cli/master/src/sla
 $ chmod +x slack
 ```
 
-> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+> __PROTIP:__ You are responsible for having `jq` on your `PATH`.
 
 ### Via `make`:
 
@@ -73,11 +71,13 @@ $ cd slack-cli
 $ make install bindir=/path/to/bin etcdir=/path/to/etc
 ```
 
-> __PROTIP:__ You are responsible for having `stedolan/jq` on your `PATH`.
+> __PROTIP:__ You are responsible for having `jq` on your `PATH`.
 
 ## Configuration
 
-Ensure you have a [Slack API token](https://api.slack.com/web) and use said token one of the
+If you want to post from your own account, you need a legacy API token which can be found [here](https://api.slack.com/custom-integrations/legacy-tokens).
+If you want to post from a slackbot, [create one here](https://my.slack.com/services/new/bot).
+Otherwise you can create an app with an [Slack API token](https://api.slack.com/web) and use said api token one of the
 following ways:
 
 ### Via `init`:
