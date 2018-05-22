@@ -372,10 +372,10 @@ $ # Add reminder via prompts:
 $ slack reminder add
 $
 $ # Add reminder via arguments:
-$ slack reminder add '@rockymadden' 'lunch' 1526995300
+$ slack reminder add '@slackbot' 'lunch' 1526995300
 $
 $ # Add reminder via options:
-$ slack reminder add --user="@rockymadden" --text="lunch" --time=1526995300
+$ slack reminder add --user="@slackbot" --text="lunch" --time=1526995300
 ```
 
 ### `reminder complete`

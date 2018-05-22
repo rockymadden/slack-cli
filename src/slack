@@ -181,7 +181,7 @@ case "${cmd}${sub}" in
     fi
   ;;
   reminderadd)
-    [ -z "${user}" ] && read -e -p 'Enter user (e.g. @foo): ' user
+    [ -z "${user}" ] && read -e -p 'Enter user (e.g. @slackbot): ' user
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 1526955300): ' _time
   ;;
