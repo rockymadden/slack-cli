@@ -91,7 +91,7 @@ $ slack init
 ### Via environment variable
 
 ```console
-export SLACK_CLI_TOKEN='token'
+$ export SLACK_CLI_TOKEN='token'
 ```
 
 ## Usage
