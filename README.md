@@ -6,11 +6,12 @@
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
 
-A pure bash, pipe friendly, feature rich, command line interface for Slack. Richly formatted
-messages are a first class concept, helping you send
-[beautiful messages](https://api.slack.com/docs/message-formatting) with ease. Deep integration
-with [jq](https://github.com/stedolan/jq) allows for the ability to perform advanced operations
-upon JSON responses, helping you perform complex queries and pipe chaining with ease.
+A pure bash, pipe friendly, feature rich, command line interface for Slack.
+[Richly formatted messages](https://api.slack.com/docs/message-formatting),
+[file uploads](#file-upload), and even [creating Slack posts](#file-upload) are first class
+constructs. Deep integration with [jq](https://github.com/stedolan/jq) allows for the ability to
+perform advanced operations upon JSON responses, helping you perform complex queries and pipe
+chaining with ease.
 
 __Basic message example:__
 
@@ -93,138 +94,6 @@ $ slack init
 ```console
 $ export SLACK_CLI_TOKEN='token'
 ```
-
-## Usage
-
-```console
-$ slack --help
-Usage:
-  slack chat delete [<timestamp> [channel]]
-    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]
-    [--timestamp|-ts <timestamp>] [--trace|-x]
-
-  slack chat send [<text> [channel]]
-    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
-    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
-    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]
-    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]
-    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
-    [--title|-ti <title>] [--title-link|-tl <title-link>] [--trace|-x]
-
-  slack chat update [<text> [<timestamp> [channel]]]
-    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]
-    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]
-    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]
-    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]
-    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]
-    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]
-    [--trace|-x]
-
-  slack init
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]
-    [--trace|-x]
-
-  slack file delete [file]
-    [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>] [--monochrome|-m]
-    [--trace|-x]
-
-  slack file info [file]
-    [--count|-cn <count>] [--compact|-c] [--file|-fl <file>] [--filter|-f <filter>]
-    [--monochrome|-m] [--page|-pg <page>] [--trace|-x]
-
-  slack file list
-    [--channel|-ch <channel>] [--count|-cn <count>] [--compact|-c] [--filter|-f <filter>]
-    [--monochrome|-m] [--page|-pg <page>] [--timestamp-from|-tf <timetamp>]
-    [--timestamp-to|-tt <timestamp>] [--trace|-x] [--types|-ty <types>]
-    [--user|-ur <user>]
-
-  slack file upload [<file> [channels]]
-    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]
-    [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]
-    [--monochrome|-m] [--title|-ti <title>] [--trace|-x]
-
-  slack presence active
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
-
-  slack presence away
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
-
-  slack reminder add [<user> [<text> [time]]]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--text|tx] [--time|tm]
-    [--trace|-x] [--user|-ur]
-
-  slack reminder complete [reminder]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
-
-  slack reminder delete [reminder]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
-
-  slack reminder info [reminder]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
-
-  slack reminder list
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
-
-  slack snooze end
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
-
-  slack snooze info [user]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
-    [--user|-ur <user>]
-
-  slack snooze start [minutes]
-    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]
-    [--trace|-x]
-
-  slack status edit [<text> [<emoji>]]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
-
-Configuration Commands:
-  init    Initialize
-
-Chat Commands:
-  chat delete    Delete chat message
-  chat send      Send chat message
-  chat update    Update chat message
-
-File Commands:
-  file delete    Delete file
-  file info      Info about file
-  file list      List files
-  file upload    Upload file
-
-Presence Commands:
-  presence active    Active presence
-  presence away      Away presence
-
-Reminder Commands:
-  reminder add         Add reminder
-  reminder complete    Complete reminder
-  reminder delete      Delete reminder
-  reminder info        Info about reminder
-  reminder list        List reminders
-
-Snooze Commands:
-  snooze end      End snooze
-  snooze info     Info about snooze
-  snooze start    Start snooze
-
-Status Commands:
-  status edit    Edit status
-
-More Information:
-  repo    https://github.com/rockymadden/slack-cli
-```
-
-> __PROTIPS:__
-* The `--compact` option is a wrapper around the [jq](https://stedolan.github.io/jq/manual/)
-  `--compact-output` option
-* The `--filter` option is passed directly to [jq](https://stedolan.github.io/jq/manual/) as a
-  filter
-* The `--monochrome` option a wrapper around the [jq](https://stedolan.github.io/jq/manual/)
-  `--monochrome-output` option
-* All commands prompt for required arguments which were not provided via options or arguments. This
-  allows for both traditional usage and prompt-based usage.
 
 ## Examples and Recipes
 
@@ -313,6 +182,9 @@ $ ls -al | slack file upload --channels '#channel'
 $
 $ # Upload file with rich formatting:
 $ slack file upload README.md '#channel' --comment 'Comment' --title 'Title'
+$
+$ # Create a Slack post, noting the filetype option:
+$ slack file upload --file post.md --filetype post --title 'Post Title' --channels '#channel'
 ```
 
 ### `file list`

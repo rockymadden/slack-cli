@@ -52,7 +52,9 @@ while (( "$#" )); do
     --emoji=*) emoji=${1/--emoji=/''} ; shift ;;
     --emoji*|-em*) emoji=${2} ; shift ; shift ;;
     --filename=*) filename=${1/--filename=/''} ; shift ;;
-    --filename*|-fn*) filename=${2} ; shift ; shift ;;
+    --filename*|-fln*) filename=${2} ; shift ; shift ;;
+    --filetype=*) filetype=${1/--filetype=/''} ; shift ;;
+    --filetype*|-flt*) filetype=${2} ; shift ; shift ;;
     --file=*) file=${1/--file=/''} ; shift ;;
     --file*|-fl*) file=${2} ; shift ; shift ;;
     --filter=*) filter=${1/--filter=/''} ; shift ;;
@@ -338,8 +340,8 @@ function help() {
   echo
   echo "  ${bin} file upload [<file> [channels]]"
   echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
-  echo '    [--file|fl <file>] [--filename|-fn <filename>] [--filter|-f <filter>]'
-  echo '    [--monochrome|-m] [--title|-ti <title>] [--trace|-x]'
+  echo '    [--file|fl <file>] [--filename|-fn <filename>] [--filetype|-ft <filetype>]'
+  echo '    [--filter|-f <filter>] [--monochrome|-m] [--title|-ti <title>] [--trace|-x]'
   echo
   echo "  ${bin} presence active"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
@@ -476,6 +478,7 @@ function fileupload() {
           ${comment:+ --data-urlencode "initial_comment=${comment}"} \
           ${_content:+ --data-urlencode "content=${_content}"} \
           ${_filename:+ --data-urlencode "filename=${_filename}"} \
+          ${filetype:+ --data-urlencode "filetype=${filetype}"} \
           ${title:+ --data-urlencode "title=${title}"} \
           --data-urlencode "token=${token}")
     ;;
@@ -486,6 +489,7 @@ function fileupload() {
           ${comment:+ --form "initial_comment=${comment}"} \
           ${_file:+ --form "file=@${_file}"} \
           ${_filename:+ --form "filename=${_filename}"} \
+          ${filetype:+ --form "filetype=${filetype}"} \
           ${title:+ --form "title=${title}"} \
           --form "token=${token}")
     ;;
