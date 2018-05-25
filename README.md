@@ -1,6 +1,6 @@
 # slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
 
-[![version](http://img.shields.io/badge/version-0.15.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
+[![version](http://img.shields.io/badge/version-0.16.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
@@ -33,7 +33,7 @@ $ slack chat send \
   --image 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
   --pretext 'pretext' \
   --text 'text' \
-  --timestamp 123456789 \
+  --time 123456789 \
   --title 'title' \
   --title-link 'https://github.com/rockymadden/slack-cli'
 ```
