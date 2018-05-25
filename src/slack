@@ -153,8 +153,21 @@ case "${cmd}${sub}" in
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
   ;;
   chatsend)
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
+    [ -z "${channel}" ] && [ -z "${text}" ] && prompt='true'
+    [ -n "${prompt}" ] && [ -z "${author}" ] && read -e -p 'Enter author name (e.g. slackbot): ' author
+    [ -n "${prompt}" ] && [ -z "${authoricon}" ] && read -e -p 'Enter author icon (e.g. a URL): ' authoricon
+    [ -n "${prompt}" ] && [ -z "${authorlink}" ] && read -e -p 'Enter author link (e.g. a URL): ' authorlink
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+    [ -n "${prompt}" ] && [ -z "${color}" ] && read -e -p 'Enter color (e.g. good): ' color
+    [ -n "${prompt}" ] && [ -z "${footer}" ] && read -e -p 'Enter footer (e.g. Hello footer!): ' footer
+    [ -n "${prompt}" ] && [ -z "${footericon}" ] && read -e -p 'Enter footer icon (e.g. a URL): ' footericon
+    [ -n "${prompt}" ] && [ -z "${image}" ] && read -e -p 'Enter image (e.g. a URL): ' image
+    [ -n "${prompt}" ] && [ -z "${pretext}" ] && read -e -p 'Enter pretext (e.g. Hello pretext!): ' pretext
+    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello text!): ' text
+    [ -n "${prompt}" ] && [ -z "${thumbnail}" ] && read -e -p 'Enter thumbnail (e.g. a URL): ' thumbnail
+    [ -n "${prompt}" ] && [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
+    [ -n "${prompt}" ] && [ -z "${title}" ] && read -e -p 'Enter title (e.g. Hello title!): ' title
+    [ -n "${prompt}" ] && [ -z "${titlelink}" ] && read -e -p 'Enter title link (e.g. a URL): ' titlelink
   ;;
   chatupdate)
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
@@ -185,7 +198,7 @@ case "${cmd}${sub}" in
   reminderadd)
     [ -z "${user}" ] && read -e -p 'Enter user (e.g. @slackbot): ' user
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
-    [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 1526955300): ' _time
+    [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
   ;;
   remindercomplete|reminderdelete|reminderinfo)
     [ -z "${reminder}" ] && read -e -p 'Enter reminder (e.g. RmCT7QGVBF): ' reminder
@@ -210,9 +223,10 @@ function attachify() {
   [ -n "${image}" ] && local _image=", \"image_url\": \"${image}\""
   [ -n "${pretext}" ] && local _pretext=", \"pretext\": \"${pretext}\""
   [ -n "${thumbnail}" ] && local _thumbnail=", \"thumb_url\": \"${thumbnail}\""
+  [ -n "${_time}" ] && local __time=", \"ts\": \"${_time}\""
   [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
   [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
-  local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${_title}${_titlelink}"
+  local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${__time}${_title}${_titlelink}"
   [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
   [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
 
@@ -309,7 +323,8 @@ function help() {
   echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
-  echo '    [--title|-ti <title>] [--title-link|-tl <title-link>] [--trace|-x]'
+  echo '    [--time|-tm <time>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
@@ -317,8 +332,8 @@ function help() {
   echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
-  echo '    [--timestamp|-ts <timestamp>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
-  echo '    [--trace|-x]'
+  echo '    [--time|-tm <time>] [--timestamp|-ts <timestamp>] [--title|-ti <title>]'
+  echo '    [--title-link|-tl <title-link>] [--trace|-x]'
   echo
   echo "  ${bin} init"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--token|-tk <token>]'
@@ -350,17 +365,20 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
   echo "  ${bin} reminder add [<user> [<text> [time]]]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--text|tx] [--time|tm]'
-  echo '    [--trace|-x] [--user|-ur]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--text|tx <text>]'
+  echo '    [--time|tm <time>] [--trace|-x] [--user|-ur <user>]'
   echo
   echo "  ${bin} reminder complete [reminder]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm <reminder>]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} reminder delete [reminder]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm <reminder>]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} reminder info [reminder]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm <reminder>]'
+  echo '    [--trace|-x]'
   echo
   echo "  ${bin} reminder list"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
