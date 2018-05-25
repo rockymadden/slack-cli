@@ -184,7 +184,7 @@ $ # Upload file with rich formatting:
 $ slack file upload README.md '#channel' --comment 'Comment' --title 'Title'
 $
 $ # Create a Slack post, noting the filetype option:
-$ slack file upload --file post.md --filetype post --title 'My Post' --channels '#channel'
+$ slack file upload --file post.md --filetype post --title 'Post Title' --channels '#channel'
 ```
 
 ### `file list`
