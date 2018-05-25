@@ -19,7 +19,7 @@ case "${cmd}${1}" in
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist| \
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit)
+  statusclear|statusedit)
     sub=${1} ; shift
   ;;
 esac
@@ -394,6 +394,9 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--minutes|-mn <minutes>] [--monochrome|-m]'
   echo '    [--trace|-x]'
   echo
+  echo "  ${bin} status clear"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo
   echo "  ${bin} status edit [<text> [<emoji>]]"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
@@ -428,7 +431,8 @@ function help() {
   echo '  snooze start    Start snooze'
   echo
   echo 'Status Commands:'
-  echo '  status edit    Edit status'
+  echo '  status clear    Clear status'
+  echo '  status edit     Edit status'
   echo
   echo 'More Information:'
   echo '  repo    https://github.com/rockymadden/slack-cli'
@@ -623,6 +627,15 @@ function snoozestart() {
   jqify "${msg}"
 }
 
+function statusclear() {
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/users.profile.set \
+      --data-urlencode 'profile={"status_text":"", "status_emoji":""}' \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
 function statusedit() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/users.profile.set \
@@ -646,7 +659,7 @@ case "${cmd}${sub}" in
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusedit)
+  statusclear|statusedit)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
