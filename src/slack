@@ -153,20 +153,21 @@ case "${cmd}${sub}" in
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
   ;;
   chatsend)
-    [ -z "${author}" ] && read -e -p 'Enter author name (e.g. slackbot): ' author
-    [ -z "${authoricon}" ] && read -e -p 'Enter author icon (e.g. a URL): ' authoricon
-    [ -z "${authorlink}" ] && read -e -p 'Enter author link (e.g. a URL): ' authorlink
+    [ -z "${channel}" ] && [ -z "${text}" ] && prompt='true'
+    [ -n "${prompt}" ] && [ -z "${author}" ] && read -e -p 'Enter author name (e.g. slackbot): ' author
+    [ -n "${prompt}" ] && [ -z "${authoricon}" ] && read -e -p 'Enter author icon (e.g. a URL): ' authoricon
+    [ -n "${prompt}" ] && [ -z "${authorlink}" ] && read -e -p 'Enter author link (e.g. a URL): ' authorlink
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
-    [ -z "${color}" ] && read -e -p 'Enter color (e.g. good): ' color
-    [ -z "${footer}" ] && read -e -p 'Enter footer (e.g. Hello footer!): ' footer
-    [ -z "${footericon}" ] && read -e -p 'Enter footer icon (e.g. a URL): ' footericon
-    [ -z "${image}" ] && read -e -p 'Enter image (e.g. a URL): ' image
-    [ -z "${pretext}" ] && read -e -p 'Enter pretext (e.g. Hello pretext!): ' pretext
+    [ -n "${prompt}" ] && [ -z "${color}" ] && read -e -p 'Enter color (e.g. good): ' color
+    [ -n "${prompt}" ] && [ -z "${footer}" ] && read -e -p 'Enter footer (e.g. Hello footer!): ' footer
+    [ -n "${prompt}" ] && [ -z "${footericon}" ] && read -e -p 'Enter footer icon (e.g. a URL): ' footericon
+    [ -n "${prompt}" ] && [ -z "${image}" ] && read -e -p 'Enter image (e.g. a URL): ' image
+    [ -n "${prompt}" ] && [ -z "${pretext}" ] && read -e -p 'Enter pretext (e.g. Hello pretext!): ' pretext
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello text!): ' text
-    [ -z "${thumbnail}" ] && read -e -p 'Enter thumbnail (e.g. a URL): ' thumbnail
-    [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
-    [ -z "${title}" ] && read -e -p 'Enter title (e.g. Hello title!): ' title
-    [ -z "${titlelink}" ] && read -e -p 'Enter title link (e.g. a URL): ' titlelink
+    [ -n "${prompt}" ] && [ -z "${thumbnail}" ] && read -e -p 'Enter thumbnail (e.g. a URL): ' thumbnail
+    [ -n "${prompt}" ] && [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
+    [ -n "${prompt}" ] && [ -z "${title}" ] && read -e -p 'Enter title (e.g. Hello title!): ' title
+    [ -n "${prompt}" ] && [ -z "${titlelink}" ] && read -e -p 'Enter title link (e.g. a URL): ' titlelink
   ;;
   chatupdate)
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
