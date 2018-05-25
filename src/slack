@@ -626,7 +626,7 @@ function snoozestart() {
 function statusedit() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/users.profile.set \
-      --data-urlencode 'profile={"status_text":"'${text}'", "status_emoji":"'${emoji}'"}' \
+      --data-urlencode "profile={\"status_text\":\"${text}\", \"status_emoji\":\"${emoji}\"}" \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
