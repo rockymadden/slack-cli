@@ -19,6 +19,15 @@ __Basic message example:__
 $ slack chat send hi @slackbot
 ```
 
+__100% Slack-based pomodoro example:__
+```bash
+alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" && slack snooze start --minutes="${1-60}" && slack reminder add @rocky "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
+```
+
+```console
+$ pomodoro 60
+```
+
 __Richly formatted message example:__
 
 ```console
