@@ -13,22 +13,32 @@ constructs. Deep integration with [jq](https://github.com/stedolan/jq) allows fo
 perform advanced operations upon JSON responses, helping you perform complex queries and pipe
 chaining with ease.
 
-__Basic message example:__
+__Simple chat example:__
 
 ```console
 $ slack chat send hi @slackbot
 ```
 
+---
 __100% Slack-based pomodoro example:__
-```bash
-alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" && slack snooze start --minutes="${1-60}" && slack reminder add @rocky "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
-```
-
 ```console
+$ alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" && slack snooze start --minutes="${1-60}" && slack reminder add @username "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
 $ pomodoro 60
 ```
+> __NOTE:__ Ensure you edit the username in the alias
 
-__Richly formatted message example:__
+---
+__Pipe chaining example:__
+
+```console
+$ # Send a message, update the message, and finally delete the message:
+$ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
+  xargs -n2 slack chat delete
+```
+
+---
+__Richly formatted chat example:__
 
 ```console
 $ slack chat send \
@@ -45,15 +55,6 @@ $ slack chat send \
   --time 123456789 \
   --title 'title' \
   --title-link 'https://github.com/rockymadden/slack-cli'
-```
-
-__Pipe chaining example:__
-
-```console
-$ # Send a message, update the message, and finally delete the message:
-$ slack chat send hello @slackbot --filter '.ts + "\n" + .channel' |
-  xargs -n2 slack chat update goodbye --filter '.ts + "\n" + .channel' |
-  xargs -n2 slack chat delete
 ```
 
 ## Installation
