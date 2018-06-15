@@ -644,7 +644,7 @@ function statusedit() {
 }
 
 function version() {
-  echo '0.17.0'
+  echo '0.18.0'
 }
 
 # COMMAND ROUTING #################################################################################
