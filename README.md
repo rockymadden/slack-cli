@@ -22,10 +22,9 @@ $ slack chat send hi @slackbot
 ---
 __100% Slack-based pomodoro example:__
 ```console
-$ alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" && slack snooze start --minutes="${1-60}" && slack reminder add @username "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
+$ alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" && slack snooze start --minutes="${1-60}" && slack reminder add "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
 $ pomodoro 60
 ```
-> __NOTE:__ Ensure you edit the username in the alias
 
 ---
 __Pipe chaining example:__
@@ -254,10 +253,13 @@ $ # Add reminder via prompts:
 $ slack reminder add
 $
 $ # Add reminder via arguments:
-$ slack reminder add '@slackbot' 'lunch' 1526995300
+$ slack reminder add 'lunch' 1526995300
+$
+$ # Add reminder in 10 minutes, via date on macOS, via arguments:
+$ slack reminder add 'lunch' $(date -v +10M "+%s")
 $
 $ # Add reminder via options:
-$ slack reminder add --user="@slackbot" --text="lunch" --time=1526995300
+$ slack reminder add --text="lunch" --time=1526995300
 ```
 
 ### `reminder complete`

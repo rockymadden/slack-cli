@@ -130,9 +130,8 @@ while (( "$#" )); do
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
         reminderadd)
-          [ -n "${1}" ] && [ -n "${user}" ] && [ -n "${text}" ] && [ -z "${_time}" ] && _time=${1}
-          [ -n "${1}" ] && [ -n "${user}" ] && [ -z "${text}" ] && text=${1}
-          [ -n "${1}" ] && [ -z "${user}" ] && user=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${_time}" ] && _time=${1}
+          [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
         ;;
         remindercomplete|reminderdelete|reminderinfo)
           [ -n "${1}" ] && [ -z "${reminder}" ] && reminder=${1}
@@ -196,7 +195,6 @@ case "${cmd}${sub}" in
     fi
   ;;
   reminderadd)
-    [ -z "${user}" ] && read -e -p 'Enter user (e.g. @slackbot): ' user
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
   ;;
@@ -364,7 +362,7 @@ function help() {
   echo "  ${bin} presence away"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
-  echo "  ${bin} reminder add [<user> [<text> [time]]]"
+  echo "  ${bin} reminder add [<text> [time]]"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--text|tx <text>]'
   echo '    [--time|tm <time>] [--trace|-x] [--user|-ur <user>]'
   echo
