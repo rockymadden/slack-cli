@@ -259,7 +259,7 @@ function luser() {
     @*)
       local _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${user/@/}\")) | .[].id")
+        jq -r "map(select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\")) | .[0].id")
 
       echo ${_user}
     ;;
