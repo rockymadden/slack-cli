@@ -72,7 +72,7 @@ $ curl -O https://raw.githubusercontent.com/rockymadden/slack-cli/master/src/sla
 $ chmod +x slack
 ```
 
-> __PROTIP:__ You are responsible for having `jq` on your `PATH`.
+> __PROTIP:__ You are responsible for having `curl` and `jq` on your `PATH`.
 
 ### Via `make`
 
@@ -82,7 +82,7 @@ $ cd slack-cli
 $ make install bindir=/path/to/bin etcdir=/path/to/etc
 ```
 
-> __PROTIP:__ You are responsible for having `jq` on your `PATH`.
+> __PROTIP:__ You are responsible for having `curl` and `jq` on your `PATH`.
 
 ## Configuration
 
