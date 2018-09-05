@@ -14,7 +14,7 @@ cmd="${1}" ; shift
 
 # SUBCOMMAND PARSING ##############################################################################
 case "${cmd}${1}" in
-  chatdelete|chatsend|chatupdate|\
+  avatarupload|avatardelete|chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist| \
@@ -99,6 +99,9 @@ while (( "$#" )); do
     --user|-ur*) user=${2} ; shift ; shift ;;
     *)
       case "${cmd}${sub}" in
+        avatarupload)
+          [ -n "${1}" ] && [ -z "${file}" ] && file=${1}
+        ;;
         chatdelete)
           [ -n "${1}" ] && [ -n "${timestamp}" ] && [ -z "${channel}" ] && channel=${1}
           [ -n "${1}" ] && [ -z "${timestamp}" ] && timestamp=${1}
@@ -147,6 +150,9 @@ ${trace}
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}${sub}" in
+  avatarupload)
+    [ -z "${file}" ] && read -e -p 'Enter avatar upload (e.g. avatar.png): ' file
+  ;;
   chatdelete)
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
     [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
@@ -432,6 +438,10 @@ function help() {
   echo '  status clear    Clear status'
   echo '  status edit     Edit status'
   echo
+  echo 'Avatar Commands:'
+  echo '  avatar upload     Upload avatar'
+  echo '  avatar delete     Delete avatar'
+  echo
   echo 'More Information:'
   echo '  repo    https://github.com/rockymadden/slack-cli'
 }
@@ -514,6 +524,27 @@ function fileupload() {
           --form "token=${token}")
     ;;
   esac
+
+  jqify "${msg}"
+}
+
+function avatarupload() {
+  if [ -f "${file}" ]; then
+    local _file=${file}
+  fi
+
+  local msg=$(\
+    curl -s -X POST https://slack.com/api/users.setPhoto \
+      ${_file:+ --form "image=@${_file}"} \
+      --form "token=${token}")
+
+  jqify "${msg}"
+}
+
+function avatardelete() {
+  local msg=$(\
+    curl -s https://slack.com/api/users.deletePhoto \
+      --form "token=${token}")
 
   jqify "${msg}"
 }
@@ -652,7 +683,7 @@ case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
   init) init ; exit $? ;;
-  chatdelete|chatsend|chatupdate|\
+  avatarupload|avatardelete|chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist|\
