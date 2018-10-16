@@ -7,6 +7,10 @@ if [ -n "${SLACK_CLI_TOKEN}" ]; then
   token="${SLACK_CLI_TOKEN}"
 elif [ -r "${etcdir}/.slack" ] && [ -f "${etcdir}/.slack" ]; then
   token=$(sed -n '1p' < "${etcdir}/.slack")
+elif [ -r "$HOME/.slack" ] && [ -f "$HOME/.slack" ]; then
+  token=$(sed -n '1p' < "$HOME/.slack")
+elif [ -r "/etc/.slack" ] && [ -f "/etc/.slack" ]; then
+  token=$(sed -n '1p' < "/etc/.slack")
 fi
 
 # COMMAND PARSING #################################################################################
