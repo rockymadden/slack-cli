@@ -41,11 +41,13 @@ __Richly formatted chat example:__
 
 ```console
 $ slack chat send \
+  --actions '{"type": "button", "style": "primary", "text": "See results", "url": "http://example.com"}' \
   --author 'author' \
   --author-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
   --author-link 'https://github.com/rockymadden/slack-cli' \
   --channel '#channel' \
   --color good \
+  --fields '{"title": "Environment", "value": "snapshot", "short": true}' \
   --footer 'footer' \
   --footer-icon 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \
   --image 'https://assets-cdn.github.com/images/modules/logos_page/Octocat.png' \

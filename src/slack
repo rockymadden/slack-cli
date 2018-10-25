@@ -36,6 +36,8 @@ esac
 # ARGUMENT AND OPTION PARSING #####################################################################
 while (( "$#" )); do
   case "${1}" in
+    --actions=*) actions=${1/--actions=/''} ; shift ;;
+    --actions*|-a*) actions=${2} ; shift ; shift ;;
     --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
     --author-icon*|-ai*) authoricon=${2} ; shift ; shift ;;
     --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
@@ -55,6 +57,8 @@ while (( "$#" )); do
     --count|-cn*) count=${2} ; shift ; shift ;;
     --emoji=*) emoji=${1/--emoji=/''} ; shift ;;
     --emoji*|-em*) emoji=${2} ; shift ; shift ;;
+    --fields=*) fields=${1/--fields=/''} ; shift ;;
+    --fields*|-flds*) fields=${2} ; shift ; shift ;;
     --filename=*) filename=${1/--filename=/''} ; shift ;;
     --filename*|-fln*) filename=${2} ; shift ; shift ;;
     --filetype=*) filetype=${1/--filetype=/''} ; shift ;;
@@ -157,11 +161,13 @@ case "${cmd}${sub}" in
   ;;
   chatsend)
     [ -z "${channel}" ] && [ -z "${text}" ] && prompt='true'
+    [ -n "${prompt}" ] && [ -z "${actions}" ] && read -e -p 'Enter actions (e.g. {"type": “button", "style": "primary", "text": "my text", "url": "http://example.com"}, ...): ' actions
     [ -n "${prompt}" ] && [ -z "${author}" ] && read -e -p 'Enter author name (e.g. slackbot): ' author
     [ -n "${prompt}" ] && [ -z "${authoricon}" ] && read -e -p 'Enter author icon (e.g. a URL): ' authoricon
     [ -n "${prompt}" ] && [ -z "${authorlink}" ] && read -e -p 'Enter author link (e.g. a URL): ' authorlink
     [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
     [ -n "${prompt}" ] && [ -z "${color}" ] && read -e -p 'Enter color (e.g. good): ' color
+    [ -n "${prompt}" ] && [ -z "${fields}" ] && read -e -p 'Enter fields (e.g. {"title": "My Field Title", "value": "My field value", "short": true}, ...): ' fields
     [ -n "${prompt}" ] && [ -z "${footer}" ] && read -e -p 'Enter footer (e.g. Hello footer!): ' footer
     [ -n "${prompt}" ] && [ -z "${footericon}" ] && read -e -p 'Enter footer icon (e.g. a URL): ' footericon
     [ -n "${prompt}" ] && [ -z "${image}" ] && read -e -p 'Enter image (e.g. a URL): ' image
@@ -216,10 +222,12 @@ esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
 function attachify() {
+  [ -n "${actions}" ] && local _actions=", \"actions\": [${actions}]"
   [ -n "${author}" ] && local _author=", \"author_name\": \"${author}\""
   [ -n "${authoricon}" ] && local _authoricon=", \"author_icon\": \"${authoricon}\""
   [ -n "${authorlink}" ] && local _authorlink=", \"author_link\": \"${authorlink}\""
   [ -n "${color}" ] && local _color=", \"color\": \"${color}\""
+  [ -n "${fields}" ] && local _fields=", \"fields\": [${fields}]"
   [ -n "${footer}" ] && local _footer=", \"footer\": \"${footer}\""
   [ -n "${footericon}" ] && local _footericon=", \"footer_icon\": \"${footericon}\""
   [ -n "${image}" ] && local _image=", \"image_url\": \"${image}\""
@@ -228,7 +236,7 @@ function attachify() {
   [ -n "${_time}" ] && local __time=", \"ts\": \"${_time}\""
   [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
   [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
-  local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${__time}${_title}${_titlelink}"
+  local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${__time}${_title}${_titlelink}${_fields}${_actions}"
   [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
   [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
 
@@ -286,6 +294,7 @@ function chatdelete() {
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
 
+  echo $(attachify)
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
@@ -322,7 +331,7 @@ function help() {
   echo "  ${bin} chat send [<text> [channel]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
   echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
-  echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
+  echo '    [--compact|-cp] [--fields|-flds <fields>] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--time|-tm <time>] [--title|-ti <title>] [--title-link|-tl <title-link>]'
@@ -331,7 +340,7 @@ function help() {
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
   echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
-  echo '    [--compact|-cp] [--filter|-f <filter>] [--footer|-ft <footer>]'
+  echo '    [--compact|-cp] [--fields|flds <fields>] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
   echo '    [--time|-tm <time>] [--timestamp|-ts <timestamp>] [--title|-ti <title>]'
