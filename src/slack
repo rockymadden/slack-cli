@@ -7,8 +7,8 @@ if [ -n "${SLACK_CLI_TOKEN}" ]; then
   token="${SLACK_CLI_TOKEN}"
 elif [ -r "${etcdir}/.slack" ] && [ -f "${etcdir}/.slack" ]; then
   token=$(sed -n '1p' < "${etcdir}/.slack")
-elif [ -r "$HOME/.slack" ] && [ -f "$HOME/.slack" ]; then
-  token=$(sed -n '1p' < "$HOME/.slack")
+elif [ -r "${HOME}/.slack" ] && [ -f "${HOME}/.slack" ]; then
+  token=$(sed -n '1p' < "${HOME}/.slack")
 elif [ -r "/etc/.slack" ] && [ -f "/etc/.slack" ]; then
   token=$(sed -n '1p' < "/etc/.slack")
 fi
@@ -247,7 +247,7 @@ function lchannel() {
     @*)
       local _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${channel/@/}\")) | .[].id")
+        jq -r ".members | map(select(.name == \"${channel/@/}\" or .profile.display_name == \"${channel/@/}\")) | .[0].id")
       local _channel=$(\
         curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
         jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
@@ -263,7 +263,7 @@ function luser() {
     @*)
       local _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r "map(select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\")) | .[0].id")
+        jq -r ".members | map(select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\")) | .[0].id")
 
       echo ${_user}
     ;;
