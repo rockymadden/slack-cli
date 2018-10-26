@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:cosmic-curl
+    steps:
+      - checkout
+      - run: sudo apt-get install software-properties-common
+      - run: sudo add-apt-repository ppa:duggan/bats -y
+      - run: sudo apt-get update
+      - run: sudo apt-get install build-essential
+      - run: sudo apt-get install rsync
+      - run: sudo apt-get install bats
+      - run: make test
