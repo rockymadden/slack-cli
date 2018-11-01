@@ -294,7 +294,6 @@ function chatdelete() {
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
 
-  echo $(attachify)
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
