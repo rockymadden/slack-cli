@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-bindir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 etcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -n "${SLACK_CLI_TOKEN}" ]; then
@@ -37,7 +36,7 @@ esac
 while (( "$#" )); do
   case "${1}" in
     --actions=*) actions=${1/--actions=/''} ; shift ;;
-    --actions*|-a*) actions=${2} ; shift ; shift ;;
+    --actions*|-ac*) actions=${2} ; shift ; shift ;;
     --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
     --author-icon*|-ai*) authoricon=${2} ; shift ; shift ;;
     --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
@@ -68,9 +67,9 @@ while (( "$#" )); do
     --filter=*) filter=${1/--filter=/''} ; shift ;;
     --filter*|-f*) filter=${2} ; shift ; shift ;;
     --footer-icon=*) footericon=${1/--footer-icon=/''} ; shift ;;
-    --footer-icon*|-fi*) footericon=${2} ; shift ; shift ;;
+    --footer-icon*) footericon=${2} ; shift ; shift ;;
     --footer=*) footer=${1/--footer=/''} ; shift ;;
-    --footer*|-ft*) footer=${2} ; shift ; shift ;;
+    --footer*) footer=${2} ; shift ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
     --image*|-im*) image=${2} ; shift ; shift ;;
     --monochrome|-m) monochrome='-M' ; shift ;;
@@ -156,42 +155,42 @@ ${trace}
 # ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}${sub}" in
   chatdelete)
-    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
-    [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+    [ -z "${channel}" ] && read -r -e -p 'Enter channel (e.g. #general): ' channel
+    [ -z "${timestamp}" ] && read -r e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
   ;;
   chatsend)
     [ -z "${channel}" ] && [ -z "${text}" ] && prompt='true'
-    [ -n "${prompt}" ] && [ -z "${actions}" ] && read -e -p 'Enter actions (e.g. {"type": “button", "style": "primary", "text": "my text", "url": "http://example.com"}, ...): ' actions
-    [ -n "${prompt}" ] && [ -z "${author}" ] && read -e -p 'Enter author name (e.g. slackbot): ' author
-    [ -n "${prompt}" ] && [ -z "${authoricon}" ] && read -e -p 'Enter author icon (e.g. a URL): ' authoricon
-    [ -n "${prompt}" ] && [ -z "${authorlink}" ] && read -e -p 'Enter author link (e.g. a URL): ' authorlink
-    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
-    [ -n "${prompt}" ] && [ -z "${color}" ] && read -e -p 'Enter color (e.g. good): ' color
-    [ -n "${prompt}" ] && [ -z "${fields}" ] && read -e -p 'Enter fields (e.g. {"title": "My Field Title", "value": "My field value", "short": true}, ...): ' fields
-    [ -n "${prompt}" ] && [ -z "${footer}" ] && read -e -p 'Enter footer (e.g. Hello footer!): ' footer
-    [ -n "${prompt}" ] && [ -z "${footericon}" ] && read -e -p 'Enter footer icon (e.g. a URL): ' footericon
-    [ -n "${prompt}" ] && [ -z "${image}" ] && read -e -p 'Enter image (e.g. a URL): ' image
-    [ -n "${prompt}" ] && [ -z "${pretext}" ] && read -e -p 'Enter pretext (e.g. Hello pretext!): ' pretext
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello text!): ' text
-    [ -n "${prompt}" ] && [ -z "${thumbnail}" ] && read -e -p 'Enter thumbnail (e.g. a URL): ' thumbnail
-    [ -n "${prompt}" ] && [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
-    [ -n "${prompt}" ] && [ -z "${title}" ] && read -e -p 'Enter title (e.g. Hello title!): ' title
-    [ -n "${prompt}" ] && [ -z "${titlelink}" ] && read -e -p 'Enter title link (e.g. a URL): ' titlelink
+    [ -n "${prompt}" ] && [ -z "${actions}" ] && read -r -e -p 'Enter actions (e.g. {"type": “button", "style": "primary", "text": "my text", "url": "http://example.com"}, ...): ' actions
+    [ -n "${prompt}" ] && [ -z "${author}" ] && read -r -e -p 'Enter author name (e.g. slackbot): ' author
+    [ -n "${prompt}" ] && [ -z "${authoricon}" ] && read -r -e -p 'Enter author icon (e.g. a URL): ' authoricon
+    [ -n "${prompt}" ] && [ -z "${authorlink}" ] && read -r -e -p 'Enter author link (e.g. a URL): ' authorlink
+    [ -z "${channel}" ] && read -r -e -p 'Enter channel (e.g. #general): ' channel
+    [ -n "${prompt}" ] && [ -z "${color}" ] && read -r -e -p 'Enter color (e.g. good): ' color
+    [ -n "${prompt}" ] && [ -z "${fields}" ] && read -r -e -p 'Enter fields (e.g. {"title": "My Field Title", "value": "My field value", "short": true}, ...): ' fields
+    [ -n "${prompt}" ] && [ -z "${footer}" ] && read -r -e -p 'Enter footer (e.g. Hello footer!): ' footer
+    [ -n "${prompt}" ] && [ -z "${footericon}" ] && read -r -e -p 'Enter footer icon (e.g. a URL): ' footericon
+    [ -n "${prompt}" ] && [ -z "${image}" ] && read -r -e -p 'Enter image (e.g. a URL): ' image
+    [ -n "${prompt}" ] && [ -z "${pretext}" ] && read -r -e -p 'Enter pretext (e.g. Hello pretext!): ' pretext
+    [ -z "${text}" ] && read -r -e -p 'Enter text (e.g. Hello text!): ' text
+    [ -n "${prompt}" ] && [ -z "${thumbnail}" ] && read -r -e -p 'Enter thumbnail (e.g. a URL): ' thumbnail
+    [ -n "${prompt}" ] && [ -z "${_time}" ] && read -r -e -p 'Enter time (e.g. 123456789): ' _time
+    [ -n "${prompt}" ] && [ -z "${title}" ] && read -r -e -p 'Enter title (e.g. Hello title!): ' title
+    [ -n "${prompt}" ] && [ -z "${titlelink}" ] && read -r -e -p 'Enter title link (e.g. a URL): ' titlelink
   ;;
   chatupdate)
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. Hello World!): ' text
-    [ -z "${timestamp}" ] && read -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
-    [ -z "${channel}" ] && read -e -p 'Enter channel (e.g. #general): ' channel
+    [ -z "${text}" ] && read -r -e -p 'Enter text (e.g. Hello World!): ' text
+    [ -z "${timestamp}" ] && read -r -e -p 'Enter timestamp (e.g. 1405894322.002768): ' timestamp
+    [ -z "${channel}" ] && read -r -e -p 'Enter channel (e.g. #general): ' channel
   ;;
   filedelete)
-    [ -z "${file}" ] && read -e -p 'Enter file (e.g. F2147483862): ' file
+    [ -z "${file}" ] && read -r -e -p 'Enter file (e.g. F2147483862): ' file
   ;;
   fileinfo)
-    [ -z "${file}" ] && read -e -p 'Enter file (e.g. F2147483862): ' file
+    [ -z "${file}" ] && read -r -e -p 'Enter file (e.g. F2147483862): ' file
   ;;
   fileupload)
-    [ -z "${file}" ] && read -e -p 'Enter file (e.g. file.log): ' file
-    [ -z "${channels}" ] && read -e -p 'Enter channels (e.g. #general,C1234567890): ' channels
+    [ -z "${file}" ] && read -r -e -p 'Enter file (e.g. file.log): ' file
+    [ -z "${channels}" ] && read -r -e -p 'Enter channels (e.g. #general,C1234567890): ' channels
   ;;
   init)
     if [ -n "${SLACK_CLI_TOKEN}" ]; then
@@ -201,22 +200,22 @@ case "${cmd}${sub}" in
     fi
 
     if [ -z "${token}" ] || [ "${token}" == "${_token}" ]; then
-      read -e -p 'Enter Slack API token: ' token
+      read -r -e -p 'Enter Slack API token: ' token
     fi
   ;;
   reminderadd)
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
-    [ -z "${_time}" ] && read -e -p 'Enter time (e.g. 123456789): ' _time
+    [ -z "${text}" ] && read -r -e -p 'Enter text (e.g. lunch): ' text
+    [ -z "${_time}" ] && read -r -e -p 'Enter time (e.g. 123456789): ' _time
   ;;
   remindercomplete|reminderdelete|reminderinfo)
-    [ -z "${reminder}" ] && read -e -p 'Enter reminder (e.g. RmCT7QGVBF): ' reminder
+    [ -z "${reminder}" ] && read -r -e -p 'Enter reminder (e.g. RmCT7QGVBF): ' reminder
   ;;
   snoozestart)
-    [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
+    [ -z "${minutes}" ] && read -r -e -p 'Enter minutes (e.g. 60): ' minutes
   ;;
   statusedit)
-    [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
-    [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
+    [ -z "${text}" ] && read -r -e -p 'Enter text (e.g. lunch): ' text
+    [ -z "${emoji}" ] && read -r -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
   ;;
 esac
 
@@ -244,44 +243,48 @@ function attachify() {
 }
 
 function jqify() {
-  case "$(echo ${1} | jq -r '.ok')" in
-    true) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
-    *) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
+  case $(echo "${1}" | jq -r '.ok') in
+    true) echo "${1}" | jq -r ${compact} ${monochrome} "${filter:-.}" ;;
+    *) echo "${1}" | jq -r ${compact} ${monochrome} "${filter:-.}" ; return 1 ;;
   esac
 }
 
 function lchannel() {
   case "${channel}" in
     @*)
-      local _user=$(\
+      local _user
+      local _channel
+      _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
         jq -r ".members | map(select(.name == \"${channel/@/}\" or .profile.display_name == \"${channel/@/}\")) | .[0].id")
-      local _channel=$(\
+      _channel=$(\
         curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
         jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
 
-      echo ${_channel}
+      echo "${_channel}"
     ;;
-    *) echo ${channel} ;;
+    *) echo "${channel}" ;;
   esac
 }
 
 function luser() {
   case "${user}" in
     @*)
-      local _user=$(\
+      local _user
+      _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
         jq -r ".members | map(select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\")) | .[0].id")
 
-      echo ${_user}
+      echo "${_user}"
     ;;
-    *) echo ${user} ;;
+    *) echo "${user}" ;;
   esac
 }
 
 # COMMAND FUNCTIONS ###############################################################################
 function chatdelete() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/chat.delete \
       --data-urlencode "as_user=true" \
       --data-urlencode "channel=$(lchannel)" \
@@ -294,7 +297,8 @@ function chatdelete() {
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
 
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
       --data-urlencode "attachments=$(attachify)" \
@@ -307,7 +311,8 @@ function chatsend() {
 function chatupdate() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
 
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/chat.update \
       --data-urlencode "as_user=true" \
       --data-urlencode "attachments=$(attachify)" \
@@ -319,7 +324,7 @@ function chatupdate() {
 }
 
 function help() {
-  local a=(${0//\// })
+  local a=("${0//\// }")
   local bin=${a[${#a[@]}-1]}
 
   echo 'Usage:'
@@ -449,7 +454,8 @@ function help() {
 }
 
 function filedelete() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/files.delete \
       --data-urlencode "file=${file}" \
       --data-urlencode "token=${token}")
@@ -458,7 +464,8 @@ function filedelete() {
 }
 
 function fileinfo() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/files.info \
       ${count:+ --data-urlencode "count=${count}"} \
       --data-urlencode "file=${file}" \
@@ -469,7 +476,8 @@ function fileinfo() {
 }
 
 function filelist() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/files.list \
       ${channel:+ --data-urlencode "channel=${channel}"} \
       ${count:+ --data-urlencode "count=${count}"} \
@@ -490,7 +498,10 @@ function fileupload() {
     local _file=${file}
 
     case "${filename}" in
-      '') local _filename=$(basename ${file}) ;;
+      '')
+        local _filename
+        _filename=$(basename "${file}")
+      ;;
       *) local _filename=${filename} ;;
     esac
   else
@@ -504,7 +515,8 @@ function fileupload() {
 
   case "${_file}" in
     '')
-      local msg=$(\
+      local msg
+      msg=$(\
         curl -s -X POST https://slack.com/api/files.upload \
           ${channels:+ --data-urlencode "channels=${channels}"} \
           ${comment:+ --data-urlencode "initial_comment=${comment}"} \
@@ -515,7 +527,8 @@ function fileupload() {
           --data-urlencode "token=${token}")
     ;;
     *)
-      local msg=$(\
+      local msg
+      msg=$(\
         curl -s -X POST https://slack.com/api/files.upload \
           ${channels:+ --form-string "channels=${channels}"} \
           ${comment:+ --form "initial_comment=${comment}"} \
@@ -534,22 +547,24 @@ function init() {
   echo "${token}" > "${etcdir}/.slack"
 
   case "${?}" in
-    0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
+    0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:-.}" ;;
     *)
       echo '{"ok": false, "error": "not_writable"}' |
-        jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1
+        jq -r ${compact} ${monochrome} "${filter:-.}" ; return 1
     ;;
   esac
 }
 
 # Setting presence=auto + setActive works more consistently than just setActive.
 function presenceactive() {
-  local msg0=$(\
+  local msg0
+  msg0=$(\
     curl -s -X POST https://slack.com/api/users.setPresence \
       --data-urlencode "presence=auto" \
       --data-urlencode "token=${token}")
 
-  local msg1=$(\
+  local msg1
+  msg1=$(\
     curl -s -X POST https://slack.com/api/users.setActive \
       --data-urlencode "token=${token}")
 
@@ -557,7 +572,8 @@ function presenceactive() {
 }
 
 function presenceaway() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/users.setPresence \
       --data-urlencode "presence=away" \
       --data-urlencode "token=${token}")
@@ -566,7 +582,8 @@ function presenceaway() {
 }
 
 function reminderadd() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/reminders.add \
       --data-urlencode "text=${text}" \
       --data-urlencode "time=${_time}" \
@@ -577,7 +594,8 @@ function reminderadd() {
 }
 
 function remindercomplete() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/reminders.complete \
       --data-urlencode "reminder=${reminder}" \
       --data-urlencode "token=${token}")
@@ -586,7 +604,8 @@ function remindercomplete() {
 }
 
 function reminderdelete() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/reminders.delete \
       --data-urlencode "reminder=${reminder}" \
       --data-urlencode "token=${token}")
@@ -595,7 +614,8 @@ function reminderdelete() {
 }
 
 function reminderinfo() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/reminders.info \
       --data-urlencode "reminder=${reminder}" \
       --data-urlencode "token=${token}")
@@ -604,7 +624,8 @@ function reminderinfo() {
 }
 
 function reminderlist() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/reminders.list \
       --data-urlencode "token=${token}")
 
@@ -612,7 +633,8 @@ function reminderlist() {
 }
 
 function snoozeend() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/dnd.endSnooze \
       --data-urlencode "token=${token}")
 
@@ -620,7 +642,8 @@ function snoozeend() {
 }
 
 function snoozeinfo() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/dnd.info \
       ${user:+ --data-urlencode "user=$(luser)"} \
       --data-urlencode "token=${token}")
@@ -629,7 +652,8 @@ function snoozeinfo() {
 }
 
 function snoozestart() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/dnd.setSnooze \
       --data-urlencode "num_minutes=${minutes}" \
       --data-urlencode "token=${token}")
@@ -638,7 +662,8 @@ function snoozestart() {
 }
 
 function statusclear() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/users.profile.set \
       --data-urlencode 'profile={"status_text":"", "status_emoji":""}' \
       --data-urlencode "token=${token}")
@@ -647,7 +672,8 @@ function statusclear() {
 }
 
 function statusedit() {
-  local msg=$(\
+  local msg
+  msg=$(\
     curl -s -X POST https://slack.com/api/users.profile.set \
       --data-urlencode "profile={\"status_text\":\"${text}\", \"status_emoji\":\"${emoji}\"}" \
       --data-urlencode "token=${token}")
@@ -672,10 +698,10 @@ case "${cmd}${sub}" in
   statusclear|statusedit)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
-        jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
+        jq -r ${compact} ${monochrome} "${filter:-.}" ; exit 1
     fi
 
-    ${cmd}${sub} ; exit $?
+    "${cmd}${sub}" ; exit $?
   ;;
   *) help ; exit 1 ;;
 esac
