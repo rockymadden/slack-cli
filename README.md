@@ -108,6 +108,19 @@ $ export SLACK_CLI_TOKEN='token'
 
 ## Examples and Recipes
 
+### `avatar`
+
+```console
+$ # Upload avatar via prompts:
+$ slack avatar upload
+$
+$ # Upload avatar via arguments:
+$ slack avatar upload avatar.png
+$
+$ # Delete avatar:
+$ slack avatar delete
+```
+
 ### `chat send`
 
 ```console
