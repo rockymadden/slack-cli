@@ -63,7 +63,6 @@ $ slack chat send \
 ### Via `brew`
 
 ```console
-$ brew tap rockymadden/rockymadden
 $ brew install rockymadden/rockymadden/slack-cli
 ```
 
