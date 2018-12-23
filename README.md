@@ -362,7 +362,7 @@ $ # Edit status via options:
 $ slack status edit --text lunch --emoji :hamburger:
 $
 $ # Edit status via short form options:
-$ slack status edit --tx lunch -em :hamburger:
+$ slack status edit -tx lunch -em :hamburger:
 ```
 
 ## Contributors
