@@ -22,7 +22,7 @@ $ slack chat send hi @slackbot
 ---
 __100% Slack-based pomodoro example:__
 ```console
-$ alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" && slack snooze start --minutes="${1-60}" && slack reminder add "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
+$ alias pomodoro='f() { slack status edit --text="Pomodoro" --emoji=":tomato:" --expiration $(date -v +${1-60}M "+%s") && slack snooze start --minutes="${1-60}" && slack reminder add "Pomodoro done!" $(date -v +${1-60}M "+%s") }; f'
 $ pomodoro 60
 ```
 
@@ -359,10 +359,10 @@ $ # Edit status via arguments:
 $ slack status edit lunch :hamburger:
 $
 $ # Edit status via options:
-$ slack status edit --text lunch --emoji :hamburger:
+$ slack status edit --text lunch --emoji :hamburger: --expiration $(date -v 1H "+%s")
 $
 $ # Edit status via short form options:
-$ slack status edit --tx lunch -em :hamburger:
+$ slack status edit -tx lunch -em :hamburger: -ex $(date -v 1H "+%s")
 ```
 
 ## Contributors
