@@ -250,16 +250,44 @@ function jqify() {
   esac
 }
 
+function join_by {
+   local IFS="$1"; shift; echo "$*"; 
+}
+
 function lchannel() {
   case "${channel}" in
     @*)
-      local _user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${channel/@/}\" or .profile.display_name == \"${channel/@/}\")) | .[0].id")
-      local _channel=$(\
-        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
+      local _channel=""
+      if [[ $channel =~ ,* ]];
+      then
+        IFS=',' read -r -a users <<< "${channel}"
+        local _user_ids=()
+        # look up user id for all selected users
+        for user in ${users[@]};
+        do
+          local _user=$(\
+          curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
+          jq -r ".members[] | select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\").id")
 
+          [[ ! -z $_user ]] && _user_ids+=($_user)
+        done
+
+        # Open a conversation between all users specified in channel arg
+        _channel=$(\
+          curl -s -X POST https://slack.com/api/conversations.open \
+            --data-urlencode "token=${token}" \
+            --data-urlencode "users=$(join_by , ${_user_ids[@]})" \
+            --data-urlencode "return_im=true" 2>&1 | \
+          jq -r ".channel.id")
+      else
+        local _user=$(\
+          curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
+          jq -r ".members[] | select(.name == \"${channel/@/}\" or .profile.display_name == \"${channel/@/}\").id")
+        _channel=$(\
+          curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
+          jq -r ".ims[] | select(.user == \"${_user}\").id")
+      fi
+      
       echo ${_channel}
     ;;
     *) echo ${channel} ;;
@@ -271,7 +299,7 @@ function luser() {
     @*)
       local _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\")) | .[0].id")
+        jq -r ".members[] | select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\").id")
 
       echo ${_user}
     ;;
@@ -293,7 +321,6 @@ function chatdelete() {
 
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
-
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
