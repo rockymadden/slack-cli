@@ -292,7 +292,7 @@ function chatdelete() {
 }
 
 function chatsend() {
-  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+  [ -n "${stdin}" ] && [ -z "${text}" ] && text=$(jq -Rs <<< "$stdin" '"```" + . + "```"' |  sed 's/^"//; s/"$//')
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
@@ -305,7 +305,7 @@ function chatsend() {
 }
 
 function chatupdate() {
-  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+  [ -n "${stdin}" ] && [ -z "${text}" ] && text=$(jq -Rs <<< "$stdin" '"```" + . + "```"' |  sed 's/^"//; s/"$//')
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.update \
