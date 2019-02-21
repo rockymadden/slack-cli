@@ -6,6 +6,15 @@ load suite
   build/bin/slack chat send 'chat send to public channel should succeed' '#slack-cli'
 }
 
+@test 'chat send to public channel via bot without --bot should fail' {
+  SLACK_CLI_TOKEN=$SLACK_CLI_BOT_TOKEN run build/bin/slack chat send 'chat send to public channel should succeed' '#slack-cli'
+  [ ${status} -eq 1 ]
+}
+
+@test 'chat send to public channel via bot with --bot should succeed' {
+  SLACK_CLI_TOKEN=$SLACK_CLI_BOT_TOKEN run build/bin/slack chat send 'chat send to public channel should succeed' '#slack-cli' --bot
+}
+
 @test 'chat send to private channel should succeed' {
   build/bin/slack chat send 'chat send to private channel should succeed' '#slack-cli-private'
 }
