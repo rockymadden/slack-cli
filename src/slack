@@ -34,6 +34,8 @@ case "${cmd}${sub}" in
 esac
 
 # ARGUMENT AND OPTION PARSING #####################################################################
+as_user=true
+
 while (( "$#" )); do
   case "${1}" in
     --actions=*) actions=${1/--actions=/''} ; shift ;;
@@ -44,6 +46,7 @@ while (( "$#" )); do
     --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
     --author*|-at*) author=${2} ; shift ; shift ;;
+    --bot|-b) as_user=false ; shift ;;
     --channels=*) channels=${1/--channels=/''} ; shift ;;
     --channels*|-chs*) channels=${2} ; shift ; shift ;;
     --channel=*) channel=${1/--channel=/''} ; shift ;;
@@ -283,7 +286,7 @@ function luser() {
 function chatdelete() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.delete \
-      --data-urlencode "as_user=true" \
+      --data-urlencode "as_user=${as_user}" \
       --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "ts=${timestamp}" \
       --data-urlencode "token=${token}")
@@ -296,7 +299,7 @@ function chatsend() {
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
-      --data-urlencode "as_user=true" \
+      --data-urlencode "as_user=${as_user}" \
       --data-urlencode "attachments=$(attachify)" \
       --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "token=${token}")
@@ -309,7 +312,7 @@ function chatupdate() {
 
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.update \
-      --data-urlencode "as_user=true" \
+      --data-urlencode "as_user=${as_user}" \
       --data-urlencode "attachments=$(attachify)" \
       --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "ts=${timestamp}" \
@@ -324,12 +327,12 @@ function help() {
 
   echo 'Usage:'
   echo "  ${bin} chat delete [<timestamp> [channel]]"
-  echo '    [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
+  echo '    [--bot|-b] [--channel|-ch <channel>] [--compact|-c] [--filter|-f <filter>] [--monochrome|-m]'
   echo '    [--timestamp|-ts <timestamp>] [--trace|-x]'
   echo
   echo "  ${bin} chat send [<text> [channel]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
-  echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
+  echo '    [--author-link|-al <author-link>] [--bot|-b] [--channel|-ch <channel>] [--color|-cl <color>]'
   echo '    [--compact|-cp] [--fields|-flds <fields>] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
@@ -338,7 +341,7 @@ function help() {
   echo
   echo "  ${bin} chat update [<text> [<timestamp> [channel]]]"
   echo '    [--author|-at <author>] [--author-icon|-ai <author-icon-url>]'
-  echo '    [--author-link|-al <author-link>] [--channel|-ch <channel>] [--color|-cl <color>]'
+  echo '    [--author-link|-al <author-link>] [--bot|-b] [--channel|-ch <channel>] [--color|-cl <color>]'
   echo '    [--compact|-cp] [--fields|flds <fields>] [--filter|-f <filter>] [--footer|-ft <footer>]'
   echo '    [--footer-icon|-fi <footer-icon-url>] [--image|-im <image-url>] [--monochrome|-m]'
   echo '    [--pretext|-pt <pretext>] [--text|-tx <text>] [--thumbnail|-th <thumbnail-url>]'
