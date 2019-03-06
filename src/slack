@@ -252,13 +252,23 @@ function jqify() {
 
 function lchannel() {
   case "${channel}" in
+    *@*)
+      local _user=$(\
+        curl -s -X POST https://slack.com/api/users.lookupByEmail --data-urlencode "token=${token}" --data-urlencode "email=${channel}" 2>&1 | \
+        jq -r ".user.id")
+      local _channel=$(\
+        curl -s -X POST https://slack.com/api/im.open --data-urlencode "token=${token}" --data-urlencode "user=${_user}" 2>&1 | \
+        jq -r ".channel.id")
+
+      echo ${_channel}
+    ;;
     @*)
       local _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
         jq -r ".members | map(select(.name == \"${channel/@/}\" or .profile.display_name == \"${channel/@/}\")) | .[0].id")
       local _channel=$(\
-        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
+        curl -s -X POST https://slack.com/api/im.open --data-urlencode "token=${token}" --data-urlencode "user=${_user}" 2>&1 | \
+        jq -r ".channel.id")
 
       echo ${_channel}
     ;;
@@ -268,6 +278,13 @@ function lchannel() {
 
 function luser() {
   case "${user}" in
+    *@*)
+      local _user=$(\
+        curl -s -X POST https://slack.com/api/users.lookupByEmail --data-urlencode "token=${token}" --data-urlencode "email=${user}" 2>&1 | \
+        jq -r ".user.id")
+
+      echo ${_user}
+    ;;
     @*)
       local _user=$(\
         curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \

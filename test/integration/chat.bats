@@ -14,6 +14,10 @@ load suite
   build/bin/slack chat send 'chat send to direct channel should succeed' @rockymadden
 }
 
+@test 'chat send to direct channel via email should succeed' {
+  build/bin/slack chat send 'chat send to direct channel via email should succeed' github@rockymadden.com
+}
+
 @test 'chat send to invalid channel should fail' {
   run build/bin/slack chat send 'chat send to invalid channel should fail' '#invalid'
   [ ${status} -eq 1 ]
