@@ -237,7 +237,7 @@ function attachify() {
   [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
   [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
   local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${__time}${_title}${_titlelink}${_fields}${_actions}"
-  [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
+  [ -z "${_json}" ] && local _attachments="" # no echo if only text
   [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
 
   echo "${_attachments}"
@@ -294,10 +294,14 @@ function chatdelete() {
 function chatsend() {
   [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
 
+  local attachments="$(attachify)"
+  local postMsg=""
+  [ -n "$attachments" ] && postMsg="attachments=$attachments" || postMsg="text=$text"
+
   local msg=$(\
     curl -s -X POST https://slack.com/api/chat.postMessage \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=$(attachify)" \
+      --data-urlencode "$postMsg" \
       --data-urlencode "channel=$(lchannel)" \
       --data-urlencode "token=${token}")
 
