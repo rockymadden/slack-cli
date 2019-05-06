@@ -61,6 +61,7 @@ while (( "$#" )); do
     --footer-icon*|-fi*) footericon=${2} ; shift ; shift ;;
     --footer=*) footer=${1/--footer=/''} ; shift ;;
     --footer*|-ft*) footer=${2} ; shift ; shift ;;
+    --human) human=${1/--human=/''} ; shift ;;
     --image=*) image=${1/--image-url=/''} ; shift ;;
     --image*|-im*) image=${2} ; shift ; shift ;;
     --monochrome|-m) monochrome='-M' ; shift ;;
@@ -358,10 +359,10 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
   echo
   echo "  ${bin} reminder info [reminder]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--human] [--trace|-x]'
   echo
   echo "  ${bin} reminder list"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--human] [--trace|-x]'
   echo
   echo "  ${bin} snooze end"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
@@ -564,7 +565,8 @@ function reminderinfo() {
       --data-urlencode "reminder=${reminder}" \
       --data-urlencode "token=${token}")
 
-  jqify "${msg}"
+    # If we have a human flag we'll output in a human readable form, otherwise just show the JSON
+  [  -z "$human" ] && jqify "${msg}" || echo ${msg} | jq -r '.reminder | .text as $text | .complete_ts as $completed | .recurring as $recurring | .id as $id | if $recurring == true then "♲ \($text) (id: \($id))" elif $completed == 0 then "✗ \($text) (id: \($id))" else "✓ \($text) (id: \($id))" end'   
 }
 
 function reminderlist() {
@@ -572,7 +574,8 @@ function reminderlist() {
     curl -s -X POST https://slack.com/api/reminders.list \
       --data-urlencode "token=${token}")
 
-  jqify "${msg}"
+  # If we have a human flag we'll output in a human readable form, otherwise just show the JSON
+  [  -z "$human" ] && jqify "${msg}" || echo ${msg} | jq -r '.reminders[] | .text as $text | .complete_ts as $completed | .recurring as $recurring | .id as $id | if $recurring == true then "♲ \($text) (id: \($id))" elif $completed == 0 then "✗ \($text) (id: \($id))" else "✓ \($text) (id: \($id))" end'   
 }
 
 function snoozeend() {

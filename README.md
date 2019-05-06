@@ -160,10 +160,10 @@ Usage:
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
 
   slack reminder info [reminder]
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--trace|-x]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--reminder|rm] [--human] [--trace|-x]
 
   slack reminder list
-    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
+    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--human] [--trace|-x]
 
   slack snooze end
     [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]
@@ -363,6 +363,9 @@ $ slack presence active
 ```console
 $ # List reminders:
 $ slack reminder list
+
+$ # List reminders in human readable form via options (no JSON output)
+$ slack reminder list --human
 ```
 
 ### `reminder add`
@@ -370,10 +373,10 @@ $ slack reminder list
 ```console
 $ # Add reminder via prompts:
 $ slack reminder add
-$
+
 $ # Add reminder via arguments:
 $ slack reminder add '@slackbot' 'lunch' 1526995300
-$
+
 $ # Add reminder via options:
 $ slack reminder add --user="@slackbot" --text="lunch" --time=1526995300
 ```
@@ -383,10 +386,10 @@ $ slack reminder add --user="@slackbot" --text="lunch" --time=1526995300
 ```console
 $ # Complete reminder via prompts:
 $ slack reminder complete
-$
+
 $ # Complete reminder via arguments:
 $ slack reminder complete Rm7MGABKT6
-$
+
 $ # Complete reminder via options:
 $ slack reminder complete --reminder="Rm7MGABKT6"
 ```
@@ -396,10 +399,10 @@ $ slack reminder complete --reminder="Rm7MGABKT6"
 ```console
 $ # Complete reminder via prompts:
 $ slack reminder delete
-$
+
 $ # Complete reminder via arguments:
 $ slack reminder delete "Rm7MGABKT6"
-$
+
 $ # Complete reminder via options:
 $ slack reminder delete --reminder="Rm7MGABKT6"
 ```
@@ -409,12 +412,15 @@ $ slack reminder delete --reminder="Rm7MGABKT6"
 ```console
 $ # Info about reminder via prompts:
 $ slack reminder info
-$
+
 $ # Info about reminder via arguments:
 $ slack reminder info "Rm7MGABKT6"
-$
+
 $ # Info about reminder via options:
 $ slack reminder info --reminder="Rm7MGABKT6"
+
+# Info about reminders in human readable form via options (no JSON output)
+$ slack reminder info --human
 ```
 
 ### `presence away`
