@@ -23,7 +23,7 @@ case "${cmd}${1}" in
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist| \
   snoozeend|snoozeinfo|snoozestart|\
-  statusclear|statusedit)
+  statusclear|statusedit|statusget)
     sub=${1} ; shift
   ;;
 esac
@@ -57,6 +57,8 @@ while (( "$#" )); do
     --count|-cn*) count=${2} ; shift ; shift ;;
     --emoji=*) emoji=${1/--emoji=/''} ; shift ;;
     --emoji*|-em*) emoji=${2} ; shift ; shift ;;
+    --expiration=*) expiration=${1/--expiration=/''} ; shift ;;
+    --expiration*|-ex*) expiration=${2} ; shift ; shift ;;
     --fields=*) fields=${1/--fields=/''} ; shift ;;
     --fields*|-flds*) fields=${2} ; shift ; shift ;;
     --filename=*) filename=${1/--filename=/''} ; shift ;;
@@ -136,6 +138,7 @@ while (( "$#" )); do
         statusedit)
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${emoji}" ] && emoji=${1}
           [ -n "${1}" ] && [ -z "${text}" ] && text=${1}
+          [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${expiration}" ] && expiration=${1}
         ;;
         reminderadd)
           [ -n "${1}" ] && [ -n "${text}" ] && [ -z "${_time}" ] && _time=${1}
@@ -217,6 +220,7 @@ case "${cmd}${sub}" in
   statusedit)
     [ -z "${text}" ] && read -e -p 'Enter text (e.g. lunch): ' text
     [ -z "${emoji}" ] && read -e -p 'Enter emoji (e.g. :hamburger:): ' emoji
+    [ -z "${expiration}" ] && read -e -p 'Enter timestamp (e.g. 1405894322): ' expiration
   ;;
 esac
 
@@ -407,7 +411,10 @@ function help() {
   echo "  ${bin} status clear"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
-  echo "  ${bin} status edit [<text> [<emoji>]]"
+  echo "  ${bin} status edit [<text> [<emoji>] [<expiration>]]"
+  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo
+  echo "  ${bin} status get"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
   echo 'Configuration Commands:'
@@ -443,6 +450,7 @@ function help() {
   echo 'Status Commands:'
   echo '  status clear    Clear status'
   echo '  status edit     Edit status'
+  echo '  status get      Get status'
   echo
   echo 'More Information:'
   echo '  repo    https://github.com/rockymadden/slack-cli'
@@ -649,7 +657,15 @@ function statusclear() {
 function statusedit() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/users.profile.set \
-      --data-urlencode "profile={\"status_text\":\"${text}\", \"status_emoji\":\"${emoji}\"}" \
+      --data-urlencode "profile={\"status_text\":\"${text}\", \"status_emoji\":\"${emoji}\", \"status_expiration\":\"${expiration}\"}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
+function statusget() {
+  local msg=$(\
+    curl -s https://slack.com/api/users.profile.get \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
@@ -669,7 +685,7 @@ case "${cmd}${sub}" in
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist|\
   snoozeend|snoozeinfo|snoozestart|\
-  statusclear|statusedit)
+  statusclear|statusedit|statusget)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
@@ -679,3 +695,4 @@ case "${cmd}${sub}" in
   ;;
   *) help ; exit 1 ;;
 esac
+
