@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+for i in curl sed jq grep dirname; do
+  command -v $i >/dev/null 2>&1 || { echo >&2 "Not found: $i. Aborting."; exit 1; }
+done
+
 bindir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 etcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
