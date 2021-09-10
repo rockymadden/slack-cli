@@ -55,6 +55,7 @@ while (( "$#" )); do
     --comment*|-cm*) comment=${2} ; shift ; shift ;;
     --count=*) count=${1/--count=/''} ; shift ;;
     --count|-cn*) count=${2} ; shift ; shift ;;
+    --expire|-e) expire=${2} ; shift ; shift ;;
     --emoji=*) emoji=${1/--emoji=/''} ; shift ;;
     --emoji*|-em*) emoji=${2} ; shift ; shift ;;
     --fields=*) fields=${1/--fields=/''} ; shift ;;
@@ -407,7 +408,7 @@ function help() {
   echo "  ${bin} status clear"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
-  echo "  ${bin} status edit [<text> [<emoji>]]"
+  echo "  ${bin} status edit [-e <expire-date>] [<text> [<emoji>]]"
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
   echo 'Configuration Commands:'
@@ -647,9 +648,13 @@ function statusclear() {
 }
 
 function statusedit() {
+  if [[ "$expire" =~ ^\+ ]]; then
+    expire="$(( $(date '+%s') + expire ))"
+  fi
+
   local msg=$(\
     curl -s -X POST https://slack.com/api/users.profile.set \
-      --data-urlencode "profile={\"status_text\":\"${text}\", \"status_emoji\":\"${emoji}\"}" \
+      --data-urlencode "profile={\"status_text\":\"${text}\",\"status_expiration\":\"${expire:-0}\",\"status_emoji\":\"${emoji}\"}" \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
