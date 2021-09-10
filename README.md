@@ -363,6 +363,12 @@ $ slack status edit --text lunch --emoji :hamburger:
 $
 $ # Edit status via short form options:
 $ slack status edit --tx lunch -em :hamburger:
+$
+$ # Clear status at 09:30 today:
+$ slack status edit -e "$(date -d '09:30' '+%s')" --tx coffee -em :coffee:
+$
+$ # Clear status after 5 minutes:
+$ slack status edit -e +300 --tx "Back in 5" -em :clock1:
 ```
 
 ## Contributors
