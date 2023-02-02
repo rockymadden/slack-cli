@@ -211,6 +211,9 @@ case "${cmd}${sub}" in
   remindercomplete|reminderdelete|reminderinfo)
     [ -z "${reminder}" ] && read -e -p 'Enter reminder (e.g. RmCT7QGVBF): ' reminder
   ;;
+  search)
+    [ -z "${searchquery}" ] && read -e -p 'Enter search query: ' searchquery
+  ;;
   snoozestart)
     [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
   ;;
@@ -611,6 +614,15 @@ function reminderlist() {
   jqify "${msg}"
 }
 
+function search() {
+   local msg=$(\
+    curl -s -X POST https://slack.com/api/search.messages \
+      --data-urlencode "query=${searchquery}" \
+      --data-urlencode "token=${token}")
+
+  jqify "${msg}"
+}
+
 function snoozeend() {
   local msg=$(\
     curl -s -X POST https://slack.com/api/dnd.endSnooze \
@@ -668,7 +680,7 @@ case "${cmd}${sub}" in
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist|\
-  snoozeend|snoozeinfo|snoozestart|\
+  search|snoozeend|snoozeinfo|snoozestart|\
   statusclear|statusedit)
     if [ -z "${token}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
