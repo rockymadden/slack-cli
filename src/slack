@@ -80,6 +80,8 @@ while (( "$#" )); do
     --page|-pg*) page=${2} ; shift ; shift ;;
     --pretext=*) pretext=${1/--pretext=/''} ; shift ;;
     --pretext*|-pt*) pretext=${2} ; shift ; shift ;;
+    --query=*) query=${1/--query=/''} ; shift ;;
+    --query*|-q*) query=${2} ; shift ; shift ;;
     --reminder=*) reminder=${1/--reminder=/''} ; shift ;;
     --reminder|-rm*) reminder=${2} ; shift ; shift ;;
     --text=*) text=${1/--text=/''} ; shift ;;
@@ -212,7 +214,7 @@ case "${cmd}${sub}" in
     [ -z "${reminder}" ] && read -e -p 'Enter reminder (e.g. RmCT7QGVBF): ' reminder
   ;;
   search)
-    [ -z "${searchquery}" ] && read -e -p 'Enter search query: ' searchquery
+    [ -z "${query}" ] && read -e -p 'Enter search query: ' query
   ;;
   snoozestart)
     [ -z "${minutes}" ] && read -e -p 'Enter minutes (e.g. 60): ' minutes
@@ -617,7 +619,7 @@ function reminderlist() {
 function search() {
    local msg=$(\
     curl -s -X POST https://slack.com/api/search.messages \
-      --data-urlencode "query=${searchquery}" \
+      --data-urlencode "query=${query}" \
       --data-urlencode "token=${token}")
 
   jqify "${msg}"
