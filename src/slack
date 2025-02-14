@@ -515,14 +515,23 @@ function fileupload() {
           --data-urlencode "token=${token}")
     ;;
     *)
+      local _length=$(wc -c < ${_file} | xargs)
+      local _get_upload_msg=$(\
+        curl -s -X POST https://slack.com/api/files.getUploadURLExternal \
+          ${_filename:+ --form "filename=${_filename}"} \
+          --form "length=${_length}" \
+          --form "token=${token}")
+      local _upload_url=$(echo ${_get_upload_msg} | jq -r '.upload_url')
+      local _file_id=$(echo ${_get_upload_msg} | jq -r '.file_id')
+      local _upload_post_msg=$(\
+        curl -s -X POST ${_upload_url} \
+          --form "file=@${_file}" \
+          --form "token=${token}")
       local msg=$(\
-        curl -s -X POST https://slack.com/api/files.upload \
+        curl -s -X POST https://slack.com/api/files.completeUploadExternal \
           ${channels:+ --form-string "channels=${channels}"} \
           ${comment:+ --form "initial_comment=${comment}"} \
-          ${_file:+ --form "file=@${_file}"} \
-          ${_filename:+ --form "filename=${_filename}"} \
-          ${filetype:+ --form "filetype=${filetype}"} \
-          ${title:+ --form "title=${title}"} \
+          --form "files=[{'id':'${_file_id}'}]" \
           --form "token=${token}")
     ;;
   esac
