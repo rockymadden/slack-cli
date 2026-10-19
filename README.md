@@ -1,10 +1,37 @@
 # slack-cli <sub><sup>| Powerful Slack CLI via pure bash</sup></sub>
 
-[![version](http://img.shields.io/badge/version-0.18.0-blue.svg)](https://github.com/rockymadden/slack-cli/releases)
+[![version](http://img.shields.io/badge/version-0.19.0-blue.svg)](https://github.com/jasonpaulso/slack-cli)
 [![versioning](http://img.shields.io/badge/versioning-semver-blue.svg)](http://semver.org/)
 [![branching](http://img.shields.io/badge/branching-github%20flow-blue.svg)](https://guides.github.com/introduction/flow/)
 [![license](http://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
 [![circleci](https://circleci.com/gh/rockymadden/slack-cli.svg?style=shield)](https://circleci.com/gh/rockymadden/slack-cli)
+
+## This fork: `slk`
+
+Maintained fork of [rockymadden/slack-cli](https://github.com/rockymadden/slack-cli), modernized for
+the current Slack Web API. The binary is `slk`, so it can sit beside Slack's own `slack` CLI. The
+examples below still say `slack`; substitute `slk`.
+
+```console
+$ make install bindir="$HOME/.local/bin" etcdir="$HOME/.config/slk"
+$ slk init                      # paste a user token (xoxp-)
+$ make test                     # unit + offline shim tests; nothing reaches Slack
+```
+
+Changes from upstream 0.18.0:
+
+- `file upload` uses `files.getUploadURLExternal` + `files.completeUploadExternal` (`files.upload` is retired); `#name` and `@name` targets are resolved to ids, `--filetype` becomes `snippet_type`.
+- `chat send @user` opens the DM with `conversations.open` (`im.list` is retired).
+- `status edit --expires <+90m|+2h|HH:MM|epoch>` sets a self-clearing status; `status clear` clears the expiry too.
+- JSON for messages and statuses is built with `jq`, so quotes and backslashes in text are safe.
+- The token is sent as an `Authorization: Bearer` header via curl config on stdin, never in argv or `--trace` output.
+- `@name` lookups page through `users.list`; `presence active` no longer calls the no-op `users.setActive`.
+- Fixed `--author-link`, `--image=`, `--timestamp-from=`, `--timestamp-to=` parsing.
+- Reminder commands are limited by Slack, not by this CLI: since Save it for Later (2023), `reminders.add` returns ok but `reminders.info`/`list`/`delete` cannot see the reminder. See [Slack's changelog](https://docs.slack.dev/changelog/2023-07-its-later-already-for-stars-and-reminders).
+
+Required user token scopes: `chat:write`, `dnd:read`, `dnd:write`, `files:read`, `files:write`,
+`channels:read`, `groups:read`, `im:write`, `reminders:read`, `reminders:write`, `users:read`,
+`users:write`, `users.profile:write`.
 
 A pure bash, pipe friendly, feature rich, command line interface for Slack.
 [Richly formatted messages](https://api.slack.com/docs/message-formatting),

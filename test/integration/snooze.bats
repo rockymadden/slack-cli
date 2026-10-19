@@ -3,13 +3,13 @@
 load suite
 
 @test 'snooze start should succeed' {
-  build/bin/slack snooze start 5
+  build/bin/slk snooze start 5
 }
 
 @test 'snooze info should succeed' {
-  build/bin/slack snooze info
+  build/bin/slk snooze info
 }
 
 @test 'snooze end should succeed' {
-  build/bin/slack snooze end
+  build/bin/slk snooze end
 }

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Fake curl for offline tests. Logs one JSON line per call to ${SHIM_DIR}/calls and replies
+# with ${SHIM_DIR}/responses/<method>[.<n>] (the n-th call to that method), else {"ok":true}.
+
+config=''
+url=''
+wfmt=''
+out=''
+args=("$@")
+for ((i = 0; i < ${#args[@]}; i++)); do
+  case "${args[i]}" in
+    -K) [ "${args[i+1]}" = '-' ] && config=$(cat) ;;
+    -w) wfmt=${args[i+1]} ;;
+    -o) out=${args[i+1]} ;;
+    http*) url=${args[i]} ;;
+  esac
+done
+
+case "${url}" in
+  https://files.slack.com/*) method='UPLOAD' ;;
+  *) method=${url##*/} ;;
+esac
+
+jq -cn --arg url "${url}" --arg method "${method}" --arg config "${config}" \
+  '{url: $url, method: $method, config: $config, argv: $ARGS.positional}' --args -- "$@" \
+  >> "${SHIM_DIR}/calls"
+
+count_file="${SHIM_DIR}/count.${method}"
+n=$(( $(cat "${count_file}" 2>/dev/null || echo 0) + 1 ))
+echo "${n}" > "${count_file}"
+
+body='{"ok":true}'
+for candidate in "${SHIM_DIR}/responses/${method}.${n}" "${SHIM_DIR}/responses/${method}"; do
+  [ -f "${candidate}" ] && { body=$(cat "${candidate}"); break; }
+done
+
+if [ -n "${out}" ]; then printf '%s' "${body}" > "${out}"; else printf '%s' "${body}"; fi
+if [ -n "${wfmt}" ]; then cat "${SHIM_DIR}/http_code" 2>/dev/null || printf '200'; fi
+exit 0

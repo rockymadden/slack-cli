@@ -41,7 +41,7 @@ while (( "$#" )); do
     --author-icon=*) authoricon=${1/--author-icon=/''} ; shift ;;
     --author-icon*|-ai*) authoricon=${2} ; shift ; shift ;;
     --author-link=*) authorlink=${1/--author-link=/''} ; shift ;;
-    --author-link*|-al*) titlelink=${2} ; shift ; shift ;;
+    --author-link*|-al*) authorlink=${2} ; shift ; shift ;;
     --author=*) author=${1/--author=/''} ; shift ;;
     --author*|-at*) author=${2} ; shift ; shift ;;
     --channels=*) channels=${1/--channels=/''} ; shift ;;
@@ -56,6 +56,8 @@ while (( "$#" )); do
     --count=*) count=${1/--count=/''} ; shift ;;
     --count|-cn*) count=${2} ; shift ; shift ;;
     --emoji=*) emoji=${1/--emoji=/''} ; shift ;;
+    --expires=*) expires=${1/--expires=/''} ; shift ;;
+    --expires*|-ex*) expires=${2} ; shift ; shift ;;
     --emoji*|-em*) emoji=${2} ; shift ; shift ;;
     --fields=*) fields=${1/--fields=/''} ; shift ;;
     --fields*|-flds*) fields=${2} ; shift ; shift ;;
@@ -71,7 +73,7 @@ while (( "$#" )); do
     --footer-icon*|-fi*) footericon=${2} ; shift ; shift ;;
     --footer=*) footer=${1/--footer=/''} ; shift ;;
     --footer*|-ft*) footer=${2} ; shift ; shift ;;
-    --image=*) image=${1/--image-url=/''} ; shift ;;
+    --image=*) image=${1/--image=/''} ; shift ;;
     --image*|-im*) image=${2} ; shift ; shift ;;
     --monochrome|-m) monochrome='-M' ; shift ;;
     --minutes=*) minutes=${1/--minutes=/''} ; shift ;;
@@ -88,9 +90,9 @@ while (( "$#" )); do
     --thumbnail*|-th*) thumbnail=${2} ; shift ; shift ;;
     --time=*) _time=${1/--time=/''} ; shift ;;
     --time|-tm*) _time=${2} ; shift ; shift ;;
-    --timestamp-from=*) timestampfrom=${1/--timestampfrom=/''} ; shift ;;
+    --timestamp-from=*) timestampfrom=${1/--timestamp-from=/''} ; shift ;;
     --timestamp-from|-tf*) timestampfrom=${2} ; shift ; shift ;;
-    --timestamp-to=*) timestampto=${1/--timestampto=/''} ; shift ;;
+    --timestamp-to=*) timestampto=${1/--timestamp-to=/''} ; shift ;;
     --timestamp-to|-tt*) timestampto=${2} ; shift ; shift ;;
     --timestamp=*) timestamp=${1/--timestamp=/''} ; shift ;;
     --timestamp*|-ts*) timestamp=${2} ; shift ; shift ;;
@@ -151,7 +153,8 @@ while (( "$#" )); do
 done
 
 # TRACING #########################################################################################
-${trace}
+# init handles the raw token at every step, so it is never traced.
+[ "${cmd}" != 'init' ] && ${trace}
 
 # ARGUMENT AND OPTION PROMPTING ###################################################################
 case "${cmd}${sub}" in
@@ -221,99 +224,175 @@ case "${cmd}${sub}" in
 esac
 
 # COMMAND UTILITY FUNCTIONS #######################################################################
-function attachify() {
-  [ -n "${actions}" ] && local _actions=", \"actions\": [${actions}]"
-  [ -n "${author}" ] && local _author=", \"author_name\": \"${author}\""
-  [ -n "${authoricon}" ] && local _authoricon=", \"author_icon\": \"${authoricon}\""
-  [ -n "${authorlink}" ] && local _authorlink=", \"author_link\": \"${authorlink}\""
-  [ -n "${color}" ] && local _color=", \"color\": \"${color}\""
-  [ -n "${fields}" ] && local _fields=", \"fields\": [${fields}]"
-  [ -n "${footer}" ] && local _footer=", \"footer\": \"${footer}\""
-  [ -n "${footericon}" ] && local _footericon=", \"footer_icon\": \"${footericon}\""
-  [ -n "${image}" ] && local _image=", \"image_url\": \"${image}\""
-  [ -n "${pretext}" ] && local _pretext=", \"pretext\": \"${pretext}\""
-  [ -n "${thumbnail}" ] && local _thumbnail=", \"thumb_url\": \"${thumbnail}\""
-  [ -n "${_time}" ] && local __time=", \"ts\": \"${_time}\""
-  [ -n "${title}" ] && local _title=", \"title\": \"${title}\""
-  [ -n "${titlelink}" ] && local _titlelink=", \"title_link\": \"${titlelink}\""
-  local _json="${_author}${_authoricon}${_authorlink}${_color}${_footer}${_footericon}${_image}${_pretext}${_thumbnail}${__time}${_title}${_titlelink}${_fields}${_actions}"
-  [ -z "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"pretext\"], \"fallback\": \"${text}\", \"pretext\": \"${text}\"}]"
-  [ -n "${_json}" ] && local _attachments="[{\"mrkdwn_in\": [\"fields\", \"pretext\", \"text\"], \"fallback\": \"${text}\", \"text\": \"${text}\"${_json}}]"
+# api <method> [curl args...]: POST to a Slack Web API method. The token travels as a bearer header
+# in curl config read from stdin, so it never appears in argv (ps) or in --trace output.
+function api() {
+  local _method=${1} ; shift
+  curl -s -X POST "https://slack.com/api/${_method}" -K - "$@" \
+    <<< "header = \"Authorization: Bearer ${token}\""
+}
 
-  echo "${_attachments}"
+function attachify() {
+  jq -cn \
+    --arg text "${text}" --arg author "${author}" --arg authoricon "${authoricon}" \
+    --arg authorlink "${authorlink}" --arg color "${color}" --arg footer "${footer}" \
+    --arg footericon "${footericon}" --arg image "${image}" --arg pretext "${pretext}" \
+    --arg thumbnail "${thumbnail}" --arg ts "${_time}" --arg title "${title}" \
+    --arg titlelink "${titlelink}" --argjson fields "[${fields}]" --argjson actions "[${actions}]" '
+    def opt(k; v): if v == "" or v == [] then {} else {(k): v} end;
+    ( opt("author_name"; $author) + opt("author_icon"; $authoricon) + opt("author_link"; $authorlink)
+      + opt("color"; $color) + opt("footer"; $footer) + opt("footer_icon"; $footericon)
+      + opt("image_url"; $image) + opt("pretext"; $pretext) + opt("thumb_url"; $thumbnail)
+      + opt("ts"; $ts) + opt("title"; $title) + opt("title_link"; $titlelink)
+      + opt("fields"; $fields) + opt("actions"; $actions) ) as $extra
+    | if $extra == {}
+      then [{mrkdwn_in: ["pretext"], fallback: $text, pretext: $text}]
+      else [{mrkdwn_in: ["fields", "pretext", "text"], fallback: $text, text: $text} + $extra]
+      end' 2>/dev/null
 }
 
 function jqify() {
-  case "$(echo ${1} | jq -r '.ok')" in
-    true) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
-    *) echo ${1} | jq -r ${compact} ${monochrome} "${filter:=.}" ; return 1 ;;
-  esac
+  jq -r ${compact} ${monochrome} "${filter:=.}" <<< "${1}"
+  [ "$(jq -r '.ok' <<< "${1}" 2>/dev/null)" = 'true' ]
+}
+
+# lerror <error> [extra-json-object]: print a Slack-shaped failure and return 1.
+function lerror() {
+  local _extra=${2}
+  [ -z "${_extra}" ] && _extra='{}'
+  jqify "$(jq -cn --arg e "${1}" --argjson x "${_extra}" '{ok: false, error: $e} + $x')"
+}
+
+# ldeps <executable...>: print missing_dependency and return 1 unless each executable is on PATH.
+# Plain echo, since jq may be the one missing.
+function ldeps() {
+  local _dep
+  for _dep in "$@"; do
+    command -v "${_dep}" > /dev/null && continue
+    echo "{\"ok\": false, \"error\": \"missing_dependency\", \"dependency\": \"${_dep}\"}"
+    return 1
+  done
+}
+
+# lepoch <when>: epoch seconds for +90m, +2h, HH:MM (next occurrence, local time) or epoch seconds.
+function lepoch() {
+  local _now=$(date +%s) _t
+  if [[ "${1}" =~ ^\+([0-9]+)([mh])$ ]]; then
+    case "${BASH_REMATCH[2]}" in
+      m) echo $(( _now + BASH_REMATCH[1] * 60 )) ;;
+      h) echo $(( _now + BASH_REMATCH[1] * 3600 )) ;;
+    esac
+  elif [[ "${1}" =~ ^[0-9]{1,2}:[0-9]{2}$ ]]; then
+    if date --version >/dev/null 2>&1; then
+      _t=$(date -d "${1}:00" +%s 2>/dev/null) || return 1
+    else
+      _t=$(date -j -f '%Y-%m-%d %H:%M:%S' "$(date +%Y-%m-%d) ${1}:00" +%s 2>/dev/null) || return 1
+    fi
+    [ "${_t}" -le "${_now}" ] && _t=$(( _t + 86400 ))
+    echo "${_t}"
+  elif [[ "${1}" =~ ^[0-9]+$ ]]; then
+    echo "${1}"
+  else
+    return 1
+  fi
+}
+
+# lpaged <method> <name> <jq-filter> [curl args...]: first non-empty match across cursor-paginated
+# pages; the filter reads the name as $n.
+function lpaged() {
+  local _method=${1} _name=${2} _jq=${3} _cursor='' _page _hit ; shift 3
+  while :; do
+    _page=$(api "${_method}" --data-urlencode 'limit=200' ${_cursor:+ --data-urlencode "cursor=${_cursor}"} "$@")
+    _hit=$(jq -r --arg n "${_name}" "${_jq} // empty" <<< "${_page}" 2>/dev/null)
+    [ -n "${_hit}" ] && { echo "${_hit}" ; return 0 ; }
+    _cursor=$(jq -r '.response_metadata.next_cursor // empty' <<< "${_page}" 2>/dev/null)
+    [ -z "${_cursor}" ] && return 1
+  done
+}
+
+# luid <@name>: user id by username or display name.
+function luid() {
+  lpaged users.list "${1#@}" '[.members[]? | select(.name == $n or .profile.display_name == $n)][0].id'
+}
+
+# lconversation <#name>: channel id by name, public or private.
+function lconversation() {
+  lpaged conversations.list "${1#\#}" '[.channels[]? | select(.name == $n)][0].id' \
+    --data-urlencode 'types=public_channel,private_channel' --data-urlencode 'exclude_archived=true'
 }
 
 function lchannel() {
   case "${channel}" in
     @*)
-      local _user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${channel/@/}\" or .profile.display_name == \"${channel/@/}\")) | .[0].id")
-      local _channel=$(\
-        curl -s -X POST https://slack.com/api/im.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".ims | map(select(.user == \"${_user}\")) | .[].id")
-
-      echo ${_channel}
+      local _user
+      _user=$(luid "${channel}") || return 1
+      api conversations.open --data-urlencode "users=${_user}" | jq -r '.channel.id // empty'
     ;;
-    *) echo ${channel} ;;
+    *) echo "${channel}" ;;
   esac
+}
+
+# lchannelids: ${channels} (comma-separated #names, @names and ids) as comma-separated ids.
+function lchannelids() {
+  local _ids='' _c _id
+  while IFS= read -r _c; do
+    [ -z "${_c}" ] && continue
+    case "${_c}" in
+      @*) _id=$(luid "${_c}") ;;
+      \#*) _id=$(lconversation "${_c}") ;;
+      *) _id=${_c} ;;
+    esac
+    [ -z "${_id}" ] && return 1
+    _ids=${_ids:+${_ids},}${_id}
+  done < <(tr ',' '\n' <<< "${channels}")
+  echo "${_ids}"
 }
 
 function luser() {
   case "${user}" in
-    @*)
-      local _user=$(\
-        curl -s -X POST https://slack.com/api/users.list --data-urlencode "token=${token}" 2>&1 | \
-        jq -r ".members | map(select(.name == \"${user/@/}\" or .profile.display_name == \"${user/@/}\")) | .[0].id")
-
-      echo ${_user}
-    ;;
-    *) echo ${user} ;;
+    @*) luid "${user}" ;;
+    *) echo "${user}" ;;
   esac
 }
 
 # COMMAND FUNCTIONS ###############################################################################
 function chatdelete() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/chat.delete \
+    api chat.delete \
       --data-urlencode "as_user=true" \
       --data-urlencode "channel=$(lchannel)" \
-      --data-urlencode "ts=${timestamp}" \
-      --data-urlencode "token=${token}")
+      --data-urlencode "ts=${timestamp}")
 
   jqify "${msg}"
 }
 
 function chatsend() {
-  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin}\`\`\`
+
+  local _attachments
+  _attachments=$(attachify) || { lerror invalid_attachments ; return 1 ; }
 
   local msg=$(\
-    curl -s -X POST https://slack.com/api/chat.postMessage \
+    api chat.postMessage \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=$(attachify)" \
-      --data-urlencode "channel=$(lchannel)" \
-      --data-urlencode "token=${token}")
+      --data-urlencode "attachments=${_attachments}" \
+      --data-urlencode "channel=$(lchannel)")
 
   jqify "${msg}"
 }
 
 function chatupdate() {
-  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin//$'\n'/'\n'}\`\`\`
+  [ -n "${stdin}" ] && [ -z "${text}" ] && text=\`\`\`${stdin}\`\`\`
+
+  local _attachments
+  _attachments=$(attachify) || { lerror invalid_attachments ; return 1 ; }
 
   local msg=$(\
-    curl -s -X POST https://slack.com/api/chat.update \
+    api chat.update \
       --data-urlencode "as_user=true" \
-      --data-urlencode "attachments=$(attachify)" \
+      --data-urlencode "attachments=${_attachments}" \
       --data-urlencode "channel=$(lchannel)" \
-      --data-urlencode "ts=${timestamp}" \
-      --data-urlencode "token=${token}")
+      --data-urlencode "ts=${timestamp}")
 
   jqify "${msg}"
 }
@@ -365,7 +444,7 @@ function help() {
   echo
   echo "  ${bin} file upload [<file> [channels]]"
   echo '    [--channels|-chs <channels>] [--comment|-cm <comment>] [--compact|-c]'
-  echo '    [--file|fl <file>] [--filename|-fn <filename>] [--filetype|-ft <filetype>]'
+  echo '    [--file|fl <file>] [--filename|-fln <filename>] [--filetype|-flt <snippet-type>]'
   echo '    [--filter|-f <filter>] [--monochrome|-m] [--title|-ti <title>] [--trace|-x]'
   echo
   echo "  ${bin} presence active"
@@ -408,7 +487,8 @@ function help() {
   echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
   echo
   echo "  ${bin} status edit [<text> [<emoji>]]"
-  echo '    [--compact|-c] [--filter|-f <filter>] [--monochrome|-m] [--trace|-x]'
+  echo '    [--compact|-c] [--expires|-ex <+90m|+2h|HH:MM|epoch>] [--filter|-f <filter>]'
+  echo '    [--monochrome|-m] [--trace|-x]'
   echo
   echo 'Configuration Commands:'
   echo '  init    Initialize'
@@ -428,7 +508,7 @@ function help() {
   echo '  presence active    Active presence'
   echo '  presence away      Away presence'
   echo
-  echo 'Reminder Commands:'
+  echo 'Reminder Commands (Slack-limited since Save it for Later: add works, info/list/delete may not):'
   echo '  reminder add         Add reminder'
   echo '  reminder complete    Complete reminder'
   echo '  reminder delete      Delete reminder'
@@ -445,93 +525,95 @@ function help() {
   echo '  status edit     Edit status'
   echo
   echo 'More Information:'
-  echo '  repo    https://github.com/rockymadden/slack-cli'
+  echo '  repo    https://github.com/jasonpaulso/slack-cli'
 }
 
 function filedelete() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/files.delete \
-      --data-urlencode "file=${file}" \
-      --data-urlencode "token=${token}")
+    api files.delete \
+      --data-urlencode "file=${file}")
 
   jqify "${msg}"
 }
 
 function fileinfo() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/files.info \
+    api files.info \
       ${count:+ --data-urlencode "count=${count}"} \
       --data-urlencode "file=${file}" \
-      ${page:+ --data-urlencode "page=${page}"} \
-      --data-urlencode "token=${token}")
+      ${page:+ --data-urlencode "page=${page}"})
 
   jqify "${msg}"
 }
 
 function filelist() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/files.list \
+    api files.list \
       ${channel:+ --data-urlencode "channel=${channel}"} \
       ${count:+ --data-urlencode "count=${count}"} \
       ${page:+ --data-urlencode "page=${page}"} \
       ${timestampfrom:+ --data-urlencode "ts_from=${timestampfrom}"} \
       ${timestampto:+ --data-urlencode "ts_to=${timestampto}"} \
       ${types:+ --data-urlencode "types=${types}"} \
-      ${user:+ --data-urlencode "user=$(luser)"} \
-      --data-urlencode "token=${token}")
+      ${user:+ --data-urlencode "user=$(luser)"})
 
   jqify "${msg}"
 }
 
+# files.upload is retired: get an upload URL, POST the bytes there, then complete (and share) it.
 function fileupload() {
   [ -n "${stdin}" ] && [ -z "${file}" ] && file=${stdin}
 
+  local _path _filename _tmp=''
   if [ -f "${file}" ]; then
-    local _file=${file}
-
-    case "${filename}" in
-      '') local _filename=$(basename ${file}) ;;
-      *) local _filename=${filename} ;;
-    esac
+    _path=${file}
+    _filename=${filename:-$(basename "${file}")}
   else
-    local _content=${file}
-
-    case "${filename}" in
-      '') local _filename='stdin' ;;
-      *) local _filename=${filename} ;;
-    esac
+    _tmp=$(mktemp)
+    printf '%s' "${file}" > "${_tmp}"
+    _path=${_tmp}
+    _filename=${filename:-stdin}
   fi
 
-  case "${_file}" in
-    '')
-      local msg=$(\
-        curl -s -X POST https://slack.com/api/files.upload \
-          ${channels:+ --data-urlencode "channels=${channels}"} \
-          ${comment:+ --data-urlencode "initial_comment=${comment}"} \
-          ${_content:+ --data-urlencode "content=${_content}"} \
-          ${_filename:+ --data-urlencode "filename=${_filename}"} \
-          ${filetype:+ --data-urlencode "filetype=${filetype}"} \
-          ${title:+ --data-urlencode "title=${title}"} \
-          --data-urlencode "token=${token}")
-    ;;
-    *)
-      local msg=$(\
-        curl -s -X POST https://slack.com/api/files.upload \
-          ${channels:+ --form-string "channels=${channels}"} \
-          ${comment:+ --form "initial_comment=${comment}"} \
-          ${_file:+ --form "file=@${_file}"} \
-          ${_filename:+ --form "filename=${_filename}"} \
-          ${filetype:+ --form "filetype=${filetype}"} \
-          ${title:+ --form "title=${title}"} \
-          --form "token=${token}")
-    ;;
-  esac
+  local _length=$(wc -c < "${_path}" | tr -d ' ')
+  local _ticket=$(\
+    api files.getUploadURLExternal \
+      --data-urlencode "filename=${_filename}" \
+      --data-urlencode "length=${_length}" \
+      ${filetype:+ --data-urlencode "snippet_type=${filetype}"})
+
+  if [ "$(jq -r '.ok' <<< "${_ticket}" 2>/dev/null)" != 'true' ]; then
+    [ -n "${_tmp}" ] && rm -f "${_tmp}"
+    jqify "${_ticket}" ; return 1
+  fi
+
+  # The upload URL is pre-signed; it gets the bytes and no token.
+  local _code=$(\
+    curl -s -o /dev/null -w '%{http_code}' -X POST "$(jq -r '.upload_url' <<< "${_ticket}")" \
+      -F "filename=@${_path}")
+  [ -n "${_tmp}" ] && rm -f "${_tmp}"
+  [ "${_code}" = '200' ] || { lerror upload_failed "{\"http_code\": \"${_code}\"}" ; return 1 ; }
+
+  local _ids=''
+  if [ -n "${channels}" ]; then
+    _ids=$(lchannelids) || { lerror channel_not_found ; return 1 ; }
+  fi
+
+  local _files=$(\
+    jq -cn --arg id "$(jq -r '.file_id' <<< "${_ticket}")" --arg title "${title:-${_filename}}" \
+      '[{id: $id, title: $title}]')
+
+  local msg=$(\
+    api files.completeUploadExternal \
+      --data-urlencode "files=${_files}" \
+      ${_ids:+ --data-urlencode "channels=${_ids}"} \
+      ${comment:+ --data-urlencode "initial_comment=${comment}"})
 
   jqify "${msg}"
 }
 
 function init() {
-  echo "${token}" > "${etcdir}/.slack"
+  ( umask 077 ; printf '%s\n' "${token}" > "${etcdir}/.slack" ) && chmod 600 "${etcdir}/.slack"
 
   case "${?}" in
     0) echo '{"ok": true}' | jq -r ${compact} ${monochrome} "${filter:=.}" ;;
@@ -542,135 +624,128 @@ function init() {
   esac
 }
 
-# Setting presence=auto + setActive works more consistently than just setActive.
 function presenceactive() {
-  local msg0=$(\
-    curl -s -X POST https://slack.com/api/users.setPresence \
-      --data-urlencode "presence=auto" \
-      --data-urlencode "token=${token}")
+  local msg=$(\
+    api users.setPresence \
+      --data-urlencode "presence=auto")
 
-  local msg1=$(\
-    curl -s -X POST https://slack.com/api/users.setActive \
-      --data-urlencode "token=${token}")
-
-  jqify "${msg0}" && jqify "${msg1}" >/dev/null 2>&1
+  jqify "${msg}"
 }
 
 function presenceaway() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/users.setPresence \
-      --data-urlencode "presence=away" \
-      --data-urlencode "token=${token}")
+    api users.setPresence \
+      --data-urlencode "presence=away")
 
   jqify "${msg}"
 }
 
 function reminderadd() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/reminders.add \
+    api reminders.add \
       --data-urlencode "text=${text}" \
       --data-urlencode "time=${_time}" \
-      ${user:+ --data-urlencode "user=$(luser)"} \
-      --data-urlencode "token=${token}")
+      ${user:+ --data-urlencode "user=$(luser)"})
 
   jqify "${msg}"
 }
 
 function remindercomplete() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/reminders.complete \
-      --data-urlencode "reminder=${reminder}" \
-      --data-urlencode "token=${token}")
+    api reminders.complete \
+      --data-urlencode "reminder=${reminder}")
 
   jqify "${msg}"
 }
 
 function reminderdelete() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/reminders.delete \
-      --data-urlencode "reminder=${reminder}" \
-      --data-urlencode "token=${token}")
+    api reminders.delete \
+      --data-urlencode "reminder=${reminder}")
 
   jqify "${msg}"
 }
 
 function reminderinfo() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/reminders.info \
-      --data-urlencode "reminder=${reminder}" \
-      --data-urlencode "token=${token}")
+    api reminders.info \
+      --data-urlencode "reminder=${reminder}")
 
   jqify "${msg}"
 }
 
 function reminderlist() {
-  local msg=$(\
-    curl -s -X POST https://slack.com/api/reminders.list \
-      --data-urlencode "token=${token}")
+  local msg=$(api reminders.list)
 
   jqify "${msg}"
 }
 
 function snoozeend() {
-  local msg=$(\
-    curl -s -X POST https://slack.com/api/dnd.endSnooze \
-      --data-urlencode "token=${token}")
+  local msg=$(api dnd.endSnooze)
 
   jqify "${msg}"
 }
 
 function snoozeinfo() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/dnd.info \
-      ${user:+ --data-urlencode "user=$(luser)"} \
-      --data-urlencode "token=${token}")
+    api dnd.info \
+      ${user:+ --data-urlencode "user=$(luser)"})
 
   jqify "${msg}"
 }
 
 function snoozestart() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/dnd.setSnooze \
-      --data-urlencode "num_minutes=${minutes}" \
-      --data-urlencode "token=${token}")
+    api dnd.setSnooze \
+      --data-urlencode "num_minutes=${minutes}")
 
   jqify "${msg}"
 }
 
 function statusclear() {
   local msg=$(\
-    curl -s -X POST https://slack.com/api/users.profile.set \
-      --data-urlencode 'profile={"status_text":"", "status_emoji":""}' \
-      --data-urlencode "token=${token}")
+    api users.profile.set \
+      --data-urlencode 'profile={"status_text":"","status_emoji":"","status_expiration":0}')
 
   jqify "${msg}"
 }
 
 function statusedit() {
+  local _expiration=0
+  if [ -n "${expires}" ]; then
+    _expiration=$(lepoch "${expires}") || { lerror invalid_expires ; return 1 ; }
+  fi
+
+  local _profile=$(\
+    jq -cn --arg t "${text}" --arg e "${emoji}" --argjson x "${_expiration}" \
+      '{status_text: $t, status_emoji: $e, status_expiration: $x}')
+
   local msg=$(\
-    curl -s -X POST https://slack.com/api/users.profile.set \
-      --data-urlencode "profile={\"status_text\":\"${text}\", \"status_emoji\":\"${emoji}\"}" \
-      --data-urlencode "token=${token}")
+    api users.profile.set \
+      --data-urlencode "profile=${_profile}")
 
   jqify "${msg}"
 }
 
 function version() {
-  echo '0.18.0'
+  echo '0.19.0'
 }
 
 # COMMAND ROUTING #################################################################################
 case "${cmd}${sub}" in
   --help|-h) help ; exit 0 ;;
   --version|-v) version ; exit 0 ;;
-  init) init ; exit $? ;;
+  init) ldeps jq || exit 1 ; init ; exit $? ;;
   chatdelete|chatsend|chatupdate|\
   filedelete|fileinfo|filelist|fileupload|\
   presenceactive|presenceaway|\
   reminderadd|remindercomplete|reminderdelete|reminderinfo|reminderlist|\
   snoozeend|snoozeinfo|snoozestart|\
   statusclear|statusedit)
-    if [ -z "${token}" ]; then
+    ldeps curl jq || exit 1
+
+    # ${token:+set} keeps the token itself out of --trace output.
+    if [ -z "${token:+set}" ]; then
       echo '{"ok": false, "error": "not_inited"}' |
         jq -r ${compact} ${monochrome} "${filter:=.}" ; exit 1
     fi

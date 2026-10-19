@@ -3,5 +3,5 @@
 load suite
 
 @test 'status edit should succeed' {
-  build/bin/slack status edit lunch :hamburger:
+  build/bin/slk status edit lunch :hamburger:
 }

@@ -3,9 +3,9 @@
 load suite
 
 @test 'presence active should succeed' {
-  build/bin/slack presence active
+  build/bin/slk presence active
 }
 
 @test 'presence away should succeed' {
-  build/bin/slack presence away
+  build/bin/slk presence away
 }
